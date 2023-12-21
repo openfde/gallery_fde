@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.fde.gallery;
+package com.fde.gallery.base;
 
-import android.app.Application;
+import androidx.fragment.app.Fragment;
 
-public class GalleryApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+public class BaseFragment extends Fragment {
+
 }

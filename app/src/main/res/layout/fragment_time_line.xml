@@ -1,5 +1,4 @@
-<resources>
-    <!-- Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,10 +12,15 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-    <string name="app_name">Gallery</string>
-    <string name="tab_time_line">时间线</string>
-    <string name="tab_picture">图片</string>
-    <string name="tab_video">视频</string>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.TimeLineFragment">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/tab_time_line" />
 
-</resources>
+</FrameLayout>
