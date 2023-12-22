@@ -13,7 +13,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-    <string name="app_name">Gallery</string>
+    <string name="app_name">图库</string>
     <string name="tab_time_line">时间线</string>
     <string name="tab_picture">图片</string>
     <string name="tab_video">视频</string>

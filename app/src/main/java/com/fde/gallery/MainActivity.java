@@ -16,23 +16,28 @@
 package com.fde.gallery;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.viewpager.widget.ViewPager;
 
 import com.fde.gallery.adapter.SectionsPagerAdapter;
 import com.fde.gallery.base.BaseActivity;
-import com.fde.gallery.ui.PictureFragment;
-import com.fde.gallery.ui.VideoFragment;
+import com.fde.gallery.ui.fragment.PictureListFragment;
+import com.fde.gallery.ui.fragment.VideoListFragment;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends BaseActivity {
-    VideoFragment videoFragment;
-    PictureFragment pictureFragment;
+    VideoListFragment videoFragment;
+    PictureListFragment pictureFragment;
     ViewPager viewPager;
     TabLayout tabLayout;
     SectionsPagerAdapter sectionsPagerAdapter;
     Context context;
+
+    public static final String[] permissions = {
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +45,14 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         context = this;
         initView();
-
+        if (Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(permissions, 1);
+        }
     }
 
     private void initView() {
-        videoFragment = new VideoFragment();
-        pictureFragment = new PictureFragment();
+        videoFragment = new VideoListFragment();
+        pictureFragment = new PictureListFragment();
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
 

@@ -25,9 +25,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseFragment;
-import com.fde.gallery.ui.PictureFragment;
-import com.fde.gallery.ui.TimeLineFragment;
-import com.fde.gallery.ui.VideoFragment;
+import com.fde.gallery.ui.fragment.PictureListFragment;
+import com.fde.gallery.ui.fragment.TimeLineFragment;
+import com.fde.gallery.ui.fragment.VideoListFragment;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
@@ -44,10 +44,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            PictureFragment pictureFragment = new PictureFragment();
+            PictureListFragment pictureFragment = new PictureListFragment();
             return pictureFragment;
         } else if (position == 1) {
-            VideoFragment videoFragment = new VideoFragment();
+            VideoListFragment videoFragment = new VideoListFragment();
             return videoFragment;
         } else {
             TimeLineFragment timeLineFragment = new TimeLineFragment();
