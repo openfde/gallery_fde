@@ -16,69 +16,66 @@
 package com.fde.gallery.ui.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseFragment;
-import com.fde.gallery.bean.Multimedia;
-import com.fde.gallery.ui.logic.VideoListPersenter;
-
-import java.util.List;
+import com.fde.gallery.ui.logic.TimeLineListPersenter;
+import com.fde.gallery.utils.LogTools;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link VideoListFragment#newInstance} factory method to
+ * Use the {@link TimeLineListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VideoListFragment extends BaseFragment {
-    VideoListPersenter videoListPersenter;
+public class TimeLineListFragment extends BaseFragment {
+    TimeLineListPersenter timeLinePersenter;
     Context context;
-    List<Multimedia> list;
-    boolean isInit = false ;
 
-    public VideoListFragment() {
+    public TimeLineListFragment() {
     }
 
-    public static VideoListFragment newInstance(String param1, String param2) {
-        VideoListFragment fragment = new VideoListFragment();
+    public static TimeLineListFragment newInstance(String param1, String param2) {
+        TimeLineListFragment fragment = new TimeLineListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         context = getActivity();
-        View view = inflater.inflate(R.layout.fragment_video, container, false);
-        videoListPersenter = new VideoListPersenter(this, view);
-        videoListPersenter.initView();
+        View view = inflater.inflate(R.layout.fragment_time_line, container, false);
+        timeLinePersenter = new TimeLineListPersenter(this, view);
+        timeLinePersenter.initView();
         return view;
     }
 
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         super.onFragmentVisibleChange(isVisible);
-        if(isVisible){
-            videoListPersenter.getAllVideos(context);
+        if (isVisible) {
+            LogTools.i("-----time------onFragmentVisibleChange-------");
+            if (isVisible) {
+                timeLinePersenter.getAllMedia(context);
+            }
         }
     }
 
     @Override
     protected void onFragmentFirstVisible() {
         super.onFragmentFirstVisible();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        videoListPersenter.deleteVideo();
     }
 }

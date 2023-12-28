@@ -15,7 +15,33 @@
  */
 package com.fde.gallery.base;
 
+import android.app.RecoverableSecurityException;
+import android.content.Context;
+import android.content.IntentSender;
+import android.os.Build;
+import android.os.Bundle;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity {
+    protected  Context context ;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = this;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void requestConfirmDialog(RecoverableSecurityException e) {
+        try {
+            startIntentSenderForResult(
+                    e.getUserAction().getActionIntent().getIntentSender()
+                    , 1, null, 0, 0, 0, null);
+        } catch (IntentSender.SendIntentException ex) {
+            ex.printStackTrace();
+        }
+    }
 }

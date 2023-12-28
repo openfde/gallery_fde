@@ -1,122 +1,187 @@
+/*
+ * Copyright (C) 2018 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.fde.gallery.ui.logic;
 
+import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fde.gallery.R;
 import com.fde.gallery.adapter.PictureListAdapter;
-import com.fde.gallery.bean.Picture;
-import com.fde.gallery.view.AutoFitGridLayoutManager;
+import com.fde.gallery.base.BaseFragment;
+import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.event.ViewEvent;
+import com.fde.gallery.utils.FileUtils;
+import com.fde.gallery.utils.LogTools;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PictureListPersenter {
+public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     Context context;
     View view;
 
+    LinearLayout layoutBottomBtn;
+
     PictureListAdapter pictureListAdapter;
     RecyclerView recyclerView;
-    List<Picture> list;
+    List<Multimedia> list;
+    List<Multimedia> delList;
+    TextView txtShare;
 
-    int numberOfColumns =  3 ;
+    TextView txtDelete;
 
-    public PictureListPersenter(Context context, View view) {
-        this.context = context;
+    TextView txtAllSelected;
+
+    int numberOfColumns = 3;
+
+    boolean isAllSelected;
+
+    boolean isShowBottomBtn = false;
+
+    BaseFragment baseFragment;
+
+    public PictureListPersenter(BaseFragment baseFragment, View view) {
+        this.baseFragment = baseFragment;
         this.view = view;
+        context = baseFragment.getActivity();
     }
 
-    public  boolean initView(){
+    public boolean initView() {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns){
-            @Override
-            public void onMeasure(@NonNull RecyclerView.Recycler recycler, @NonNull RecyclerView.State state, int widthSpec, int heightSpec) {
-                super.onMeasure(recycler, state, widthSpec, heightSpec);
-                int measuredWidth = recyclerView.getMeasuredWidth();
-                int measuredHeight = recyclerView.getMeasuredHeight();
-                int myMeasureHeight = 0;
-                int count = state.getItemCount();
-                for (int i = 0; i < count; i++) {
-                    View view = recycler.getViewForPosition(i);
-                    if (view != null) {
-                        if (myMeasureHeight < measuredHeight && i % numberOfColumns == 0) {
-                            RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
-                            int childWidthSpec = ViewGroup.getChildMeasureSpec(widthSpec,
-                                    getPaddingLeft() + getPaddingRight(), p.width);
-                            int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec,
-                                    getPaddingTop() + getPaddingBottom(), p.height);
-                            view.measure(childWidthSpec, childHeightSpec);
-                            myMeasureHeight += view.getMeasuredHeight() + p.bottomMargin + p.topMargin;
-                        }
-                        recycler.recycleView(view);
-                    }
-                }
-//                setMeasuredDimension(measuredWidth, Math.min(measuredHeight, myMeasureHeight));
-                setMeasuredDimension(measuredWidth, measuredWidth);
-            }
-        };
-        recyclerView.setLayoutManager(gridLayoutManager);
-        list = new ArrayList<>();
-        pictureListAdapter = new PictureListAdapter(context, list);
-        recyclerView.setAdapter(pictureListAdapter);
-        return  true;
-    }
+        layoutBottomBtn = (LinearLayout) view.findViewById(R.id.layoutBottomBtn);
+        txtShare = (TextView) view.findViewById(R.id.txtShare);
+        txtDelete = (TextView) view.findViewById(R.id.txtDelete);
+        txtAllSelected = (TextView) view.findViewById(R.id.txtAllSelected);
+        txtShare.setOnClickListener(this);
+        txtDelete.setOnClickListener(this);
+        txtAllSelected.setOnClickListener(this);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
 
+        recyclerView.setLayoutManager(gridLayoutManager);
+//        recyclerView.addItemDecoration(new SpacesItemDecoration(2));
+        list = new ArrayList<>();
+        pictureListAdapter = new PictureListAdapter(context, list, numberOfColumns, this);
+        recyclerView.setAdapter(pictureListAdapter);
+        return true;
+    }
 
     /***
      * get all picture
      * @param context
      */
     public void getAllImages(Context context) {
-        // The columns we're interested in (id, data, date taken, title, width, height and size)
-        String[] projection = new String[]{
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.DATE_TAKEN,
-                MediaStore.Images.Media.TITLE,
-                MediaStore.Images.Media.WIDTH,
-                MediaStore.Images.Media.HEIGHT,
-                MediaStore.Images.Media.SIZE,
-        };
+            if(list !=null){
+                list.clear();
+            }
+            list.addAll(FileUtils.getAllImages(context));
+            if (pictureListAdapter == null) {
+                LogTools.i("pictureListAdapter is null");
+            } else {
+                pictureListAdapter.notifyDataSetChanged();
+            }
+    }
 
-        // Query the content provider
-        Cursor cursor = context.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // The content URI of the words table
-                projection,   // The columns to return for each row
-                null,         // Selection criteria
-                null,         // Selection criteria
-                null);        // The sort order for the returned rows
+    @Override
+    public void onRightEvent(int pos) {
+        isShowBottomBtn = !isShowBottomBtn;
 
-        if (cursor != null) {
-            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-            int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN);
-            int titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
-            int widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
-            int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
-            int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
-
-            while (cursor.moveToNext()) {
-                Picture picture = new Picture();
-                picture.setId(cursor.getLong(idColumn));
-                picture.setPath(cursor.getString(dataColumn));
-                picture.setDateTaken(cursor.getLong(dateTakenColumn));
-                picture.setTitle(cursor.getString(titleColumn));
-                picture.setSize(cursor.getLong(sizeColumn));
-                picture.setWidth(cursor.getInt(widthColumn));
-                picture.setHeight(cursor.getInt(heightColumn));
-                list.add(picture);
+        try {
+            layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+            for (int i = 0; i < list.size(); i++) {
+                Multimedia picture = list.get(i);
+                picture.setShowCheckbox(isShowBottomBtn);
+                list.set(i, picture);
             }
             pictureListAdapter.notifyDataSetChanged();
-            cursor.close();
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
+    @Override
+    public void onSelectEvent(int pos, boolean isSelect) {
+     try {
+         Multimedia picture = list.get(pos);
+         picture.setSelected(isSelect);
+         list.set(pos, picture);
+     }catch (Exception e){
+         e.printStackTrace();
+     }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.txtShare:
+                LogTools.i("list " + list.toString());
+                break;
+
+            case R.id.txtDelete:
+                List<Multimedia> tempList = new ArrayList<>();
+                delList = new ArrayList<>();
+
+                for (int i = 0; i < list.size(); i++) {
+                    Multimedia picture = list.get(i);
+                    if (picture.isSelected()) {
+                        delList.add(picture);
+                    } else {
+                        tempList.add(picture);
+                    }
+                }
+                list.clear();
+                list.addAll(tempList);
+                deleteImage();
+                break;
+
+            case R.id.txtAllSelected:
+                isAllSelected = !isAllSelected;
+                for (int i = 0; i < list.size(); i++) {
+                    Multimedia picture = list.get(i);
+                    picture.setSelected(isAllSelected);
+                    list.set(i, picture);
+                }
+                pictureListAdapter.notifyDataSetChanged();
+                txtAllSelected.setText(isAllSelected? context.getString(R.string.deselect_all) :context.getString(R.string.select_all) );
+                break;
+        }
+    }
+
+    public void deleteImage() {
+        if (delList != null) {
+            try {
+                // 你的删除或修改文件的代码
+                for (Multimedia picture : delList) {
+                    FileUtils.deleteImage(context, picture.getPath());
+                }
+                pictureListAdapter.notifyDataSetChanged();
+            } catch (RecoverableSecurityException e) {
+                baseFragment.requestConfirmDialog(e);
+            }
+        }
+    }
 }

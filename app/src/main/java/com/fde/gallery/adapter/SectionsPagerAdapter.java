@@ -17,6 +17,7 @@ package com.fde.gallery.adapter;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
@@ -26,7 +27,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.ui.fragment.PictureListFragment;
-import com.fde.gallery.ui.fragment.TimeLineFragment;
+import com.fde.gallery.ui.fragment.TimeLineListFragment;
 import com.fde.gallery.ui.fragment.VideoListFragment;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -50,7 +51,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             VideoListFragment videoFragment = new VideoListFragment();
             return videoFragment;
         } else {
-            TimeLineFragment timeLineFragment = new TimeLineFragment();
+            TimeLineListFragment timeLineFragment = new TimeLineListFragment();
             return timeLineFragment;
         }
     }
@@ -59,6 +60,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return context.getResources().getString(TAB_TITLES[position]);
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return super.getItemPosition(object);
     }
 
     @Override

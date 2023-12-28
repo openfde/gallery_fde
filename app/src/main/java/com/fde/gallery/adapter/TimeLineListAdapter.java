@@ -1,30 +1,14 @@
-/*
- * Copyright (C) 2018 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.fde.gallery.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -33,42 +17,43 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.fde.gallery.R;
 import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.PicturePreviewActivity;
+import com.fde.gallery.ui.activity.VideoPlayActivity;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.StringUtils;
 
-import java.io.File;
 import java.util.List;
 
-public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.PictureListViewHolder> {
-    List<Multimedia> list;
+public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapter.TimeLineListViewHolder> {
     Context context;
+    List<Multimedia> list;
+
     int numberOfColumns;
 
     ViewEvent viewEvent;
 
-    SparseBooleanArray selectedItems = new SparseBooleanArray();
-
-    public PictureListAdapter(Context context, List<Multimedia> list, int numberOfColumns, ViewEvent viewEvent) {
-        this.list = list;
+    public TimeLineListAdapter(Context context, List<Multimedia> list, int numberOfColumns, ViewEvent viewEvent) {
         this.context = context;
+        this.list = list;
         this.numberOfColumns = numberOfColumns;
         this.viewEvent = viewEvent;
     }
 
     @NonNull
     @Override
-    public PictureListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_picture_list, parent, false);
-        PictureListViewHolder holder = new PictureListViewHolder(view);
+    public TimeLineListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_video_list, parent, false);
+        TimeLineListAdapter.TimeLineListViewHolder holder = new TimeLineListAdapter.TimeLineListViewHolder(view);
         return holder;
     }
 
-
     @Override
-    public void onViewAttachedToWindow(@NonNull PictureListViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull TimeLineListAdapter.TimeLineListViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.rootView.post(new Runnable() {
             @Override
@@ -88,40 +73,43 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
                 }
             }
         });
-
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull PictureListViewHolder holder, int position) {
-//        holder.imageView.setImageURI(Uri.parse(list.get(position).getPath()));
-        Multimedia picture = list.get(position);
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, int position) {
+        Multimedia multimedia = list.get(position);
         Glide.with(context)
-                .load(Uri.fromFile(new File(list.get(position).getPath())))
+//                .load(Uri.fromFile(new File(list.get(position).getPath())))
+                .load(multimedia.getPath())
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
+                .apply(new RequestOptions().frame(1000))
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.imageView);
+//        Glide.with(context) // replace 'this' with your context
+//                .load(list.get(position).getPath())
+//                .apply(new RequestOptions().frame(1000)) // frame at 1 second into the video
+//                .into(holder.imageView);
+        holder.checkBox.setVisibility(multimedia.isShowCheckbox() ? View.VISIBLE : View.GONE);
+        holder.checkBox.setChecked(multimedia.isSelected());
+
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                LogTools.i("picture" + picture.toString());
+                Multimedia multimedia = list.get(position);
+                LogTools.i("multimedia" + multimedia.toString());
                 Intent intent = new Intent();
-                intent.putExtra("picture_data", picture);
-                intent.setClass(context, PicturePreviewActivity.class);
+                if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
+                    intent.putExtra("picture_data", multimedia);
+                    intent.setClass(context, PicturePreviewActivity.class);
+                } else {
+                    intent.putExtra("video_data", multimedia);
+                    intent.setClass(context, VideoPlayActivity.class);
+                }
                 context.startActivity(intent);
-            }
-        });
-
-        holder.checkBox.setVisibility(picture.isShowCheckbox() ?View.VISIBLE:View.GONE);
-        holder.checkBox.setChecked(picture.isSelected());
-
-        holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                return false;
             }
         });
 
@@ -148,17 +136,17 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
         return list.size();
     }
 
-    class PictureListViewHolder extends RecyclerView.ViewHolder {
-        RelativeLayout rootView;
+    class TimeLineListViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        RelativeLayout rootView;
+
         CheckBox checkBox;
 
-        public PictureListViewHolder(@NonNull View itemView) {
+        public TimeLineListViewHolder(@NonNull View itemView) {
             super(itemView);
             rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
         }
     }
-
 }

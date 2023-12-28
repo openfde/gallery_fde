@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/layoutBottomBtn"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:background="@color/app_gray_light"
+    android:orientation="horizontal">
+
+
+
+        <TextView
+            android:id="@+id/txtShare"
+            android:text="@string/share"
+            android:layout_weight="1"
+            android:drawableTop="@mipmap/icon_share"
+            style="@style/list_bottom_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/txtDelete"
+            android:layout_weight="1"
+            android:drawableTop="@mipmap/icon_delete"
+            android:text="@string/delete"
+            style="@style/list_bottom_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/txtAllSelected"
+            android:layout_weight="1"
+            android:drawableTop="@mipmap/icon_select_all"
+            android:text="@string/select_all"
+            style="@style/list_bottom_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</LinearLayout>

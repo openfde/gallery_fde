@@ -12,15 +12,19 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.TimeLineFragment">
+    android:orientation="vertical"
+    tools:context=".ui.fragment.TimeLineListFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/tab_time_line" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
 
-</FrameLayout>
+    <include layout="@layout/layout_bottom_button" />
+
+</LinearLayout>

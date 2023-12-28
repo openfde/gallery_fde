@@ -17,7 +17,10 @@ package com.fde.gallery.bean;
 
 import java.io.Serializable;
 
-public class Picture implements Serializable {
+/**
+ * multi-media bean class
+ */
+public class Multimedia implements Serializable {
     private long id;
     private String path;
     private String title;
@@ -25,6 +28,10 @@ public class Picture implements Serializable {
     private int height;
     private long size;
     private long dateTaken;
+    private long duration;
+    private boolean isSelected;
+    private boolean isShowCheckbox;
+    private int mediaType;
 
     public long getId() {
         return id;
@@ -82,16 +89,52 @@ public class Picture implements Serializable {
         this.dateTaken = dateTaken;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isShowCheckbox() {
+        return isShowCheckbox;
+    }
+
+    public void setShowCheckbox(boolean showCheckbox) {
+        isShowCheckbox = showCheckbox;
+    }
+
+    public int getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(int mediaType) {
+        this.mediaType = mediaType;
+    }
+
     @Override
     public String toString() {
-        return "Picture{" +
+        return "Multimedia{" +
                 "id=" + id +
-                ", path=" + path +
+                ", path='" + path + '\'' +
                 ", title='" + title + '\'' +
                 ", width=" + width +
                 ", height=" + height +
                 ", size=" + size +
                 ", dateTaken=" + dateTaken +
+                ", duration=" + duration +
+                ", isSelected=" + isSelected +
+                ", isShowCheckbox=" + isShowCheckbox +
+                ", mediaType=" + mediaType +
                 '}';
     }
 }

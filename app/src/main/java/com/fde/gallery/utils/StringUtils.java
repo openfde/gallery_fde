@@ -103,17 +103,18 @@ public class StringUtils {
     }
 
     //传入指定时间
-    public void convertToTimestamp(String time) {
+    public long convertToTimestamp(String time) {
         try {
             Date date = new SimpleDateFormat("yyyy-MM-dd").parse(time);
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             long timestamp = cal.getTimeInMillis();
+            return  timestamp;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return  0;
     }
-
     public static String getPercentFormat(Object data,int IntegerDigits,int FractionDigits){
        try {
            double date = ToDouble(data);

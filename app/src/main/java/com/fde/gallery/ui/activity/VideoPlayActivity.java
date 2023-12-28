@@ -15,14 +15,17 @@
  */
 package com.fde.gallery.ui.activity;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
-import com.fde.gallery.bean.Video;
-import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.utils.StringUtils;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -32,28 +35,46 @@ import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.io.File;
-
 public class VideoPlayActivity extends BaseActivity {
     private SimpleExoPlayer mSimpleExoPlayer;
     private StyledPlayerView mStyledPlayerView;
     private DefaultTrackSelector mDefaultTrackSelector;
     private DefaultTrackSelector.Parameters mDefaultTrackSelectorParameters;
-    private Video videoData;
+    private Multimedia videoData;
+
+    ImageView imgDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_play);
         mStyledPlayerView = findViewById(R.id.player_view);
-        videoData = (Video) getIntent().getSerializableExtra("video_data");
+        imgDetails = (ImageView) findViewById(R.id.imgDetails);
+        videoData = (Multimedia) getIntent().getSerializableExtra("video_data");
         initPlayer();
+
+        imgDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.details);
+                builder.setMessage("title:  " + videoData.getTitle() + "\n"
+//                        + "width:  " + videoData.getWidth() + "\n"
+//                        + "height:  " + videoData.getHeight() + "\n"
+                        + "date:  " + StringUtils.conversionTime(1000 * videoData.getDateTaken()) + "\n"
+                        + "duration:  " + videoData.getDuration()/1000 + "s\n"
+                        + "path:  " + videoData.getPath() + "\n"
+                );
+                builder.show();
+            }
+        });
     }
 
     /**
      * init video play
      */
-    private void initPlayer(){
+    private void initPlayer() {
+        mStyledPlayerView.setControllerAutoShow(false);
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
         mStyledPlayerView.setPlayer(player);
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this,
@@ -68,7 +89,7 @@ public class VideoPlayActivity extends BaseActivity {
     /**
      * release player
      */
-    private void releasePlayer(){
+    private void releasePlayer() {
         if (mSimpleExoPlayer == null) return;
         mSimpleExoPlayer.release();
         mSimpleExoPlayer = null;

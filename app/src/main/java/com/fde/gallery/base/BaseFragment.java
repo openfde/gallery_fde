@@ -15,7 +15,10 @@
  */
 package com.fde.gallery.base;
 
+import android.app.RecoverableSecurityException;
 import android.content.Context;
+import android.content.IntentSender;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ContextThemeWrapper;
@@ -23,7 +26,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+
+import com.fde.gallery.utils.LogTools;
 
 public class BaseFragment extends Fragment {
     private boolean isFragmentVisible;
@@ -39,8 +45,6 @@ public class BaseFragment extends Fragment {
     protected  void  onFragmentFirstVisible(){
 
     }
-
-
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -74,7 +78,8 @@ public class BaseFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         if (rootView == null) {
             rootView = view;
-            if (getUserVisibleHint()) {
+            boolean isVisible = getUserVisibleHint() ;
+            if (isVisible) {
                 if (isFirstVisible) {
                     onFragmentFirstVisible();
                     isFirstVisible = false;
@@ -82,6 +87,8 @@ public class BaseFragment extends Fragment {
                 onFragmentVisibleChange(true);
                 isFragmentVisible = true;
             }
+        }else{
+            LogTools.i("----rootView is null--------");
         }
         super.onViewCreated(isReuseView ? rootView : view, savedInstanceState);
     }
@@ -117,6 +124,17 @@ public class BaseFragment extends Fragment {
                 toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
                 toast.show();
             }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public void requestConfirmDialog(RecoverableSecurityException e) {
+        try {
+            startIntentSenderForResult(
+                    e.getUserAction().getActionIntent().getIntentSender()
+                    , 1, null, 0, 0, 0, null);
+        } catch (IntentSender.SendIntentException ex) {
+            ex.printStackTrace();
         }
     }
 

@@ -16,29 +16,19 @@
 package com.fde.gallery.ui.fragment;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.fde.gallery.R;
-import com.fde.gallery.adapter.PictureListAdapter;
 import com.fde.gallery.base.BaseFragment;
-import com.fde.gallery.bean.Picture;
 import com.fde.gallery.ui.logic.PictureListPersenter;
 import com.fde.gallery.utils.LogTools;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,12 +37,13 @@ import java.util.List;
  */
 public class PictureListFragment extends BaseFragment {
     Context context;
-    PictureListPersenter pictureListPersenter ;
+    PictureListPersenter pictureListPersenter;
 
-    boolean isInit = false ;
+    boolean isInit = false;
+
     public PictureListFragment() {
-        // Required empty public constructor
     }
+
     public static PictureListFragment newInstance(String param1, String param2) {
         PictureListFragment fragment = new PictureListFragment();
         Bundle args = new Bundle();
@@ -63,24 +54,18 @@ public class PictureListFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_picture, container, false);
         context = getActivity();
-        pictureListPersenter = new PictureListPersenter(context,view);
+        View view = inflater.inflate(R.layout.fragment_picture, container, false);
+        pictureListPersenter = new PictureListPersenter(this, view);
+        pictureListPersenter.initView();
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
 
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         super.onFragmentVisibleChange(isVisible);
-        if(isVisible){
-            if(!isInit){
-                pictureListPersenter.initView();
-            }
+        if (isVisible) {
             pictureListPersenter.getAllImages(context);
         }
     }
@@ -88,6 +73,11 @@ public class PictureListFragment extends BaseFragment {
     @Override
     protected void onFragmentFirstVisible() {
         super.onFragmentFirstVisible();
-        LogTools.i("--------pic---onFragmentFirstVisible-----------");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        pictureListPersenter.deleteImage();
     }
 }

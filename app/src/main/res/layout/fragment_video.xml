@@ -20,17 +20,13 @@
     tools:context=".ui.fragment.PictureListFragment">
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:text="@string/tab_picture" />
-
-
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_weight="1"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_gravity="center|top"
         android:layout_height="wrap_content"/>
+
+    <include layout="@layout/layout_bottom_button"/>
 
 </LinearLayout>
