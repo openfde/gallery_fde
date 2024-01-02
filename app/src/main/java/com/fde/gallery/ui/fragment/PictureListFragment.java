@@ -17,16 +17,19 @@ package com.fde.gallery.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseFragment;
+import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.PictureListPersenter;
 import com.fde.gallery.utils.LogTools;
 
@@ -39,10 +42,12 @@ public class PictureListFragment extends BaseFragment {
     Context context;
     PictureListPersenter pictureListPersenter;
 
-    boolean isInit = false;
-
     public PictureListFragment() {
     }
+
+    public static final String[] permissions = {
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE"};
 
     public static PictureListFragment newInstance(String param1, String param2) {
         PictureListFragment fragment = new PictureListFragment();
@@ -58,14 +63,22 @@ public class PictureListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_picture, container, false);
         pictureListPersenter = new PictureListPersenter(this, view);
         pictureListPersenter.initView();
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            int iGetPerm = context.checkSelfPermission(permissions[1]);
+            if (iGetPerm == -1) {
+                requestPermissions(permissions, 888);
+            }
+        }
+
         return view;
     }
-
 
     @Override
     protected void onFragmentVisibleChange(boolean isVisible) {
         super.onFragmentVisibleChange(isVisible);
         if (isVisible) {
+            LogTools.i("----onFragmentVisibleChange--------");
             pictureListPersenter.getAllImages(context);
         }
     }
@@ -78,6 +91,17 @@ public class PictureListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        pictureListPersenter.deleteImage();
+        LogTools.i("onActivityResult requestCode: "+requestCode +" ,resultCode:  "+resultCode);
+        if(requestCode == Constant.REQUEST_DELETE_PHOTO){
+            pictureListPersenter.getAllImages(context);
+        }else {
+            pictureListPersenter.deleteImage();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        pictureListPersenter.getAllImages(context);
     }
 }

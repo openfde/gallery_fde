@@ -16,6 +16,10 @@
 package com.fde.gallery.common;
 
 public class Constant {
-    public  static  final int MEDIA_PIC = 1;
-    public  static  final int MEDIA_VIDEO = 2;
+    public static final int MEDIA_PIC = 1;
+    public static final int MEDIA_VIDEO = 2;
+    public static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
+    public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
+    public static final int REQUEST_PERMISSION_DELETE_PHOTO = 600;
+    public static final int REQUEST_DELETE_PHOTO = 601;
 }

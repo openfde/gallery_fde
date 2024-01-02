@@ -16,16 +16,18 @@
 package com.fde.gallery.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseFragment;
+import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.TimeLineListPersenter;
 import com.fde.gallery.utils.LogTools;
 
@@ -77,5 +79,16 @@ public class TimeLineListFragment extends BaseFragment {
     @Override
     protected void onFragmentFirstVisible() {
         super.onFragmentFirstVisible();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        LogTools.i("onActivityResult requestCode: "+requestCode +" ,resultCode:  "+resultCode);
+        if(requestCode == Constant.REQUEST_DELETE_PHOTO){
+            timeLinePersenter.getAllMedia(context);
+        }else {
+            timeLinePersenter.deleteImage();
+        }
     }
 }

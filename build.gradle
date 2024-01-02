@@ -7,4 +7,10 @@ plugins {
 ext {
     sdkVersion = 34
     minSdkVersion = 24
+
+    androidx_appcompat_version = "1.6.1"
+    androidx_core_version = "1.9.0"
+    androidx_exifinterface_version = "1.3.6"
+    androidx_transition_version = "1.4.1"
+    constraintlayout_version = "2.1.4"
 }

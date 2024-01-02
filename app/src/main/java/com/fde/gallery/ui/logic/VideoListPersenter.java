@@ -110,6 +110,11 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     }
 
     @Override
+    public void onJumpEvent(Multimedia multimedia) {
+
+    }
+
+    @Override
     public void onSelectEvent(int pos, boolean isSelect) {
         try {
             Multimedia video = list.get(pos);

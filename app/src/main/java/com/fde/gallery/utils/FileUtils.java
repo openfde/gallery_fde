@@ -4,11 +4,14 @@ import android.app.RecoverableSecurityException;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -87,7 +90,7 @@ public class FileUtils {
                 null,
                 null,         // Selection criteria
                 null,         // Selection criteria
-                MediaStore.Images.Media.DATE_MODIFIED + " desc");        // The sort order for the returned rows
+                MediaStore.Images.Media.DATE_ADDED + " desc");        // The sort order for the returned rows
 
         if (cursor != null) {
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
@@ -97,12 +100,14 @@ public class FileUtils {
             int widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
             int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+            int dateAddDateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
 
             while (cursor.moveToNext()) {
                 Multimedia picture = new Multimedia();
                 picture.setId(cursor.getLong(idColumn));
                 picture.setPath(cursor.getString(dataColumn));
-                picture.setDateTaken(cursor.getLong(dateTakenColumn));
+                long date = cursor.getLong(dateTakenColumn);
+                picture.setDateTaken(date  >  0 ?date  : cursor.getLong(dateAddDateColumn) );
                 picture.setTitle(cursor.getString(titleColumn));
                 picture.setSize(cursor.getLong(sizeColumn));
                 picture.setWidth(cursor.getInt(widthColumn));
@@ -112,7 +117,7 @@ public class FileUtils {
                 picture.setMediaType(Constant.MEDIA_PIC);
                 list.add(picture);
             }
-            LogTools.i("picture list size " + list.toString());
+//            LogTools.i("picture list size " + list.toString());
             cursor.close();
         }
         return  list ;
@@ -132,7 +137,7 @@ public class FileUtils {
                 null,   // The columns to return for each row
                 null,         // Selection criteria
                 null,         // Selection criteria
-                MediaStore.Images.Media.DATE_MODIFIED + " desc");        // The sort order for the returned rows
+                MediaStore.Images.Media.DATE_ADDED + " desc");        // The sort order for the returned rows
 
         if (cursor != null) {
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID);
@@ -143,7 +148,7 @@ public class FileUtils {
             int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.HEIGHT);
             int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE);
             int durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION);
-
+            int dateAddDateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
 
             while (cursor.moveToNext()) {
                 Multimedia video = new Multimedia();
@@ -152,14 +157,16 @@ public class FileUtils {
                 video.setSize(cursor.getLong(sizeColumn));
                 video.setDuration(cursor.getInt(durationColumn));
                 video.setTitle(cursor.getString(titleColumn));
-                video.setDateTaken(cursor.getLong(dateTakenColumn));
+                long date = cursor.getLong(dateTakenColumn);
+                video.setDateTaken(date  > 0 ?date  : cursor.getLong(dateAddDateColumn) );
                 video.setMediaType(Constant.MEDIA_VIDEO);
                 list.add(video);
             }
-            LogTools.i("video list size " + list.toString());
+//            LogTools.i("video list size " + list.toString());
             cursor.close();
         }
         return  list ;
     }
+
 
 }

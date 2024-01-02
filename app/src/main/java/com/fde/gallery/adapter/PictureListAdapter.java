@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fde.gallery.R;
+import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.PicturePreviewActivity;
@@ -108,10 +109,8 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
             public void onClick(View view) {
 
                 LogTools.i("picture" + picture.toString());
-                Intent intent = new Intent();
-                intent.putExtra("picture_data", picture);
-                intent.setClass(context, PicturePreviewActivity.class);
-                context.startActivity(intent);
+
+                viewEvent.onJumpEvent(picture);
             }
         });
 
@@ -133,6 +132,14 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
                 return false;
             }
         });
+
+//        holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                viewEvent.onRightEvent(position);
+//                return false;
+//            }
+//        });
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -94,7 +95,7 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
 //                .into(holder.imageView);
         holder.checkBox.setVisibility(multimedia.isShowCheckbox() ? View.VISIBLE : View.GONE);
         holder.checkBox.setChecked(multimedia.isSelected());
-
+        holder.txtDate.setText(StringUtils.conversionTime(1000* multimedia.getDateTaken()));
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,6 +141,7 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
         ImageView imageView;
         RelativeLayout rootView;
 
+        TextView txtDate;
         CheckBox checkBox;
 
         public TimeLineListViewHolder(@NonNull View itemView) {
@@ -147,6 +149,7 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
             rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
+            txtDate =(TextView) itemView.findViewById(R.id.txtDate);
         }
     }
 }

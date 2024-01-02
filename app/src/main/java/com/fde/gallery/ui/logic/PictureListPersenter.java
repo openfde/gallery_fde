@@ -17,15 +17,11 @@ package com.fde.gallery.ui.logic;
 
 import android.app.RecoverableSecurityException;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
+import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,11 +29,12 @@ import com.fde.gallery.R;
 import com.fde.gallery.adapter.PictureListAdapter;
 import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
+import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,6 +129,14 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
      }catch (Exception e){
          e.printStackTrace();
      }
+    }
+
+    @Override
+    public void onJumpEvent(Multimedia picture) {
+        Intent intent = new Intent();
+        intent.putExtra("picture_data", picture);
+        intent.setClass(context, PicturePreviewActivity.class);
+        baseFragment.getActivity().startActivityFromFragment(baseFragment,intent, Constant.REQUEST_DELETE_PHOTO);
     }
 
     @Override

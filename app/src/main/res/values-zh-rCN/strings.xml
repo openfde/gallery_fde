@@ -18,5 +18,7 @@
     <string name="tab_picture">图片</string>
     <string name="tab_video">视频</string>
 
+    <string name="format_crop_result_d_d">裁剪结果 (%1$dx%2$d)</string>
+
 
 </resources>

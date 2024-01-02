@@ -16,6 +16,7 @@
 package com.fde.gallery;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fde.gallery.adapter.SectionsPagerAdapter;
@@ -45,9 +47,7 @@ public class MainActivity extends BaseActivity {
     SectionsPagerAdapter sectionsPagerAdapter;
     Context context;
 
-    public static final String[] permissions = {
-            "android.permission.WRITE_EXTERNAL_STORAGE",
-            "android.permission.READ_EXTERNAL_STORAGE"};
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +55,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         context = this;
         initView();
-        if (Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(permissions, 1);
-        }
+
     }
 
     private void initView() {

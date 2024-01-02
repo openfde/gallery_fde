@@ -17,20 +17,22 @@ package com.fde.gallery.ui.logic;
 
 import android.app.RecoverableSecurityException;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fde.gallery.R;
 import com.fde.gallery.adapter.TimeLineListAdapter;
+import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
+import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 
@@ -42,7 +44,6 @@ import java.util.List;
 public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
     Context context;
     View view;
-
     RecyclerView recyclerView ;
     TimeLineListPersenter timeLineListPersenter ;
     TimeLineListAdapter timeLineListAdapter ;
@@ -92,7 +93,7 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         Collections.sort(list, new Comparator<Multimedia>() {
             @Override
             public int compare(Multimedia o1, Multimedia o2) {
-                return Long.compare(o1.getDateTaken(), o2.getDateTaken());
+                return Long.compare(o2.getDateTaken(), o1.getDateTaken());
             }
         });
         LogTools.i("list size "+list.size());
@@ -124,6 +125,14 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onJumpEvent(Multimedia picture) {
+        Intent intent = new Intent();
+        intent.putExtra("picture_data", picture);
+        intent.setClass(context, PicturePreviewActivity.class);
+        baseFragment.getActivity().startActivityFromFragment(baseFragment,intent,Constant.REQUEST_DELETE_PHOTO);
     }
 
     @Override

@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.StringUtils;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -47,6 +48,7 @@ public class VideoPlayActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogTools.i("----------onCreate-------");
         setContentView(R.layout.activity_video_play);
         mStyledPlayerView = findViewById(R.id.player_view);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
@@ -108,5 +110,11 @@ public class VideoPlayActivity extends BaseActivity {
         super.onPause();
         mStyledPlayerView.onPause();
         releasePlayer();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+         LogTools.i("----------onDestroy---------");
     }
 }
