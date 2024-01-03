@@ -88,7 +88,7 @@ public class TimeLineListFragment extends BaseFragment {
         if(requestCode == Constant.REQUEST_DELETE_PHOTO){
             timeLinePersenter.getAllMedia(context);
         }else {
-            timeLinePersenter.deleteImage();
+            timeLinePersenter.deleteMultiMedia();
         }
     }
 }

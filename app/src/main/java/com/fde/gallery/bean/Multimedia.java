@@ -16,6 +16,8 @@
 package com.fde.gallery.bean;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * multi-media bean class
@@ -121,6 +123,11 @@ public class Multimedia implements Serializable {
         this.mediaType = mediaType;
     }
 
+    // 用于获取当前图片的格式化日期
+    public String getDate() {
+        return new SimpleDateFormat("yyyy年MM月").format(new Date(dateTaken * 1000L));
+    }
+
     @Override
     public String toString() {
         return "Multimedia{" +
@@ -135,6 +142,7 @@ public class Multimedia implements Serializable {
                 ", isSelected=" + isSelected +
                 ", isShowCheckbox=" + isShowCheckbox +
                 ", mediaType=" + mediaType +
+                ", getDate=" + getDate() +
                 '}';
     }
 }

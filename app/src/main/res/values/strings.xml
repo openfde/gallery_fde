@@ -27,7 +27,7 @@
     <string name="cancel">取消</string>
     <string name="details">详情</string>
     <string name="collect">收藏</string>
-
+    <string name="can_not_choose_empty">请选择一项</string>
 
     <string name="notification_image_saved">Image saved</string>
     <string name="notification_image_saved_click_to_preview">Image saved. Click to preview.</string>

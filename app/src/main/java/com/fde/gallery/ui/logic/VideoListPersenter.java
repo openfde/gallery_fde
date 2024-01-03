@@ -15,13 +15,14 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.MediaStore;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,9 +32,9 @@ import com.fde.gallery.adapter.VideoListAdapter;
 import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.event.ViewEvent;
+import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
-import com.fde.gallery.view.SpacesItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     boolean isShowBottomBtn = false;
 
     BaseFragment baseFragment;
+
     public VideoListPersenter(BaseFragment baseFragment, View view) {
         this.baseFragment = baseFragment;
         this.view = view;
@@ -63,6 +65,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     }
 
     public boolean initView() {
+        numberOfColumns = DeviceUtils.getShowCount(baseFragment.getActivity());
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         layoutBottomBtn = (LinearLayout) view.findViewById(R.id.layoutBottomBtn);
         txtShare = (TextView) view.findViewById(R.id.txtShare);
@@ -75,7 +78,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
         recyclerView.setLayoutManager(gridLayoutManager);
 //        recyclerView.addItemDecoration(new SpacesItemDecoration(2));  // Here 16 is the space size
         list = new ArrayList<>();
-        videoListAdapter = new VideoListAdapter(context, list, numberOfColumns,this);
+        videoListAdapter = new VideoListAdapter(context, list, numberOfColumns, this);
         recyclerView.setAdapter(videoListAdapter);
         return true;
     }
@@ -86,15 +89,15 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
      * @param context
      */
     public void getAllVideos(Context context) {
-            if (list != null) {
-                list.clear();
-            }
-            list.addAll(FileUtils.getAllVideos(context));
-            videoListAdapter.notifyDataSetChanged();
+        if (list != null) {
+            list.clear();
+        }
+        list.addAll(FileUtils.getAllVideos(context));
+        videoListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onRightEvent(int pos) {
+    public void onRightEvent(int pos, int groupPos) {
         isShowBottomBtn = !isShowBottomBtn;
         try {
             layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
@@ -104,7 +107,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                 list.set(i, video);
             }
             videoListAdapter.notifyDataSetChanged();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -115,7 +118,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     }
 
     @Override
-    public void onSelectEvent(int pos, boolean isSelect) {
+    public void onSelectEvent(int pos, int groupPos, boolean isSelect) {
         try {
             Multimedia video = list.get(pos);
             video.setSelected(isSelect);
@@ -144,9 +147,24 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                         tempList.add(video);
                     }
                 }
-                list.clear();
-                list.addAll(tempList);
-                deleteVideo();
+                if(delList ==null ||delList.size() <1){
+                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+                    return;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.is_delete);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int pos) {
+
+                        list.clear();
+                        list.addAll(tempList);
+                        deleteVideo();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+
                 break;
 
             case R.id.txtAllSelected:
@@ -157,7 +175,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                     list.set(i, video);
                 }
                 videoListAdapter.notifyDataSetChanged();
-                txtAllSelected.setText(isAllSelected? context.getString(R.string.deselect_all) :context.getString(R.string.select_all) );
+                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
                 break;
         }
     }

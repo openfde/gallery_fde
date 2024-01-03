@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2018 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.fde.gallery.adapter;
 
 import android.content.Context;
@@ -24,6 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,36 +20,42 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.fde.gallery.R;
 import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
+import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.ui.activity.VideoPlayActivity;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.StringUtils;
 
 import java.util.List;
 
-public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {
-    List<Multimedia> list;
+public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLineListViewHolder> {
     Context context;
+    List<Multimedia> list;
+
+    int groupPos;
     int numberOfColumns;
 
     ViewEvent viewEvent;
 
-    public VideoListAdapter(Context context, List<Multimedia> list, int numberOfColumns, ViewEvent viewEvent) {
-        this.list = list;
+    public TimeLineAdapter(Context context, List<Multimedia> list, int groupPos,int numberOfColumns, ViewEvent viewEvent) {
         this.context = context;
+        this.list = list;
+        this.groupPos = groupPos;
         this.numberOfColumns = numberOfColumns;
         this.viewEvent = viewEvent;
     }
 
     @NonNull
     @Override
-    public VideoListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_video_list, parent, false);
-        VideoListViewHolder holder = new VideoListViewHolder(view);
+    public TimeLineListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_timeline, parent, false);
+        TimeLineAdapter.TimeLineListViewHolder holder = new TimeLineAdapter.TimeLineListViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onViewAttachedToWindow(@NonNull VideoListViewHolder holder) {
+    public void onViewAttachedToWindow(@NonNull TimeLineAdapter.TimeLineListViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         holder.rootView.post(new Runnable() {
             @Override
@@ -85,12 +77,13 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         });
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull VideoListViewHolder holder, int position) {
-        Multimedia video = list.get(position);
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, int position) {
+        Multimedia multimedia = list.get(position);
         Glide.with(context)
 //                .load(Uri.fromFile(new File(list.get(position).getPath())))
-                .load(video.getPath())
+                .load(multimedia.getPath())
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .apply(new RequestOptions().frame(1000))
@@ -101,18 +94,23 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 //                .load(list.get(position).getPath())
 //                .apply(new RequestOptions().frame(1000)) // frame at 1 second into the video
 //                .into(holder.imageView);
-        holder.checkBox.setVisibility(video.isShowCheckbox() ? View.VISIBLE : View.GONE);
-        holder.checkBox.setChecked(video.isSelected());
-
+        holder.checkBox.setVisibility(multimedia.isShowCheckbox() ? View.VISIBLE : View.GONE);
+        holder.checkBox.setChecked(multimedia.isSelected());
+        holder.txtDate.setText(StringUtils.conversionTime(1000* multimedia.getDateTaken()));
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Multimedia video = list.get(position);
-                LogTools.i("video" + video.toString());
+                Multimedia multimedia = list.get(position);
+                LogTools.i("multimedia" + multimedia.toString());
                 Intent intent = new Intent();
-                intent.putExtra("video_data", video);
-                intent.setClass(context, VideoPlayActivity.class);
+                if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
+                    intent.putExtra("picture_data", multimedia);
+                    intent.setClass(context, PicturePreviewActivity.class);
+                } else {
+                    intent.putExtra("video_data", multimedia);
+                    intent.setClass(context, VideoPlayActivity.class);
+                }
                 context.startActivity(intent);
             }
         });
@@ -121,7 +119,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             @Override
             public boolean onContextClick(View view) {
 //                holder.checkBox.setVisibility(View.VISIBLE);
-                viewEvent.onRightEvent(position,0);
+                viewEvent.onRightEvent(position,groupPos);
                 return false;
             }
         });
@@ -129,9 +127,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                viewEvent.onSelectEvent(position,0, b);
+                viewEvent.onSelectEvent(position,groupPos, b);
             }
         });
+
     }
 
     @Override
@@ -139,18 +138,19 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return list.size();
     }
 
-    class VideoListViewHolder extends RecyclerView.ViewHolder {
+    class TimeLineListViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         RelativeLayout rootView;
 
+        TextView txtDate;
         CheckBox checkBox;
 
-        public VideoListViewHolder(@NonNull View itemView) {
+        public TimeLineListViewHolder(@NonNull View itemView) {
             super(itemView);
             rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
+            txtDate =(TextView) itemView.findViewById(R.id.txtDate);
         }
     }
-
 }

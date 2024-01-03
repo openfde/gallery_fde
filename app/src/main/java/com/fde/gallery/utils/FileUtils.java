@@ -4,14 +4,11 @@ import android.app.RecoverableSecurityException;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
-import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,57 +18,59 @@ public class FileUtils {
     /**
      * file delete
      */
-    public static boolean delete(String path){
+    public static boolean delete(String path) {
         File file = new File(path);
-        if(file.exists() && file.isFile()){
+        if (file.exists() && file.isFile()) {
             boolean isSuccess = file.delete();
-            LogTools.i("isSuccess "+isSuccess);
+            LogTools.i("isSuccess " + isSuccess);
             return isSuccess;
         }
-        return  false ;
+        return false;
     }
 
     /**
      * delete pic
+     *
      * @param context
      * @param imagePath
      * @throws RecoverableSecurityException
      */
-    public  static  void deleteImage(Context context, String imagePath)  throws RecoverableSecurityException {
+    public static void deleteImage(Context context, String imagePath) throws RecoverableSecurityException {
         // Use the MediaStore to find the ID of the image
-           Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-           String selection = MediaStore.Images.Media.DATA + "=?";
-           String[] selectionArgs = { imagePath };
-           Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs, null);
-           if (cursor != null) {
-               if (cursor.moveToFirst()) {
-                   long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media._ID));
-                   Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                   LogTools.i("deleteImage "+imagePath + " , "+deleteUri.getPath());
-                   context.getContentResolver().delete(deleteUri, null, null);
-               }
-               cursor.close();
-           }
+        Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        String[] selectionArgs = {imagePath};
+        Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media._ID));
+                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                LogTools.i("deleteImage " + imagePath + " , " + deleteUri.getPath());
+                context.getContentResolver().delete(deleteUri, null, null);
+            }
+            cursor.close();
+        }
     }
 
 
     /**
      * delete video
+     *
      * @param context
      * @param imagePath
      * @throws RecoverableSecurityException
      */
-    public  static  void deleteVideo(Context context, String imagePath)  throws RecoverableSecurityException {
+    public static void deleteVideo(Context context, String imagePath) throws RecoverableSecurityException {
         // Use the MediaStore to find the ID of the image
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Video.Media.DATA + "=?";
-        String[] selectionArgs = { imagePath };
+        String[] selectionArgs = {imagePath};
         Cursor cursor = context.getContentResolver().query(uri, null, selection, selectionArgs, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media._ID));
                 Uri deleteUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id);
-                LogTools.i("deleteVideo "+imagePath + " , "+deleteUri.getPath());
+                LogTools.i("deleteVideo " + imagePath + " , " + deleteUri.getPath());
                 context.getContentResolver().delete(deleteUri, null, null);
             }
             cursor.close();
@@ -107,7 +106,7 @@ public class FileUtils {
                 picture.setId(cursor.getLong(idColumn));
                 picture.setPath(cursor.getString(dataColumn));
                 long date = cursor.getLong(dateTakenColumn);
-                picture.setDateTaken(date  >  0 ?date  : cursor.getLong(dateAddDateColumn) );
+                picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
                 picture.setTitle(cursor.getString(titleColumn));
                 picture.setSize(cursor.getLong(sizeColumn));
                 picture.setWidth(cursor.getInt(widthColumn));
@@ -120,9 +119,8 @@ public class FileUtils {
 //            LogTools.i("picture list size " + list.toString());
             cursor.close();
         }
-        return  list ;
+        return list;
     }
-
 
 
     /**
@@ -130,7 +128,7 @@ public class FileUtils {
      *
      * @param context
      */
-    public static   List<Multimedia> getAllVideos(Context context) {
+    public static List<Multimedia> getAllVideos(Context context) {
         List<Multimedia> list = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Video.Media.EXTERNAL_CONTENT_URI, // The content URI of the words table
@@ -158,15 +156,42 @@ public class FileUtils {
                 video.setDuration(cursor.getInt(durationColumn));
                 video.setTitle(cursor.getString(titleColumn));
                 long date = cursor.getLong(dateTakenColumn);
-                video.setDateTaken(date  > 0 ?date  : cursor.getLong(dateAddDateColumn) );
+                video.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
                 video.setMediaType(Constant.MEDIA_VIDEO);
                 list.add(video);
             }
 //            LogTools.i("video list size " + list.toString());
             cursor.close();
         }
-        return  list ;
+        return list;
     }
 
+    public static Multimedia getNextPicture(Context context) {
+        String[] projection = new String[]{MediaStore.Images.Media._ID};
 
+        // 按时间降序排序
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection, null, null,
+                MediaStore.Images.Media.DATE_ADDED + " DESC");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+
+            long currentImageId = cursor.getLong(imageIdIndex);
+
+            // 移动光标到下一张图片位置
+            if (!cursor.isLast() || !cursor.moveToNext()) {
+                return null; // 没有更多图片
+            } else {
+                long nextImageId = cursor.getLong(imageIdIndex);
+                Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, nextImageId);
+                Multimedia pic = new Multimedia();
+                pic.setPath(uri.getPath());
+                return pic;
+            }
+        }
+
+        return null; // 无法获取任何图片
+    }
 }

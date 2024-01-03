@@ -168,7 +168,7 @@ public class PictureResultActivity extends BaseActivity {
         inStream.close();
         outStream.close();
 
-        showNotification(saveFile);
+//        showNotification(saveFile);
         Toast.makeText(this, R.string.notification_image_saved, Toast.LENGTH_SHORT).show();
         finish();
     }

@@ -43,5 +43,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <ImageView
+        android:id="@+id/imgLeft"
+        android:src="@mipmap/round_left_fill"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_height="wrap_content"/>
+
+
+    <ImageView
+        android:id="@+id/imgRight"
+        android:src="@mipmap/round_right_fill"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

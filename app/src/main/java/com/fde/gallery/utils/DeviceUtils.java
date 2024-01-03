@@ -21,10 +21,13 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+
+import com.fde.gallery.base.BaseActivity;
 
 
 /**
@@ -32,7 +35,7 @@ import android.view.inputmethod.InputMethodManager;
  */
 public class DeviceUtils {
 
-    public static int getSreenWidth(Context context){
+    public static int getSreenWidth(Context context) {
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
@@ -42,7 +45,26 @@ public class DeviceUtils {
 
     }
 
-    public static int getSreenHight(Context context){
+    public static float getSreenDensity(Activity baseActivity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        baseActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm.density;
+    }
+
+    public static int getShowCount(Activity baseActivity) {
+        int w = getSreenWidth(baseActivity);
+        float d = getSreenDensity(baseActivity);
+        float s = w / d;
+        if (s < 430) {
+            return 4;
+        } else if (s < 860) {
+            return 6;
+        } else {
+            return 8;
+        }
+    }
+
+    public static int getSreenHight(Context context) {
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
@@ -52,22 +74,22 @@ public class DeviceUtils {
 
     }
 
-    public static int getScaleHeight(Context context,int width,int height){
+    public static int getScaleHeight(Context context, int width, int height) {
 
-        return getSreenWidth(context)*height/width;
+        return getSreenWidth(context) * height / width;
 
     }
 
-    public static void toggleKeyboard(Context context){
+    public static void toggleKeyboard(Context context) {
 
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
     }
 
     //
-    public static void hideKeyboard(Activity act){
+    public static void hideKeyboard(Activity act) {
 
         InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -77,7 +99,7 @@ public class DeviceUtils {
     }
 
     //弹出键盘
-    public static void showKeyboard(Context context,View view){
+    public static void showKeyboard(Context context, View view) {
 
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -105,17 +127,15 @@ public class DeviceUtils {
 //    }
 
     /**
-     *
      * @param bgAlpha
      */
-    public static void backgroundAlpha(Activity act,float bgAlpha)
-    {
+    public static void backgroundAlpha(Activity act, float bgAlpha) {
         WindowManager.LayoutParams lp = act.getWindow().getAttributes();
         lp.alpha = bgAlpha; //0.0-1.0
         act.getWindow().setAttributes(lp);
     }
 
-    public static String getAppVersionName(Context context){
+    public static String getAppVersionName(Context context) {
 
         String versionName = "";
 
@@ -132,7 +152,7 @@ public class DeviceUtils {
         return versionName;
     }
 
-    public static int getAppVersionCode(Context context){
+    public static int getAppVersionCode(Context context) {
         int versionCode = 0;
 
         try {

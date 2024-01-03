@@ -128,23 +128,23 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
             @Override
             public boolean onContextClick(View view) {
 //                holder.checkBox.setVisibility(View.VISIBLE);
-                viewEvent.onRightEvent(position);
+                viewEvent.onRightEvent(position,0);
                 return false;
             }
         });
 
-//        holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                viewEvent.onRightEvent(position);
-//                return false;
-//            }
-//        });
+        holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                viewEvent.onRightEvent(position,0);
+                return false;
+            }
+        });
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                viewEvent.onSelectEvent(position, b);
+                viewEvent.onSelectEvent(position,0, b);
             }
         });
 

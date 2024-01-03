@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Picture;
 import android.net.Uri;
 import android.widget.Toast;
 
@@ -39,61 +40,130 @@ import com.yalantis.ucrop.UCropFragment;
 import com.yalantis.ucrop.UCropFragmentCallback;
 
 import java.io.File;
+import java.util.List;
 
-public class PicturePreviewPersenter implements   UCropFragmentCallback {
+public class PicturePreviewPersenter implements UCropFragmentCallback {
     BaseActivity baseActivity;
     Multimedia picture;
     Context context;
+
+    List<Multimedia> list;
+
+    int curPos = -1;
 
     public PicturePreviewPersenter(BaseActivity baseActivity, Multimedia picture) {
         this.baseActivity = baseActivity;
         context = baseActivity;
         this.picture = picture;
+        getPicList();
+    }
+
+    public void getPicList() {
+        list = FileUtils.getAllImages(context);
+        curPos = -1;
+        for (int i = 0; i < list.size(); i++) {
+            Multimedia pic = list.get(i);
+            if (pic.getId() == picture.getId()) {
+                curPos = i;
+            }
+        }
+    }
+
+    public Multimedia getNextPic() {
+        try {
+            int maxLen = list.size();
+            if (curPos >= 0 && curPos < (maxLen - 1)) {
+                curPos++;
+                return list.get(curPos);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Multimedia getPrePic() {
+        try {
+            if (curPos > 0) {
+                curPos--;
+                return list.get(curPos);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void showDetailsDlg() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.details);
-        builder.setMessage("title:  " + picture.getTitle() + "\n"
-                + "width:  " + picture.getWidth() + "\n"
-                + "height:  " + picture.getHeight() + "\n"
-                + "date:   " + StringUtils.conversionTime(1000 * picture.getDateTaken()) + "\n"
-                + "path:  " + picture.getPath() + "\n"
-        );
-        builder.show();
+        try {
+            Multimedia pic = list.get(curPos);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.details);
+            builder.setMessage("title:  " + pic.getTitle() + "\n"
+                    + "width:  " + pic.getWidth() + "\n"
+                    + "height:  " + pic.getHeight() + "\n"
+                    + "date:   " + StringUtils.conversionTime(1000 * pic.getDateTaken()) + "\n"
+                    + "path:  " + pic.getPath() + "\n"
+            );
+            builder.show();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteImage(Context context) {
+        try {
+            Multimedia pic = list.get(curPos);
+            // 你的删除或修改文件的代码
+            FileUtils.deleteImage(context, pic.getPath());
+            baseActivity.setResult(Constant.REQUEST_DELETE_PHOTO);
+            baseActivity.finish();
+        } catch (RecoverableSecurityException e) {
+            baseActivity.requestConfirmDialog(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showDelDlg() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.is_delete);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                try {
-                    // 你的删除或修改文件的代码
-                    FileUtils.deleteImage(context, picture.getPath());
-                    baseActivity.setResult(Constant.REQUEST_DELETE_PHOTO);
-                    baseActivity.finish();
-                } catch (RecoverableSecurityException e) {
-                    baseActivity.requestConfirmDialog(e);
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.is_delete);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    deleteImage(context);
                 }
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
-    public void startCrop(@NonNull Uri uri) {
-        String destinationFileName = "openfde.jpg";
+    public void startCrop(Uri... uris) {
+        try {
+            Uri uri = null;
+            if (uris != null && uris.length > 0) {
+                uri = uris[0];
+            } else {
+                Multimedia pic = list.get(curPos);
+                uri = Uri.fromFile(new File(pic.getPath()));
+            }
+            String destinationFileName = "openfde.jpg";
 
-        UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(baseActivity.getCacheDir(), destinationFileName)));
-        uCrop = uCrop.useSourceImageAspectRatio();
-        UCrop.Options options = new UCrop.Options();
-        options.setCompressionFormat(Bitmap.CompressFormat.PNG);
-        uCrop = uCrop.withMaxResultSize(600, 600);
-        uCrop = uCrop.withOptions(options);
-        uCrop.start(baseActivity);
+            UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(baseActivity.getCacheDir(), destinationFileName)));
+            uCrop = uCrop.useSourceImageAspectRatio();
+            UCrop.Options options = new UCrop.Options();
+            options.setCompressionFormat(Bitmap.CompressFormat.PNG);
+            uCrop = uCrop.withMaxResultSize(600, 600);
+            uCrop = uCrop.withOptions(options);
+            uCrop.start(baseActivity);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
 //        Uri sourceUri = Uri.fromFile(new File(picture.getPath()));
@@ -104,7 +174,6 @@ public class PicturePreviewPersenter implements   UCropFragmentCallback {
 //                .start(PicturePreviewActivity.this);
 
     }
-
 
 
     @Override
@@ -138,7 +207,7 @@ public class PicturePreviewPersenter implements   UCropFragmentCallback {
     public void handleCropError(@NonNull Intent result) {
         final Throwable cropError = UCrop.getError(result);
         if (cropError != null) {
-            LogTools.e( "handleCropError: "+ cropError);
+            LogTools.e("handleCropError: " + cropError);
             Toast.makeText(context, cropError.getMessage(), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, R.string.toast_unexpected_error, Toast.LENGTH_SHORT).show();

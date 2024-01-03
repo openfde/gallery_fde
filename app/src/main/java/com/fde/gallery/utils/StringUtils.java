@@ -16,6 +16,7 @@
 package com.fde.gallery.utils;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,46 +26,46 @@ import java.util.Date;
 public class StringUtils {
     /**
      * 非空判斷
+     *
      * @param ojb
      * @return
      */
-    public  static  String ToString(Object ojb){
-        if(ojb == null){
+    public static String ToString(Object ojb) {
+        if (ojb == null) {
             return "";
-        }else {
-           return  String.valueOf(ojb).trim();
+        } else {
+            return String.valueOf(ojb).trim();
         }
     }
 
-    public  static  Long ToLong(Object ojb){
-        if(ojb == null){
+    public static Long ToLong(Object ojb) {
+        if (ojb == null) {
             return 0L;
-        }else {
-            String  str = ToString(ojb);
-            if(str.contains(".")){
+        } else {
+            String str = ToString(ojb);
+            if (str.contains(".")) {
                 String[] arr = str.split(".");
                 str = arr[0];
             }
-            return  Long.valueOf(str);
+            return Long.valueOf(str);
         }
     }
 
-    public  static  int ToInt(Object ojb){
-        if(ojb == null){
+    public static int ToInt(Object ojb) {
+        if (ojb == null) {
             return 0;
-        }else {
-            return  ToDouble(ojb).intValue();
+        } else {
+            return ToDouble(ojb).intValue();
         }
     }
 
     /**
-     *
      * @param date
      * @param IntegerDigits
      * @param FractionDigits
      * @return
      */
-    public static String getPercentFormat(double date,int IntegerDigits,int FractionDigits){
+    public static String getPercentFormat(double date, int IntegerDigits, int FractionDigits) {
         NumberFormat nf = NumberFormat.getPercentInstance();
         nf.setMaximumIntegerDigits(IntegerDigits);//小数点前保留几位
         nf.setMinimumFractionDigits(FractionDigits);// 小数点后保留几位
@@ -73,23 +74,22 @@ public class StringUtils {
     }
 
 
-
-    public  static  Double ToDouble(Object ojb){
-        if(ojb == null){
+    public static Double ToDouble(Object ojb) {
+        if (ojb == null) {
             return 0.0;
-        }else {
-            return  Double.valueOf(ToString(ojb));
+        } else {
+            return Double.valueOf(ToString(ojb));
         }
     }
 
-    public static  String  ToDecimal(Object value){
+    public static String ToDecimal(Object value) {
         double time = ToDouble(value);
-        return  new BigDecimal(time).toPlainString();
+        return new BigDecimal(time).toPlainString();
     }
 
 
     //传入时间戳即可
-    public  static  String conversionTime(Object timeStamp) {
+    public static String conversionTime(Object timeStamp) {
         try {
             //yyyy-MM-dd HH:mm:ss 转换的时间格式  可以自定义
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -97,9 +97,20 @@ public class StringUtils {
             String time = sdf.format(new Date(ToLong(timeStamp)));
             return time;
         } catch (Exception e) {
-           e.printStackTrace();
-           return "";
+            e.printStackTrace();
+            return "";
         }
+    }
+
+    public static Long convertDateStringToLong(String dateString, String formatStr) {
+        try {
+            DateFormat format = new SimpleDateFormat(formatStr);
+            Date date = format.parse(dateString);
+            return date.getTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0L;
     }
 
     //传入指定时间
@@ -109,24 +120,25 @@ public class StringUtils {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             long timestamp = cal.getTimeInMillis();
-            return  timestamp;
+            return timestamp;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  0;
+        return 0;
     }
-    public static String getPercentFormat(Object data,int IntegerDigits,int FractionDigits){
-       try {
-           double date = ToDouble(data);
-           NumberFormat nf = NumberFormat.getPercentInstance();
-           nf.setMaximumIntegerDigits(IntegerDigits);//小数点前保留几位
-           nf.setMinimumFractionDigits(FractionDigits);// 小数点后保留几位
-           String str = nf.format(date);
-           return str;
-       }catch (Exception e){
-           e.printStackTrace();
-       }
-       return "0%";
+
+    public static String getPercentFormat(Object data, int IntegerDigits, int FractionDigits) {
+        try {
+            double date = ToDouble(data);
+            NumberFormat nf = NumberFormat.getPercentInstance();
+            nf.setMaximumIntegerDigits(IntegerDigits);//小数点前保留几位
+            nf.setMinimumFractionDigits(FractionDigits);// 小数点后保留几位
+            String str = nf.format(date);
+            return str;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "0%";
     }
 
 }

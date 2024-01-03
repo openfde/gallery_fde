@@ -15,8 +15,10 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,6 +34,7 @@ import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.PicturePreviewActivity;
+import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 
@@ -69,6 +72,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     }
 
     public boolean initView() {
+        numberOfColumns = DeviceUtils.getShowCount(baseFragment.getActivity());
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         layoutBottomBtn = (LinearLayout) view.findViewById(R.id.layoutBottomBtn);
         txtShare = (TextView) view.findViewById(R.id.txtShare);
@@ -104,7 +108,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     }
 
     @Override
-    public void onRightEvent(int pos) {
+    public void onRightEvent(int pos,int groupPos) {
         isShowBottomBtn = !isShowBottomBtn;
 
         try {
@@ -121,7 +125,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     }
 
     @Override
-    public void onSelectEvent(int pos, boolean isSelect) {
+    public void onSelectEvent(int pos,int groupPos, boolean isSelect) {
      try {
          Multimedia picture = list.get(pos);
          picture.setSelected(isSelect);
@@ -143,7 +147,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txtShare:
-                LogTools.i("list " + list.toString());
+                LogTools.i("list " + list.get(0).getDate());
                 break;
 
             case R.id.txtDelete:
@@ -158,9 +162,24 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
                         tempList.add(picture);
                     }
                 }
-                list.clear();
-                list.addAll(tempList);
-                deleteImage();
+                if(delList ==null ||delList.size() <1){
+                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+                    return;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.is_delete);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int pos) {
+
+                        list.clear();
+                        list.addAll(tempList);
+                        deleteImage();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+
                 break;
 
             case R.id.txtAllSelected:

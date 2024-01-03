@@ -15,39 +15,47 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fde.gallery.R;
 import com.fde.gallery.adapter.TimeLineListAdapter;
-import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.base.BaseFragment;
+import com.fde.gallery.bean.MultGroup;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.PicturePreviewActivity;
+import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
     Context context;
     View view;
-    RecyclerView recyclerView ;
-    TimeLineListPersenter timeLineListPersenter ;
-    TimeLineListAdapter timeLineListAdapter ;
+    RecyclerView recyclerView;
+    TimeLineListPersenter timeLineListPersenter;
+    TimeLineListAdapter timeLineListAdapter;
     List<Multimedia> list;
+
+    List<MultGroup> listGroup;
     List<Multimedia> delList;
     int numberOfColumns = 3;
 
@@ -60,14 +68,17 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
     boolean isShowBottomBtn = false;
 
     BaseFragment baseFragment;
+
     public TimeLineListPersenter(BaseFragment baseFragment, View view) {
         this.baseFragment = baseFragment;
         this.view = view;
         context = baseFragment.getActivity();
     }
 
-    public  boolean initView(){
+    public boolean initView() {
+        numberOfColumns = DeviceUtils.getShowCount(baseFragment.getActivity());
         list = new ArrayList<>();
+        listGroup = new ArrayList<>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         layoutBottomBtn = (LinearLayout) view.findViewById(R.id.layoutBottomBtn);
         txtShare = (TextView) view.findViewById(R.id.txtShare);
@@ -76,53 +87,91 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         txtShare.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtAllSelected.setOnClickListener(this);
-        timeLineListAdapter = new TimeLineListAdapter(context,list,numberOfColumns,this);
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
+        timeLineListAdapter = new TimeLineListAdapter(context, listGroup, numberOfColumns, this);
+        LinearLayoutManager gridLayoutManager = new LinearLayoutManager(context);
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(timeLineListAdapter);
-        return  true;
+        return true;
     }
 
     public void getAllMedia(Context context) {
-        if(list !=null){
+        if (list != null) {
             list.clear();
+            listGroup.clear();
         }
         list.addAll(FileUtils.getAllImages(context));
         list.addAll(FileUtils.getAllVideos(context));
-        Collections.sort(list, new Comparator<Multimedia>() {
+
+
+        Map<String, List<Multimedia>> groupedMult = list.stream()
+                .collect(Collectors.groupingBy(Multimedia::getDate));
+
+        for (Map.Entry<String, List<Multimedia>> entry : groupedMult.entrySet()) {
+            LogTools.i("Group by date: " + entry.getKey());
+            MultGroup multGroup = new MultGroup();
+            List<Multimedia> tempList = new ArrayList<>();
+            for (Multimedia data : entry.getValue()) {
+                tempList.add(data);
+                LogTools.i("\t" + data.getTitle() + ", " + StringUtils.conversionTime(data.getDateTaken() * 1000));
+            }
+
+            Collections.sort(tempList, new Comparator<Multimedia>() {
+                @Override
+                public int compare(Multimedia o1, Multimedia o2) {
+                    return Long.compare(o2.getDateTaken(), o1.getDateTaken());
+                }
+            });
+            multGroup.setTitle(entry.getKey());
+            multGroup.setList(tempList);
+            listGroup.add(multGroup);
+        }
+
+        Collections.sort(listGroup, new Comparator<MultGroup>() {
             @Override
-            public int compare(Multimedia o1, Multimedia o2) {
-                return Long.compare(o2.getDateTaken(), o1.getDateTaken());
+            public int compare(MultGroup o1, MultGroup o2) {
+                return Long.compare(StringUtils.convertDateStringToLong(o2.getTitle(), "yyyy年MM月"), StringUtils.convertDateStringToLong(o1.getTitle(), "yyyy年MM月"));
             }
         });
-        LogTools.i("list size "+list.size());
         timeLineListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onRightEvent(int pos) {
+    public void onRightEvent(int pos, int groupPos) {
+        LogTools.i("onRightEvent " + pos + " ,groupPos " + groupPos);
         isShowBottomBtn = !isShowBottomBtn;
         try {
             layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-            for (int i = 0; i < list.size(); i++) {
-                Multimedia multimedia = list.get(i);
-                multimedia.setShowCheckbox(isShowBottomBtn);
-                list.set(i, multimedia);
+            for (int i = 0; i < listGroup.size(); i++) {
+                MultGroup multGroup = listGroup.get(i);
+                List<Multimedia> tl = multGroup.getList();
+                for (int j = 0; j < tl.size(); j++) {
+                    Multimedia multimedia = tl.get(j);
+                    multimedia.setShowCheckbox(isShowBottomBtn);
+                    tl.set(j, multimedia);
+                }
+                multGroup.setList(tl);
+                listGroup.set(i, multGroup);
             }
             timeLineListAdapter.notifyDataSetChanged();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onSelectEvent(int pos, boolean isSelect) {
+    public void onSelectEvent(int pos, int groupPos, boolean isSelect) {
+        LogTools.i("onSelectEvent " + pos + " ,groupPos " + groupPos);
         try {
-            Multimedia multimedia = list.get(pos);
+            MultGroup multGroup = listGroup.get(groupPos);
+            List<Multimedia> tempList = multGroup.getList();
+            Multimedia multimedia = tempList.get(pos);
             multimedia.setSelected(isSelect);
-            list.set(pos, multimedia);
-        }catch (Exception e){
+            tempList.set(pos, multimedia);
+            multGroup.setList(tempList);
+            listGroup.set(groupPos, multGroup);
+//            timeLineListAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -132,7 +181,7 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         Intent intent = new Intent();
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);
-        baseFragment.getActivity().startActivityFromFragment(baseFragment,intent,Constant.REQUEST_DELETE_PHOTO);
+        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
     }
 
     @Override
@@ -143,47 +192,65 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
                 break;
 
             case R.id.txtDelete:
-                List<Multimedia> tempList = new ArrayList<>();
                 delList = new ArrayList<>();
-
-                for (int i = 0; i < list.size(); i++) {
-                    Multimedia multimedia = list.get(i);
-                    if (multimedia.isSelected()) {
-                        delList.add(multimedia);
-                    } else {
-                        tempList.add(multimedia);
+                for (int i = 0; i < listGroup.size(); i++) {
+                    MultGroup multGroup = listGroup.get(i);
+                    for (int j = 0; j < multGroup.getList().size(); j++) {
+                        Multimedia multimedia = multGroup.getList().get(j);
+                        if (multimedia.isSelected()) {
+                            delList.add(multimedia);
+                        }
                     }
                 }
-                list.clear();
-                list.addAll(tempList);
-                deleteImage();
+                if(delList ==null ||delList.size() <1){
+                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+                    return;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(R.string.is_delete);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int pos) {
+                        deleteMultiMedia();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
                 break;
 
             case R.id.txtAllSelected:
                 isAllSelected = !isAllSelected;
-                for (int i = 0; i < list.size(); i++) {
-                    Multimedia multimedia = list.get(i);
-                    multimedia.setSelected(isAllSelected);
-                    list.set(i, multimedia);
+
+                for (int i = 0; i < listGroup.size(); i++) {
+                    MultGroup multGroup = listGroup.get(i);
+                    List<Multimedia> tl = multGroup.getList();
+                    for (int j = 0; j < tl.size(); j++) {
+                        Multimedia multimedia = tl.get(j);
+                        multimedia.setSelected(isAllSelected);
+                        tl.set(j, multimedia);
+                    }
+                    multGroup.setList(tl);
+                    listGroup.set(i, multGroup);
                 }
+
                 timeLineListAdapter.notifyDataSetChanged();
-                txtAllSelected.setText(isAllSelected? context.getString(R.string.deselect_all) :context.getString(R.string.select_all) );
+                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
                 break;
         }
     }
 
-    public void deleteImage() {
+    public void deleteMultiMedia() {
         if (delList != null) {
             try {
                 // 你的删除或修改文件的代码
                 for (Multimedia multimedia : delList) {
-                    if(multimedia.getMediaType() == Constant.MEDIA_PIC){
+                    if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
                         FileUtils.deleteImage(context, multimedia.getPath());
-                    }else {
+                    } else {
                         FileUtils.deleteVideo(context, multimedia.getPath());
                     }
                 }
-                timeLineListAdapter.notifyDataSetChanged();
+                getAllMedia(context);
             } catch (RecoverableSecurityException e) {
                 baseFragment.requestConfirmDialog(e);
             }

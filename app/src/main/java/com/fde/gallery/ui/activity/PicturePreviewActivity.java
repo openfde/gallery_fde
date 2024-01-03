@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +36,7 @@ import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.PicturePreviewPersenter;
+import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -42,12 +44,13 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 
-public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener{
+public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener {
     Multimedia picture;
-
     LinearLayout layoutBottomBtn;
     PhotoView imageView;
     ImageView imgDetails;
+    ImageView imgLeft;
+    ImageView imgRight;
 
     TextView txtEdit;
 
@@ -64,7 +67,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.activity_picture_preview);
 //        View view = getLayoutInflater().inflate(R.layout.activity_picture_preview,null);
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
-        picturePreviewPersenter = new PicturePreviewPersenter(this,picture);
+        picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
         initView();
 
     }
@@ -74,6 +77,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         LogTools.i("picture " + picture.toString());
         imageView = (PhotoView) findViewById(R.id.imageView);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
+        imgLeft = (ImageView) findViewById(R.id.imgLeft);
+        imgRight = (ImageView) findViewById(R.id.imgRight);
         txtDelete = (TextView) findViewById(R.id.txtDelete);
         txtDetails = (TextView) findViewById(R.id.txtDetails);
         txtEdit = (TextView) findViewById(R.id.txtEdit);
@@ -81,14 +86,10 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         txtDetails.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtEdit.setOnClickListener(this);
-        RequestOptions options = new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .override(800, 800);
+        imgLeft.setOnClickListener(this);
+        imgRight.setOnClickListener(this);
 
-        Glide.with(context) // replace 'this' with your context
-                .load(picture.getPath())
-                .apply(options)
-                .into(imageView);
+        showPic(picture);
 
         imageView.setOnContextClickListener(new View.OnContextClickListener() {
             @Override
@@ -108,6 +109,32 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             }
         });
 
+        imageView.setOnGenericMotionListener(new View.OnGenericMotionListener() {
+            @Override
+            public boolean onGenericMotion(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    float x = motionEvent.getX();
+                    float y = motionEvent.getY();
+                    int w = DeviceUtils.getSreenWidth(context);
+                    LogTools.i("onGenericMotion x " + x + " , y: " + y + " ,w " + w);
+                }
+                return false;
+            }
+        });
+
+//        imageView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+//                    float x = motionEvent.getX();
+//                    float y = motionEvent.getY();
+//                    int w = DeviceUtils.getSreenWidth(context);
+//                    LogTools.i("onTouch x "+x +" , y: "+y + " ,w "+w);
+//                }
+//                return false;
+//            }
+//        });
+
         return true;
     }
 
@@ -117,11 +144,9 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         LogTools.i("onActivityResult requestCode: " + requestCode + " ,resultCode: " + resultCode);
         if (requestCode == Constant.REQUEST_PERMISSION_DELETE_PHOTO) {
             if (resultCode == Activity.RESULT_OK) {
-                FileUtils.deleteImage(context, picture.getPath());
-                setResult(Constant.REQUEST_DELETE_PHOTO);
-                finish();
+                picturePreviewPersenter.deleteImage(context);
             }
-        }else {
+        } else {
             if (resultCode == RESULT_OK) {
                 if (requestCode == 1) {
                     final Uri selectedUri = data.getData();
@@ -137,6 +162,19 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             if (resultCode == UCrop.RESULT_ERROR) {
                 picturePreviewPersenter.handleCropError(data);
             }
+        }
+    }
+
+    public void showPic(Multimedia multimedia) {
+        if (multimedia != null) {
+            RequestOptions options = new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .override(800, 800);
+
+            Glide.with(context) // replace 'this' with your context
+                    .load(multimedia.getPath())
+                    .apply(options)
+                    .into(imageView);
         }
     }
 
@@ -164,8 +202,21 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 ////                        .apply(options1)
 //                        .into(imageView);
 
-                Uri uri = Uri.fromFile(new File(picture.getPath()));
-                picturePreviewPersenter.startCrop(uri);
+
+                picturePreviewPersenter.startCrop();
+                break;
+
+            case R.id.imgLeft:
+                Multimedia prePic = picturePreviewPersenter.getPrePic();
+                showPic(prePic);
+                break;
+
+            case R.id.imgRight:
+                Multimedia nextPic = picturePreviewPersenter.getNextPic();
+                showPic(nextPic);
+                break;
+
+            default:
 
                 break;
         }
