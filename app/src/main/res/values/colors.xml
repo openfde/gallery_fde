@@ -61,7 +61,6 @@
 
     <color name="app_black_gray">#32312D</color>
 
-    //tab background color
     <color name="app_blue_dark">#0072BC</color>
     <color name="app_green_light">#8CC63E</color>
     <color name="app_pink">#E85298</color>

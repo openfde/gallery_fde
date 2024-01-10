@@ -17,9 +17,12 @@ package com.fde.gallery;
 
 import android.app.Application;
 
+import com.fde.gallery.utils.LogTools;
+
 public class GalleryApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogTools.i("-----------GalleryApplication---------");
     }
 }

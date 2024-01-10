@@ -45,6 +45,8 @@ public class VideoPlayActivity extends BaseActivity {
 
     ImageView imgDetails;
 
+    SimpleExoPlayer player;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +79,7 @@ public class VideoPlayActivity extends BaseActivity {
      */
     private void initPlayer() {
         mStyledPlayerView.setControllerAutoShow(false);
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
         mStyledPlayerView.setPlayer(player);
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this,
                 Util.getUserAgent(this, "openfde")); // replace 'yourAppName' with your app's name
@@ -116,5 +118,8 @@ public class VideoPlayActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
          LogTools.i("----------onDestroy---------");
+        if (player != null) {
+            player.release();
+        }
     }
 }

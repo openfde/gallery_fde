@@ -30,7 +30,7 @@
     <TextView
         android:id="@+id/txtDate"
         android:padding="6dp"
-        android:text="eeee"
+        android:visibility="gone"
         android:alpha="0.5"
         android:background="@color/app_gray"
         android:textColor="@color/white"

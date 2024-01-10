@@ -59,11 +59,12 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     TextView txtDetails;
     PicturePreviewPersenter picturePreviewPersenter;
 
-    boolean isShowBottomBtn = false;
+    boolean isShowBottomBtn = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogTools.i("------PicturePreviewActivity-----onCreate------");
         setContentView(R.layout.activity_picture_preview);
 //        View view = getLayoutInflater().inflate(R.layout.activity_picture_preview,null);
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
@@ -72,6 +73,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogTools.i("------PicturePreviewActivity-----onDestroy------");
+    }
 
     public boolean initView() {
         LogTools.i("picture " + picture.toString());
@@ -91,36 +97,45 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
         showPic(picture);
 
-        imageView.setOnContextClickListener(new View.OnContextClickListener() {
+//        imageView.setOnContextClickListener(new View.OnContextClickListener() {
+//            @Override
+//            public boolean onContextClick(View view) {
+//                isShowBottomBtn = !isShowBottomBtn;
+//                layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+//                return false;
+//            }
+//        });
+//
+//        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                isShowBottomBtn = !isShowBottomBtn;
+//                layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+//                return false;
+//            }
+//        });
+
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onContextClick(View view) {
+            public void onClick(View view) {
                 isShowBottomBtn = !isShowBottomBtn;
                 layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-                return false;
             }
         });
 
-        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                isShowBottomBtn = !isShowBottomBtn;
-                layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-                return false;
-            }
-        });
-
-        imageView.setOnGenericMotionListener(new View.OnGenericMotionListener() {
-            @Override
-            public boolean onGenericMotion(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                    float x = motionEvent.getX();
-                    float y = motionEvent.getY();
-                    int w = DeviceUtils.getSreenWidth(context);
-                    LogTools.i("onGenericMotion x " + x + " , y: " + y + " ,w " + w);
-                }
-                return false;
-            }
-        });
+//        imageView.setOnGenericMotionListener(new View.OnGenericMotionListener() {
+//            @Override
+//            public boolean onGenericMotion(View view, MotionEvent motionEvent) {
+//                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+//                    float x = motionEvent.getX();
+//                    float y = motionEvent.getY();
+//                    int w = DeviceUtils.getSreenWidth(context);
+//                    LogTools.i("onGenericMotion x " + x + " , y: " + y + " ,w " + w);
+//                }
+//                return false;
+//            }
+//        });
 
 //        imageView.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
