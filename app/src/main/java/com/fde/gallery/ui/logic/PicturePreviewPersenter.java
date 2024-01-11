@@ -60,13 +60,17 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
     }
 
     public void getPicList() {
-        list = FileUtils.getAllImages(context);
-        curPos = -1;
-        for (int i = 0; i < list.size(); i++) {
-            Multimedia pic = list.get(i);
-            if (pic.getId() == picture.getId()) {
-                curPos = i;
+        try {
+            list = FileUtils.getAllImages(context);
+            curPos = -1;
+            for (int i = 0; i < list.size(); i++) {
+                Multimedia pic = list.get(i);
+                if (pic.getId() == picture.getId()) {
+                    curPos = i;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

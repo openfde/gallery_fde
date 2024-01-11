@@ -19,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.android.gallery3d"
+        applicationId "com.android.gallery2d"
         minSdk 26
         targetSdk 34
         versionCode 1
@@ -46,6 +46,11 @@ android {
         }
     }
 
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "FdeGallery.apk"
+        }
+    }
 }
 
 dependencies {

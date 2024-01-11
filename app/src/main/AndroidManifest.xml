@@ -34,7 +34,15 @@
             android:name=".ui.activity.PicturePreviewActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|density|screenSize|smallestScreenSize"
             android:screenOrientation="landscape"
-            android:exported="false" />
+            android:exported="true" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

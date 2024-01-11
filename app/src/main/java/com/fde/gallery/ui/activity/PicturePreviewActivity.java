@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -68,6 +69,15 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.activity_picture_preview);
 //        View view = getLayoutInflater().inflate(R.layout.activity_picture_preview,null);
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
+        if(picture == null){
+            Uri imageUri = getIntent().getData();
+
+            DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
+            String realPath = documentFile.getUri().toString();
+            picture = new Multimedia();
+            picture.setPath(realPath);
+        }
+
         picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
         initView();
 
@@ -119,8 +129,10 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isShowBottomBtn = !isShowBottomBtn;
-                layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+                if(picture.getId() > 0){
+                    isShowBottomBtn = !isShowBottomBtn;
+                    layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+                }
             }
         });
 
@@ -149,6 +161,17 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 //                return false;
 //            }
 //        });
+
+        if(picture.getId() <= 0){
+            isShowBottomBtn = false;
+            imgLeft.setVisibility(View.GONE);
+            imgRight.setVisibility(View.GONE);
+            layoutBottomBtn.setVisibility(View.GONE);
+        }else {
+            imgLeft.setVisibility(View.VISIBLE);
+            imgRight.setVisibility(View.VISIBLE);
+            layoutBottomBtn.setVisibility(View.VISIBLE );
+        }
 
         return true;
     }
