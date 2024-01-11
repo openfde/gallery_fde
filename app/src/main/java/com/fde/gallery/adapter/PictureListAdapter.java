@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -93,7 +94,7 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PictureListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull PictureListViewHolder holder, @SuppressLint("RecyclerView")  final int position) {
 //        holder.imageView.setImageURI(Uri.parse(list.get(position).getPath()));
         Multimedia picture = list.get(position);
         Glide.with(context)

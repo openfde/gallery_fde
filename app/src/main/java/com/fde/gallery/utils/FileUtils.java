@@ -1,5 +1,6 @@
 package com.fde.gallery.utils;
 
+import android.annotation.SuppressLint;
 import android.app.RecoverableSecurityException;
 import android.content.ContentUris;
 import android.content.Context;
@@ -35,6 +36,7 @@ public class FileUtils {
      * @param imagePath
      * @throws RecoverableSecurityException
      */
+    @SuppressLint("NewApi")
     public static void deleteImage(Context context, String imagePath) throws RecoverableSecurityException {
         // Use the MediaStore to find the ID of the image
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -60,6 +62,7 @@ public class FileUtils {
      * @param imagePath
      * @throws RecoverableSecurityException
      */
+    @SuppressLint("NewApi")
     public static void deleteVideo(Context context, String imagePath) throws RecoverableSecurityException {
         // Use the MediaStore to find the ID of the image
         Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;

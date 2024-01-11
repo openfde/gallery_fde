@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.base;
 
+import android.annotation.SuppressLint;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.IntentSender;
@@ -128,6 +129,7 @@ public class BaseFragment extends Fragment {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
+    @SuppressLint("NewApi")
     public void requestConfirmDialog(RecoverableSecurityException e) {
         try {
             startIntentSenderForResult(

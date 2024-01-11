@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
@@ -239,6 +240,7 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         }
     }
 
+    @SuppressLint("NewApi")
     public void deleteMultiMedia() {
         if (delList != null) {
             try {

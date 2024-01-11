@@ -1,5 +1,6 @@
 package com.fde.gallery.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -79,7 +80,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
 
 
     @Override
-    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder,@SuppressLint("RecyclerView")  final  int position) {
         Multimedia multimedia = list.get(position);
         Glide.with(context)
 //                .load(Uri.fromFile(new File(list.get(position).getPath())))

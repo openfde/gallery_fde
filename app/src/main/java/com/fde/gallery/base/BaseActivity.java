@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.base;
 
+import android.annotation.SuppressLint;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,6 +46,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
+    @SuppressLint("NewApi")
     public void requestConfirmDialog(RecoverableSecurityException e) {
         try {
             startIntentSenderForResult(

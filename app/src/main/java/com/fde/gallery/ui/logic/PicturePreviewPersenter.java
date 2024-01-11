@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
@@ -111,6 +112,7 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
         }
     }
 
+    @SuppressLint("NewApi")
     public void deleteImage(Context context) {
         try {
             Multimedia pic = list.get(curPos);

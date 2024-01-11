@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
@@ -194,7 +195,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
                 break;
         }
     }
-
+    @SuppressLint("NewApi")
     public void deleteImage() {
         if (delList != null) {
             try {

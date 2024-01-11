@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.ui.logic;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
@@ -180,6 +181,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
         }
     }
 
+    @SuppressLint("NewApi")
     public void deleteVideo() {
         if (delList != null) {
             try {

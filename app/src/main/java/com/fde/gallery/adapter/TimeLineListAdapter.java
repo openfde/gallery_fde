@@ -1,5 +1,6 @@
 package com.fde.gallery.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -53,7 +54,7 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, @SuppressLint("RecyclerView")  final int position) {
         MultGroup multGroup = list.get(position);
         holder.txtTitle.setText(multGroup.getTitle());
 

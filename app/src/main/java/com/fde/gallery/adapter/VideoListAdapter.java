@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -86,7 +87,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VideoListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VideoListViewHolder holder,@SuppressLint("RecyclerView")  final int position) {
         Multimedia video = list.get(position);
         Glide.with(context)
 //                .load(Uri.fromFile(new File(list.get(position).getPath())))
