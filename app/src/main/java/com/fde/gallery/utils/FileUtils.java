@@ -46,9 +46,11 @@ public class FileUtils {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media._ID));
-                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                LogTools.i("deleteImage " + imagePath + " , " + deleteUri.getPath());
-                context.getContentResolver().delete(deleteUri, null, null);
+                if(id !=-1){
+                    Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                    LogTools.i("deleteImage " + imagePath + " , " + deleteUri.getPath());
+                    context.getContentResolver().delete(deleteUri, null, null);
+                }
             }
             cursor.close();
         }
@@ -96,28 +98,30 @@ public class FileUtils {
 
         if (cursor != null) {
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-            int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
-            int titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
-            int widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
-            int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
-            int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
-            int dateAddDateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
+            if(idColumn != -1){
+                int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
+                int titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
+                int widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
+                int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
+                int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+                int dateAddDateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
 
-            while (cursor.moveToNext()) {
-                Multimedia picture = new Multimedia();
-                picture.setId(cursor.getLong(idColumn));
-                picture.setPath(cursor.getString(dataColumn));
-                long date = cursor.getLong(dateTakenColumn);
-                picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
-                picture.setTitle(cursor.getString(titleColumn));
-                picture.setSize(cursor.getLong(sizeColumn));
-                picture.setWidth(cursor.getInt(widthColumn));
-                picture.setHeight(cursor.getInt(heightColumn));
-                picture.setSelected(false);
-                picture.setShowCheckbox(false);
-                picture.setMediaType(Constant.MEDIA_PIC);
-                list.add(picture);
+                while (cursor.moveToNext()) {
+                    Multimedia picture = new Multimedia();
+                    picture.setId(cursor.getLong(idColumn));
+                    picture.setPath(cursor.getString(dataColumn));
+                    long date = cursor.getLong(dateTakenColumn);
+                    picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
+                    picture.setTitle(cursor.getString(titleColumn));
+                    picture.setSize(cursor.getLong(sizeColumn));
+                    picture.setWidth(cursor.getInt(widthColumn));
+                    picture.setHeight(cursor.getInt(heightColumn));
+                    picture.setSelected(false);
+                    picture.setShowCheckbox(false);
+                    picture.setMediaType(Constant.MEDIA_PIC);
+                    list.add(picture);
+                }
             }
 //            LogTools.i("picture list size " + list.toString());
             cursor.close();
@@ -181,18 +185,21 @@ public class FileUtils {
         if (cursor != null && cursor.moveToFirst()) {
             int imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
 
-            long currentImageId = cursor.getLong(imageIdIndex);
+            if(imageIdIndex != -1){
+                long currentImageId = cursor.getLong(imageIdIndex);
 
-            // 移动光标到下一张图片位置
-            if (!cursor.isLast() || !cursor.moveToNext()) {
-                return null; // 没有更多图片
-            } else {
-                long nextImageId = cursor.getLong(imageIdIndex);
-                Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, nextImageId);
-                Multimedia pic = new Multimedia();
-                pic.setPath(uri.getPath());
-                return pic;
+                // 移动光标到下一张图片位置
+                if (!cursor.isLast() || !cursor.moveToNext()) {
+                    return null; // 没有更多图片
+                } else {
+                    long nextImageId = cursor.getLong(imageIdIndex);
+                    Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, nextImageId);
+                    Multimedia pic = new Multimedia();
+                    pic.setPath(uri.getPath());
+                    return pic;
+                }
             }
+            cursor.close();
         }
 
         return null; // 无法获取任何图片
