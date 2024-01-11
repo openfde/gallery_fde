@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.documentfile.provider.DocumentFile;
+
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
@@ -55,6 +57,13 @@ public class VideoPlayActivity extends BaseActivity {
         mStyledPlayerView = findViewById(R.id.player_view);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
         videoData = (Multimedia) getIntent().getSerializableExtra("video_data");
+        if(videoData == null){
+            Uri imageUri = getIntent().getData();
+            DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
+            String realPath = documentFile.getUri().toString();
+            videoData = new Multimedia();
+            videoData.setPath(realPath);
+        }
         initPlayer();
 
         imgDetails.setOnClickListener(new View.OnClickListener() {

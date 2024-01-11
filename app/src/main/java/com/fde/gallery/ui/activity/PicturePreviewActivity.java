@@ -71,7 +71,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
         if(picture == null){
             Uri imageUri = getIntent().getData();
-
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
             String realPath = documentFile.getUri().toString();
             picture = new Multimedia();
