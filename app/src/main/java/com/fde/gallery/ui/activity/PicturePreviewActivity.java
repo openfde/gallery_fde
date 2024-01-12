@@ -206,11 +206,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         if (multimedia != null) {
             RequestOptions options = new RequestOptions()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .override(800, 800);
+                    .override(2800, 2800);
 
             Glide.with(context) // replace 'this' with your context
                     .load(multimedia.getPath())
-                    .apply(options)
+                    .fitCenter()
                     .into(imageView);
         }
     }

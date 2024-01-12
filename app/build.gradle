@@ -19,22 +19,21 @@ android {
         }
     }
 
+    ext {
+        appVersion = project.findProperty('appVersion') ?: "1.0.0"
+    }
+    version = appVersion
     defaultConfig {
         applicationId "com.android.gallery3d"
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
-
+        versionCode  Integer.parseInt(new Date().format("yyyyMMdd"))
+        versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-//    signingConfigs {
-//        release {
-//            v1SigningEnabled false
-//            v2SigningEnabled false
-//        }
-//    }
+
+
     buildTypes {
         release {
             minifyEnabled false

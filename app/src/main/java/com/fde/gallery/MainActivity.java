@@ -32,6 +32,7 @@ import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.ui.fragment.PictureListFragment;
 import com.fde.gallery.ui.fragment.TimeLineListFragment;
 import com.fde.gallery.ui.fragment.VideoListFragment;
+import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.LogTools;
 import com.google.android.material.tabs.TabLayout;
 
@@ -72,6 +73,7 @@ public class MainActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
 //        sectionsPagerAdapter.notifyDataSetChanged();
 //        readImages();
+        LogTools.i("getAppVersionCode: "+ DeviceUtils.getAppVersionCode(context));
     }
 
     private void readImages() {
