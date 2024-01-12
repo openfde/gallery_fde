@@ -48,7 +48,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "Gallery2.apk"
+            outputFileName = "FdeGallery.apk"
         }
     }
 }
