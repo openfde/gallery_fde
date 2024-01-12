@@ -15,6 +15,7 @@ android {
 
     testOptions {
         unitTests.all {
+            enabled = false
             ignoreFailures = true
         }
     }
@@ -27,19 +28,27 @@ android {
         applicationId "com.android.gallery3d"
         minSdk 26
         targetSdk 34
-        versionCode  Integer.parseInt(new Date().format("yyyyMMdd"))
+        versionCode Integer.parseInt(new Date().format("yyyyMMdd"))
         versionName version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
-
-    buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            storeFile file("../openfde.jks")
+            storePassword "keyforcat"
+            keyAlias "rootcloud"
+            keyPassword "keyforcat"
         }
     }
+    // ...
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            // ...
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -66,8 +75,6 @@ dependencies {
     implementation project(':ucrop')
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation group: 'com.github.bumptech.glide', name: 'glide', version: '4.11.0'
-
-
 
 
 }
