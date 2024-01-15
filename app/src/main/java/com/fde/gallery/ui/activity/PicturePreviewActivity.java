@@ -32,6 +32,7 @@ import androidx.documentfile.provider.DocumentFile;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.fde.gallery.MainActivity;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
@@ -40,6 +41,7 @@ import com.fde.gallery.ui.logic.PicturePreviewPersenter;
 import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.yalantis.ucrop.UCrop;
 
@@ -72,9 +74,15 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         if(picture == null){
             Uri imageUri = getIntent().getData();
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
-            String realPath = documentFile.getUri().toString();
-            picture = new Multimedia();
-            picture.setPath(realPath);
+            String realPath = StringUtils.ToString(documentFile.getUri());
+            if("".equals(realPath)){
+                startActivity(new Intent(context, MainActivity.class));
+                finish();
+            }else {
+                picture = new Multimedia();
+                picture.setPath(realPath);
+            }
+
         }
 
         picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
@@ -203,7 +211,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     public void showPic(Multimedia multimedia) {
-        if (multimedia != null) {
+        if (multimedia != null || !"".equals(multimedia.getPath() )) {
             RequestOptions options = new RequestOptions()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .override(2800, 2800);

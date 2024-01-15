@@ -14,20 +14,20 @@
      limitations under the License.
 -->
     <string name="app_name">Gallery</string>
-    <string name="tab_time_line">时间线</string>
-    <string name="tab_picture">图片</string>
-    <string name="tab_video">视频</string>
-    <string name="share">分享</string>
-    <string name="delete">删除</string>
-    <string name="select_all">全选</string>
-    <string name="deselect_all">取消全选</string>
-    <string name="edit">编辑</string>
-    <string name="ok">确定</string>
-    <string name="is_delete">是否删除</string>
-    <string name="cancel">取消</string>
-    <string name="details">详情</string>
-    <string name="collect">收藏</string>
-    <string name="can_not_choose_empty">请选择一项</string>
+    <string name="tab_time_line">Time Line</string>
+    <string name="tab_picture">Photo</string>
+    <string name="tab_video">Video</string>
+    <string name="share">Share</string>
+    <string name="delete">delete</string>
+    <string name="select_all">all</string>
+    <string name="deselect_all">all not</string>
+    <string name="edit">edit</string>
+    <string name="ok">OK</string>
+    <string name="is_delete">is Delete?</string>
+    <string name="cancel">cancel</string>
+    <string name="details">details</string>
+    <string name="collect">collect</string>
+    <string name="can_not_choose_empty">please choose one</string>
 
     <string name="notification_image_saved">Image saved</string>
     <string name="notification_image_saved_click_to_preview">Image saved. Click to preview.</string>

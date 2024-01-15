@@ -16,7 +16,7 @@
 package com.fde.gallery.ui.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -24,22 +24,27 @@ import android.widget.ImageView;
 
 import androidx.documentfile.provider.DocumentFile;
 
+import com.fde.gallery.MainActivity;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.StringUtils;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 public class VideoPlayActivity extends BaseActivity {
-    private SimpleExoPlayer mSimpleExoPlayer;
     private StyledPlayerView mStyledPlayerView;
     private DefaultTrackSelector mDefaultTrackSelector;
     private DefaultTrackSelector.Parameters mDefaultTrackSelectorParameters;
@@ -52,7 +57,6 @@ public class VideoPlayActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogTools.i("----------onCreate-------");
         setContentView(R.layout.activity_video_play);
         mStyledPlayerView = findViewById(R.id.player_view);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
@@ -60,7 +64,7 @@ public class VideoPlayActivity extends BaseActivity {
         if(videoData == null){
             Uri imageUri = getIntent().getData();
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
-            String realPath = documentFile.getUri().toString();
+            String realPath = StringUtils.ToString(documentFile.getUri());
             videoData = new Multimedia();
             videoData.setPath(realPath);
         }
@@ -87,8 +91,28 @@ public class VideoPlayActivity extends BaseActivity {
      * init video play
      */
     private void initPlayer() {
+        DefaultRenderersFactory rendererFactory = new DefaultRenderersFactory(this,
+                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        DefaultLoadControl.Builder builder = new DefaultLoadControl.Builder();
+        builder.setAllocator(new DefaultAllocator(true, 2 * 1024 * 1024));
+        builder.setBufferDurationsMs(
+                2000,
+                5000,
+                1500,
+                0
+        );
+        LoadControl loadControl = builder.createDefaultLoadControl();
+
+        if("".equals(videoData.getPath())){
+            startActivity(new Intent(context, MainActivity.class));
+            finish();
+        }
+
         mStyledPlayerView.setControllerAutoShow(false);
-        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+        mStyledPlayerView.setShowNextButton(false);
+        mStyledPlayerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_NEVER);
+        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(),loadControl);
         mStyledPlayerView.setPlayer(player);
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this,
                 Util.getUserAgent(this, "openfde")); // replace 'yourAppName' with your app's name
@@ -96,6 +120,7 @@ public class VideoPlayActivity extends BaseActivity {
                 .createMediaSource(Uri.parse(videoData.getPath()));
         player.prepare(videoSource);
         player.setPlayWhenReady(false);
+
     }
 
 
@@ -103,9 +128,6 @@ public class VideoPlayActivity extends BaseActivity {
      * release player
      */
     private void releasePlayer() {
-        if (mSimpleExoPlayer == null) return;
-        mSimpleExoPlayer.release();
-        mSimpleExoPlayer = null;
         mDefaultTrackSelector = null;
     }
 
