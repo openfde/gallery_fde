@@ -80,14 +80,12 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 finish();
             }else {
                 picture = new Multimedia();
+                picture.setId(-1);
                 picture.setPath(realPath);
+                picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
+                initView();
             }
-
         }
-
-        picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
-        initView();
-
     }
 
     @Override

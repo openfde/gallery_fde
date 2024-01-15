@@ -107,20 +107,19 @@ public class VideoPlayActivity extends BaseActivity {
         if("".equals(videoData.getPath())){
             startActivity(new Intent(context, MainActivity.class));
             finish();
+        }else {
+            mStyledPlayerView.setControllerAutoShow(false);
+            mStyledPlayerView.setShowNextButton(false);
+            mStyledPlayerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_NEVER);
+            player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(),loadControl);
+            mStyledPlayerView.setPlayer(player);
+            DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this,
+                    Util.getUserAgent(this, "openfde")); // replace 'yourAppName' with your app's name
+            MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(Uri.parse(videoData.getPath()));
+            player.prepare(videoSource);
+            player.setPlayWhenReady(false);
         }
-
-        mStyledPlayerView.setControllerAutoShow(false);
-        mStyledPlayerView.setShowNextButton(false);
-        mStyledPlayerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_NEVER);
-        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(),loadControl);
-        mStyledPlayerView.setPlayer(player);
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(this,
-                Util.getUserAgent(this, "openfde")); // replace 'yourAppName' with your app's name
-        MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(Uri.parse(videoData.getPath()));
-        player.prepare(videoSource);
-        player.setPlayWhenReady(false);
-
     }
 
 
