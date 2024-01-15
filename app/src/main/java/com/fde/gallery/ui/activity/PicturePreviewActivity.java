@@ -98,7 +98,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     public boolean initView() {
-        LogTools.i("picture " + picture.toString());
         imageView = (PhotoView) findViewById(R.id.imageView);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
         imgLeft = (ImageView) findViewById(R.id.imgLeft);
@@ -212,15 +211,19 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     public void showPic(Multimedia multimedia) {
-        if (multimedia != null || !"".equals(multimedia.getPath() )) {
-            RequestOptions options = new RequestOptions()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .override(2800, 2800);
+        if (multimedia != null &&  !"".equals(multimedia.getPath() )) {
+            try {
+                RequestOptions options = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(2800, 2800);
 
-            Glide.with(context) // replace 'this' with your context
-                    .load(multimedia.getPath())
-                    .fitCenter()
-                    .into(imageView);
+                Glide.with(context) // replace 'this' with your context
+                        .load(multimedia.getPath())
+                        .fitCenter()
+                        .into(imageView);
+            } catch (Exception e) {
+               e.printStackTrace();
+            }
         }
     }
 
