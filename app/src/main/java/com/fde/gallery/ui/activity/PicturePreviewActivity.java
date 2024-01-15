@@ -85,6 +85,9 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
                 initView();
             }
+        }else {
+            picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
+            initView();
         }
     }
 
