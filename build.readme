@@ -1,0 +1,1 @@
+gradlew  build -PappVersion=4.0.0
