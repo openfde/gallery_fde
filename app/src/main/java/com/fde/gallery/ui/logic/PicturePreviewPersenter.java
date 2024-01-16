@@ -18,12 +18,15 @@ package com.fde.gallery.ui.logic;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Picture;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,11 +39,13 @@ import com.fde.gallery.ui.activity.PictureResultActivity;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.StringUtils;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yalantis.ucrop.UCrop;
 import com.yalantis.ucrop.UCropFragment;
 import com.yalantis.ucrop.UCropFragmentCallback;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class PicturePreviewPersenter implements UCropFragmentCallback {
@@ -217,6 +222,28 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
             Toast.makeText(context, cropError.getMessage(), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, R.string.toast_unexpected_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void setWallpage(int type){
+        Multimedia pic = list.get(curPos);
+        Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+        wallpaperManager.suggestDesiredDimensions(1280, 1706); // 设置建议的壁纸尺寸
+
+        try {
+            if(1 == type){
+                wallpaperManager.setBitmap(wallpaperBitmap);
+            }else if(2 == type){
+                wallpaperManager.setBitmap(wallpaperBitmap, null, true, WallpaperManager.FLAG_LOCK);
+            }else {
+                wallpaperManager.setBitmap(wallpaperBitmap);
+                wallpaperManager.setBitmap(wallpaperBitmap, null, true, WallpaperManager.FLAG_LOCK);
+            }
+            // wallpaperManager.setResource(R.drawable.your_image);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

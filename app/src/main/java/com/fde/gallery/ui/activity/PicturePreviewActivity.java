@@ -19,10 +19,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,14 +40,10 @@ import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.PicturePreviewPersenter;
-import com.fde.gallery.utils.DeviceUtils;
-import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.yalantis.ucrop.UCrop;
-
-import java.io.File;
 
 public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener {
     Multimedia picture;
@@ -59,11 +57,16 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
     TextView txtDelete;
 
-    TextView txtDetails;
+    TextView txtMore;
     PicturePreviewPersenter picturePreviewPersenter;
 
     boolean isShowBottomBtn = true;
 
+    PopupWindow popupWindow;
+    View bottomSheetView;
+    TextView txtDetails;
+    TextView txtSetWallpage;
+    TextView txtSetWallpageLock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +92,19 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
             initView();
         }
+
+        popupWindow = new PopupWindow(this);
+        bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+        popupWindow.setContentView(bottomSheetView);
+        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setOutsideTouchable(true);
+        txtDetails = bottomSheetView. findViewById(R.id.txtDetails);
+        txtSetWallpage = bottomSheetView.findViewById(R.id.txtSetWallpage);
+        txtSetWallpageLock = bottomSheetView.findViewById(R.id.txtSetWallpageLock);
+        txtDetails.setOnClickListener(this);
+        txtSetWallpage.setOnClickListener(this);
+        txtSetWallpageLock.setOnClickListener(this);
     }
 
     @Override
@@ -103,10 +119,10 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgLeft = (ImageView) findViewById(R.id.imgLeft);
         imgRight = (ImageView) findViewById(R.id.imgRight);
         txtDelete = (TextView) findViewById(R.id.txtDelete);
-        txtDetails = (TextView) findViewById(R.id.txtDetails);
+        txtMore = (TextView) findViewById(R.id.txtMore);
         txtEdit = (TextView) findViewById(R.id.txtEdit);
         layoutBottomBtn = (LinearLayout) findViewById(R.id.layoutBottomBtn);
-        txtDetails.setOnClickListener(this);
+        txtMore.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtEdit.setOnClickListener(this);
         imgLeft.setOnClickListener(this);
@@ -230,13 +246,16 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txtDetails:
-                picturePreviewPersenter.showDetailsDlg();
+            case R.id.txtMore:
+                if(!popupWindow.isShowing()){
+                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM, 0, 0);
+                }
                 break;
 
             case R.id.txtDelete:
                 picturePreviewPersenter.showDelDlg();
                 break;
+
 
             case R.id.txtEdit:
 //                MultiTransformation mation3 = new MultiTransformation(new CircleCrop());
@@ -263,6 +282,21 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             case R.id.imgRight:
                 Multimedia nextPic = picturePreviewPersenter.getNextPic();
                 showPic(nextPic);
+                break;
+
+            case R.id.txtDetails:
+                picturePreviewPersenter.showDetailsDlg();
+                popupWindow.dismiss();
+                break;
+
+            case R.id.txtSetWallpage:
+                picturePreviewPersenter.setWallpage(1);
+                popupWindow.dismiss();
+                break;
+
+            case R.id.txtSetWallpageLock:
+                picturePreviewPersenter.setWallpage(2);
+                popupWindow.dismiss();
                 break;
 
             default:

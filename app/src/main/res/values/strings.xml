@@ -28,6 +28,9 @@
     <string name="details">details</string>
     <string name="collect">collect</string>
     <string name="can_not_choose_empty">please choose one</string>
+    <string name="more">more</string>
+    <string name="set_wallpage">set wallpaper</string>
+    <string name="set_wallpage_lock">set wallpaper lock</string>
 
     <string name="notification_image_saved">Image saved</string>
     <string name="notification_image_saved_click_to_preview">Image saved. Click to preview.</string>
@@ -53,7 +56,7 @@
     <string name="toast_cannot_retrieve_cropped_image">Cannot retrieve cropped image</string>
     <string name="toast_unexpected_error">Unexpected error</string>
 
-    <string name="file_provider_authorities">com.fde.gallery2.provider</string>
+    <string name="file_provider_authorities">com.fde.gallery.provider</string>
     <string name="channel_name">ucrop_chanel</string>
     <string name="channel_description">ucrop result image</string>
 </resources>
