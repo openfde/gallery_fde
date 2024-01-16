@@ -22,4 +22,6 @@ public class Constant {
     public static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
     public static final int REQUEST_PERMISSION_DELETE_PHOTO = 600;
     public static final int REQUEST_DELETE_PHOTO = 601;
+
+    public static final String SP_STR = "open_fde";
 }

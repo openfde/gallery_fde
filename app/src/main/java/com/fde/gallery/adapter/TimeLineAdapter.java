@@ -26,6 +26,7 @@ import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.ui.activity.VideoPlayActivity;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
 
 import java.util.List;
@@ -106,6 +107,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
                 LogTools.i("multimedia" + multimedia.toString());
                 Intent intent = new Intent();
                 if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
+                    SPUtils.putUserInfo(context,"curPicPath",multimedia.getPath());
                     intent.putExtra("picture_data", multimedia);
                     intent.setClass(context, PicturePreviewActivity.class);
                 } else {

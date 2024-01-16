@@ -39,6 +39,7 @@ import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -179,6 +180,7 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
 
     @Override
     public void onJumpEvent(Multimedia picture) {
+        SPUtils.putUserInfo(context,"curPicPath",picture.getPath());
         Intent intent = new Intent();
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);

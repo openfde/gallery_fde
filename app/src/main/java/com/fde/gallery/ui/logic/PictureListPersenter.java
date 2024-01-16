@@ -38,6 +38,7 @@ import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.SPUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +139,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
 
     @Override
     public void onJumpEvent(Multimedia picture) {
+        SPUtils.putUserInfo(context,"curPicPath",picture.getPath());
         Intent intent = new Intent();
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);

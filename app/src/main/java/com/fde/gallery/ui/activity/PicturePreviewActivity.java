@@ -17,6 +17,7 @@ package com.fde.gallery.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Picture;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -40,10 +42,14 @@ import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.PicturePreviewPersenter;
+import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.yalantis.ucrop.UCrop;
+
+import java.util.List;
 
 public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener {
     Multimedia picture;
@@ -74,6 +80,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.activity_picture_preview);
 //        View view = getLayoutInflater().inflate(R.layout.activity_picture_preview,null);
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
+        List<Multimedia> tempList = FileUtils.getAllImages(context);
+
         if(picture == null){
             Uri imageUri = getIntent().getData();
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
@@ -82,13 +90,20 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 startActivity(new Intent(context, MainActivity.class));
                 finish();
             }else {
-                picture = new Multimedia();
-                picture.setId(-1);
-                picture.setPath(realPath);
+                LogTools.i("realPath   "+realPath);
+                Multimedia m = findPicture(tempList,realPath);
+                if(m ==null){
+                    picture = new Multimedia();
+                    picture.setId(-1);
+                    picture.setPath(realPath);
+                }
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
                 initView();
             }
         }else {
+            String path = SPUtils.getUserInfo(context,"curPicPath");
+            Multimedia m = findPicture(tempList,path);
+            picture = m;
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
             initView();
         }
@@ -111,6 +126,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         LogTools.i("------PicturePreviewActivity-----onDestroy------");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     public boolean initView() {
@@ -305,5 +325,19 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         }
     }
 
+    public Multimedia findPicture(List<Multimedia> listM, String path) {
+        int curPos = -1 ;
+        try {
+            for (int i = 0; i < listM.size(); i++) {
+                if (path.equals(listM.get(i).getPath())) {
+                    curPos = i;
+                }
+            }
+            return listM.get(curPos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

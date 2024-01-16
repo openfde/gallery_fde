@@ -38,6 +38,7 @@ import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.activity.PictureResultActivity;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.yalantis.ucrop.UCrop;
@@ -79,12 +80,16 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
         }
     }
 
+
+
     public Multimedia getNextPic() {
         try {
             int maxLen = list.size();
             if (curPos >= 0 && curPos < (maxLen - 1)) {
                 curPos++;
-                return list.get(curPos);
+                Multimedia m = list.get(curPos);
+                SPUtils.putUserInfo(context, "curPicPath", m.getPath());
+                return m;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,7 +101,9 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
         try {
             if (curPos > 0) {
                 curPos--;
-                return list.get(curPos);
+                Multimedia m = list.get(curPos);
+                SPUtils.putUserInfo(context, "curPicPath", m.getPath());
+                return m;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -226,18 +233,18 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
     }
 
 
-    public void setWallpage(int type){
+    public void setWallpage(int type) {
         Multimedia pic = list.get(curPos);
         Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
         wallpaperManager.suggestDesiredDimensions(1280, 1706); // 设置建议的壁纸尺寸
 
         try {
-            if(1 == type){
+            if (1 == type) {
                 wallpaperManager.setBitmap(wallpaperBitmap);
-            }else if(2 == type){
+            } else if (2 == type) {
                 wallpaperManager.setBitmap(wallpaperBitmap, null, true, WallpaperManager.FLAG_LOCK);
-            }else {
+            } else {
                 wallpaperManager.setBitmap(wallpaperBitmap);
                 wallpaperManager.setBitmap(wallpaperBitmap, null, true, WallpaperManager.FLAG_LOCK);
             }
