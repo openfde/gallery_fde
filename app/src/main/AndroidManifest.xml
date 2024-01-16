@@ -41,7 +41,6 @@
         </activity>
         <activity
             android:name=".ui.activity.PicturePreviewActivity"
-            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|density|screenSize|smallestScreenSize"
             android:screenOrientation="landscape"
             android:exported="true" >
 
