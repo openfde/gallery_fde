@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -93,6 +94,7 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
 
                 try {
                     wallpaperManager.setBitmap(wallpaperBitmap);
+                    Toast.makeText(context,R.string.set_wallpage_success,Toast.LENGTH_SHORT).show();
                     finish();
                 } catch (IOException e) {
                     e.printStackTrace();

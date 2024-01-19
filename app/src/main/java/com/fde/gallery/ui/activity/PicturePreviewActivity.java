@@ -17,7 +17,8 @@ package com.fde.gallery.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Picture;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -113,8 +114,12 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         popupWindow = new PopupWindow(this);
         bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
         popupWindow.setContentView(bottomSheetView);
-        popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.5);
+
+        popupWindow.setWidth(width);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 //        popupWindow.setOutsideTouchable(true);
         popupWindow.setFocusable(true);
         txtDetails = bottomSheetView. findViewById(R.id.txtDetails);
@@ -271,7 +276,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         switch (view.getId()) {
             case R.id.txtMore:
                 if(!popupWindow.isShowing()){
-                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM, 0, 0);
+                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM|Gravity.RIGHT, 10, 10);
                 }
                 break;
 
@@ -314,6 +319,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
             case R.id.txtSetWallpage:
                 picturePreviewPersenter.setWallpage(1);
+                Toast.makeText(context,R.string.set_wallpage_success,Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
                 break;
 

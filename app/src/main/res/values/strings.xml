@@ -31,6 +31,7 @@
     <string name="more">more</string>
     <string name="set_wallpage">set wallpaper</string>
     <string name="set_wallpage_lock">set wallpaper lock</string>
+    <string name="set_wallpage_success">set wallpaper success</string>
 
     <string name="notification_image_saved">Image saved</string>
     <string name="notification_image_saved_click_to_preview">Image saved. Click to preview.</string>

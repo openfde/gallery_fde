@@ -104,4 +104,6 @@
     <color name="scale_color">#7e7e7e</color>
     <color name="edit_bottom_color">#bfbfbf</color>
     <color name="feedback_date_text">#afafaf</color>
+
+    <color name="linebg">#f2f2f2</color>
 </resources>

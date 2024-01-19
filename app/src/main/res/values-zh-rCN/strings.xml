@@ -31,7 +31,7 @@
     <string name="more">更多</string>
     <string name="set_wallpage">设置壁纸</string>
     <string name="set_wallpage_lock">设置屏幕锁定</string>
-
+    <string name="set_wallpage_success">设置成功</string>
     <string name="notification_image_saved">Image saved</string>
     <string name="notification_image_saved_click_to_preview">Image saved. Click to preview.</string>
 
