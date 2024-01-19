@@ -82,6 +82,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
         List<Multimedia> tempList = FileUtils.getAllImages(context);
 
+
+
         if(picture == null){
             Uri imageUri = getIntent().getData();
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
@@ -113,7 +115,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         popupWindow.setContentView(bottomSheetView);
         popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setOutsideTouchable(true);
+//        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
         txtDetails = bottomSheetView. findViewById(R.id.txtDetails);
         txtSetWallpage = bottomSheetView.findViewById(R.id.txtSetWallpage);
         txtSetWallpageLock = bottomSheetView.findViewById(R.id.txtSetWallpageLock);
