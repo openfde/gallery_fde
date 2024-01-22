@@ -158,8 +158,9 @@ public class PicturePreviewPersenter {
 
 
    public void editImageClick() {
+        Multimedia pic = list.get(curPos);
         File outputFile = FileUtils.genEditFile();
-        EditImageActivity.start(baseActivity,picture.getPath(),outputFile.getAbsolutePath(),Constant.ACTION_REQUEST_EDITIMAGE);
+        EditImageActivity.start(baseActivity,pic.getPath(),outputFile.getAbsolutePath(),Constant.ACTION_REQUEST_EDITIMAGE);
     }
 
 

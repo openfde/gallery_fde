@@ -15,7 +15,11 @@
  */
 package com.fde.imageeditlibrary.editimage.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * Created by openfde on 17/2/11.
@@ -37,5 +41,21 @@ public class DensityUtil {
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static int getSreenWidth(Context context) {
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        Display defaultDisplay = wm.getDefaultDisplay();
+
+        return defaultDisplay.getWidth();
+
+    }
+
+    public static float getSreenDensity(Activity baseActivity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        baseActivity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm.density;
     }
 }//end class

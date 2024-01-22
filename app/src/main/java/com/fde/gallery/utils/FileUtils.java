@@ -92,53 +92,57 @@ public class FileUtils {
      */
     public static List<Multimedia> getAllImages(Context context) {
         List<Multimedia> list = new ArrayList<>();
-        // Query the content provider
-        Cursor cursor = context.getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // The content URI of the words table
-                null,
-                null,         // Selection criteria
-                null,         // Selection criteria
-                MediaStore.Images.Media.DATE_ADDED + " desc");        // The sort order for the returned rows
+        try {
+            // Query the content provider
+            Cursor cursor = context.getContentResolver().query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // The content URI of the words table
+                    null,
+                    null,         // Selection criteria
+                    null,         // Selection criteria
+                    MediaStore.Images.Media.DATE_ADDED + " desc");        // The sort order for the returned rows
 
-        if (cursor != null) {
-            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-            if(idColumn != -1){
-                int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
-                int titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
-                int widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
-                int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
-                int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
-                int dateAddDateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
+            if (cursor != null) {
+                int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+                if(idColumn != -1){
+                    int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
+                    int titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
+                    int widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
+                    int heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
+                    int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+                    int dateAddDateColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED);
 
-                while (cursor.moveToNext()) {
-                    Multimedia picture = new Multimedia();
-                    picture.setId(cursor.getLong(idColumn));
-                    picture.setPath(cursor.getString(dataColumn));
-                    long date = cursor.getLong(dateTakenColumn);
-                    picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
-                    picture.setTitle(cursor.getString(titleColumn));
-                    picture.setSize(cursor.getLong(sizeColumn));
-                    int w = cursor.getInt(widthColumn);
-                    int h = cursor.getInt(heightColumn);
-                    if (w == 0 )
-                    {
-                        BitmapUtils.BitmapSize bitmapSize = BitmapUtils.getBitmapSize(picture.getPath());
-                        w = bitmapSize.width;
-                        h = bitmapSize.height;
-                    }
-                    picture.setWidth(w);
-                    picture.setHeight(h);
-                    picture.setSelected(false);
-                    picture.setShowCheckbox(false);
-                    picture.setMediaType(Constant.MEDIA_PIC);
-                    if(w > 0){
-                        list.add(picture);
+                    while (cursor.moveToNext()) {
+                        Multimedia picture = new Multimedia();
+                        picture.setId(cursor.getLong(idColumn));
+                        picture.setPath(cursor.getString(dataColumn));
+                        long date = cursor.getLong(dateTakenColumn);
+                        picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
+                        picture.setTitle(cursor.getString(titleColumn));
+                        picture.setSize(cursor.getLong(sizeColumn));
+                        int w = cursor.getInt(widthColumn);
+                        int h = cursor.getInt(heightColumn);
+                        if (w == 0 )
+                        {
+                            BitmapUtils.BitmapSize bitmapSize = BitmapUtils.getBitmapSize(picture.getPath());
+                            w = bitmapSize.width;
+                            h = bitmapSize.height;
+                        }
+                        picture.setWidth(w);
+                        picture.setHeight(h);
+                        picture.setSelected(false);
+                        picture.setShowCheckbox(false);
+                        picture.setMediaType(Constant.MEDIA_PIC);
+                        if(w > 0){
+                            list.add(picture);
+                        }
                     }
                 }
+    //            LogTools.i("picture list size " + list.toString());
+                cursor.close();
             }
-//            LogTools.i("picture list size " + list.toString());
-            cursor.close();
+        } catch (Exception e) {
+           e.printStackTrace();
         }
         return list;
     }
