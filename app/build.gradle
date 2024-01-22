@@ -72,7 +72,7 @@ dependencies {
 
 
     implementation project(":photoview")
-    implementation project(':ucrop')
+    implementation project(':imageeditlibrary')
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation group: 'com.github.bumptech.glide', name: 'glide', version: '4.11.0'
 

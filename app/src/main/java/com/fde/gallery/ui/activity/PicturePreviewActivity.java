@@ -48,7 +48,6 @@ import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
 import com.github.chrisbanes.photoview.PhotoView;
-import com.yalantis.ucrop.UCrop;
 
 import java.util.List;
 
@@ -114,7 +113,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         popupWindow = new PopupWindow(this);
         bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
         popupWindow.setContentView(bottomSheetView);
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.5);
+        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.4);
 
         popupWindow.setWidth(width);
         popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -237,20 +236,12 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             }
         } else {
             if (resultCode == RESULT_OK) {
-                if (requestCode == 1) {
-                    final Uri selectedUri = data.getData();
-                    if (selectedUri != null) {
-                        picturePreviewPersenter.startCrop(selectedUri);
-                    } else {
-                        Toast.makeText(context, R.string.toast_cannot_retrieve_selected_image, Toast.LENGTH_SHORT).show();
-                    }
-                } else if (requestCode == UCrop.REQUEST_CROP) {
-                    picturePreviewPersenter.handleCropResult(data);
+                if(requestCode == Constant.ACTION_REQUEST_EDITIMAGE){
+                    picturePreviewPersenter.handleEditorImage(data);
+                    finish();
                 }
             }
-            if (resultCode == UCrop.RESULT_ERROR) {
-                picturePreviewPersenter.handleCropError(data);
-            }
+
         }
     }
 
@@ -299,7 +290,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 //                        .into(imageView);
 
 
-                picturePreviewPersenter.startCrop();
+//                picturePreviewPersenter.startCrop();
+                picturePreviewPersenter.editImageClick();
                 break;
 
             case R.id.imgLeft:

@@ -46,9 +46,6 @@
 
         </activity>
         <activity
-            android:name=".ui.activity.PictureResultActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.activity.VideoPlayActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|density|screenSize|smallestScreenSize"
             android:exported="true"
@@ -83,10 +80,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

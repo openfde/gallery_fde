@@ -23,5 +23,7 @@ public class Constant {
     public static final int REQUEST_PERMISSION_DELETE_PHOTO = 600;
     public static final int REQUEST_DELETE_PHOTO = 601;
 
+    public static final int ACTION_REQUEST_EDITIMAGE = 9;
+
     public static final String SP_STR = "open_fde";
 }

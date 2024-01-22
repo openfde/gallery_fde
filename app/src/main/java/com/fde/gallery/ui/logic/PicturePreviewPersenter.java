@@ -24,32 +24,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
-import com.fde.gallery.ui.activity.PictureResultActivity;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.UCropFragment;
-import com.yalantis.ucrop.UCropFragmentCallback;
+import com.fde.imageeditlibrary.editimage.EditImageActivity;
+import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
+import com.fde.imageeditlibrary.editimage.utils.FileUtil;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class PicturePreviewPersenter implements UCropFragmentCallback {
+public class PicturePreviewPersenter {
     BaseActivity baseActivity;
     Multimedia picture;
     Context context;
@@ -57,6 +51,7 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
     List<Multimedia> list;
 
     int curPos = -1;
+
 
     public PicturePreviewPersenter(BaseActivity baseActivity, Multimedia picture) {
         this.baseActivity = baseActivity;
@@ -113,6 +108,7 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
 
     public void showDetailsDlg() {
         try {
+
             Multimedia pic = list.get(curPos);
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle(R.string.details);
@@ -161,75 +157,9 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
     }
 
 
-    public void startCrop(Uri... uris) {
-        try {
-            Uri uri = null;
-            if (uris != null && uris.length > 0) {
-                uri = uris[0];
-            } else {
-                Multimedia pic = list.get(curPos);
-                uri = Uri.fromFile(new File(pic.getPath()));
-            }
-            String destinationFileName = "openfde.jpg";
-
-            UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(baseActivity.getCacheDir(), destinationFileName)));
-            uCrop = uCrop.useSourceImageAspectRatio();
-            UCrop.Options options = new UCrop.Options();
-            options.setCompressionFormat(Bitmap.CompressFormat.PNG);
-            uCrop = uCrop.withMaxResultSize(600, 600);
-            uCrop = uCrop.withOptions(options);
-            uCrop.start(baseActivity);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-
-//        Uri sourceUri = Uri.fromFile(new File(picture.getPath()));
-//        Uri destinationUri = Uri.fromFile(new File(getCacheDir(), destinationFileName));
-//        UCrop.of(sourceUri, destinationUri)
-//                .withAspectRatio(16, 9)
-//                .withMaxResultSize(10, 10)
-//                .start(PicturePreviewActivity.this);
-
-    }
-
-
-    @Override
-    public void loadingProgress(boolean showLoader) {
-
-    }
-
-    @Override
-    public void onCropFinish(UCropFragment.UCropResult result) {
-        LogTools.i("-------onCropFinish------");
-        switch (result.mResultCode) {
-            case -1:
-                handleCropResult(result.mResultData);
-                break;
-            case UCrop.RESULT_ERROR:
-                handleCropError(result.mResultData);
-                break;
-        }
-    }
-
-    public void handleCropResult(@NonNull Intent result) {
-        final Uri resultUri = UCrop.getOutput(result);
-        if (resultUri != null) {
-            PictureResultActivity.startWithUri(context, resultUri);
-        } else {
-            Toast.makeText(context, R.string.toast_cannot_retrieve_cropped_image, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
-    public void handleCropError(@NonNull Intent result) {
-        final Throwable cropError = UCrop.getError(result);
-        if (cropError != null) {
-            LogTools.e("handleCropError: " + cropError);
-            Toast.makeText(context, cropError.getMessage(), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(context, R.string.toast_unexpected_error, Toast.LENGTH_SHORT).show();
-        }
+   public void editImageClick() {
+        File outputFile = FileUtils.genEditFile();
+        EditImageActivity.start(baseActivity,picture.getPath(),outputFile.getAbsolutePath(),Constant.ACTION_REQUEST_EDITIMAGE);
     }
 
 
@@ -237,7 +167,19 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
         Multimedia pic = list.get(curPos);
         Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-        wallpaperManager.suggestDesiredDimensions(1280, 1706); // 设置建议的壁纸尺寸
+
+        int w = wallpaperBitmap.getWidth();
+        int h = wallpaperBitmap.getHeight();
+
+        if (w != 0 && h != 0) {
+            if (w > h) {
+                wallpaperManager.suggestDesiredDimensions(w, h);
+            } else {
+                wallpaperManager.suggestDesiredDimensions(h, w);
+            }
+        } else {
+            wallpaperManager.suggestDesiredDimensions(1280, 1706);
+        }
 
         try {
             if (1 == type) {
@@ -252,6 +194,20 @@ public class PicturePreviewPersenter implements UCropFragmentCallback {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void handleEditorImage(Intent data) {
+        String newFilePath = data.getStringExtra(EditImageActivity.EXTRA_OUTPUT);
+        boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
+
+        if (isImageEdit){
+            Toast.makeText(context, context.getString(R.string.save_path, newFilePath), Toast.LENGTH_LONG).show();
+        }else{//未编辑  还是用原来的图片
+            newFilePath = data.getStringExtra(EditImageActivity.FILE_PATH);;
+        }
+
+        LogTools.i("image is edit: "+ isImageEdit + ",newFilePath "+newFilePath);
+
     }
 
 }

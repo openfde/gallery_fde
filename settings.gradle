@@ -30,4 +30,4 @@ dependencyResolutionManagement {
 rootProject.name = "Gallery"
 include ':app'
 include 'photoview'
-include 'ucrop'
+include 'imageeditlibrary'

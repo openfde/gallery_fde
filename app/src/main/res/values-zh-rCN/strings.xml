@@ -38,6 +38,7 @@
     <string name="menu_download">Download</string>
 
     <string name="format_crop_result_d_d">裁剪结果 (%1$dx%2$d)</string>
+    <string name="save_path">保存到路径: %s</string>
 
 
 </resources>

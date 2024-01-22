@@ -6,16 +6,20 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
+import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
+    public static final String FOLDER_NAME = "openfde";
+
     /**
      * file delete
      */
@@ -115,12 +119,22 @@ public class FileUtils {
                     picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
                     picture.setTitle(cursor.getString(titleColumn));
                     picture.setSize(cursor.getLong(sizeColumn));
-                    picture.setWidth(cursor.getInt(widthColumn));
-                    picture.setHeight(cursor.getInt(heightColumn));
+                    int w = cursor.getInt(widthColumn);
+                    int h = cursor.getInt(heightColumn);
+                    if (w == 0 )
+                    {
+                        BitmapUtils.BitmapSize bitmapSize = BitmapUtils.getBitmapSize(picture.getPath());
+                        w = bitmapSize.width;
+                        h = bitmapSize.height;
+                    }
+                    picture.setWidth(w);
+                    picture.setHeight(h);
                     picture.setSelected(false);
                     picture.setShowCheckbox(false);
                     picture.setMediaType(Constant.MEDIA_PIC);
-                    list.add(picture);
+                    if(w > 0){
+                        list.add(picture);
+                    }
                 }
             }
 //            LogTools.i("picture list size " + list.toString());
@@ -203,5 +217,54 @@ public class FileUtils {
         }
 
         return null; // 无法获取任何图片
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static File createFolders() {
+        File baseDir;
+        if (android.os.Build.VERSION.SDK_INT < 8) {
+            baseDir = Environment.getExternalStorageDirectory();
+        } else {
+            baseDir = Environment
+                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        }
+        if (baseDir == null)
+            return Environment.getExternalStorageDirectory();
+        File aviaryFolder = new File(baseDir, FOLDER_NAME);
+        if (aviaryFolder.exists())
+            return aviaryFolder;
+        if (aviaryFolder.isFile())
+            aviaryFolder.delete();
+        if (aviaryFolder.mkdirs())
+            return aviaryFolder;
+        return Environment.getExternalStorageDirectory();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static File genEditFile(){
+        return FileUtils.getEmptyFile("openfde"
+                + System.currentTimeMillis() + ".png");
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public static File getEmptyFile(String name) {
+        File folder = FileUtils.createFolders();
+        if (folder != null) {
+            if (folder.exists()) {
+                File file = new File(folder, name);
+                return file;
+            }
+        }
+        return null;
     }
 }
