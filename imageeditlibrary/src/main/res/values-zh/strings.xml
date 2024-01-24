@@ -46,4 +46,6 @@
     <string name="beauty">美颜</string>
     <string name="smooth">磨皮</string>
     <string name="white_skin">美白</string>
+
+    <string name="default_text">默认</string>
 </resources>

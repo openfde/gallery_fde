@@ -7,14 +7,14 @@
     <FrameLayout
         android:id="@+id/banner"
         android:layout_width="fill_parent"
-        android:layout_height="55dp"
+        android:layout_height="48dp"
         android:layout_alignParentTop="true"
-        android:background="#333333">
+        android:background="@color/main_backgroud">
 
         <ImageView
             android:id="@+id/back_btn"
             android:layout_width="wrap_content"
-            android:layout_height="55dp"
+            android:layout_height="48dp"
             android:layout_gravity="left|center_vertical"
             android:layout_margin="10dp"
             android:layout_marginLeft="0dp"

@@ -66,15 +66,15 @@ public class CropFragment extends BaseEditFragment {
 	private static List<RatioItem> dataList = new ArrayList<RatioItem>();
 	static {
 		// init data
-		dataList.add(new RatioItem("none", -1f));
+		dataList.add(new RatioItem("默认", -1f));
 		dataList.add(new RatioItem("1:1", 1f));
-		dataList.add(new RatioItem("1:2", 1 / 2f));
-		dataList.add(new RatioItem("1:3", 1 / 3f));
-		dataList.add(new RatioItem("2:3", 2 / 3f));
+//		dataList.add(new RatioItem("1:2", 1 / 2f));
+//		dataList.add(new RatioItem("1:3", 1 / 3f));
+//		dataList.add(new RatioItem("2:3", 2 / 3f));
 		dataList.add(new RatioItem("3:4", 3 / 4f));
-		dataList.add(new RatioItem("2:1", 2f));
-		dataList.add(new RatioItem("3:1", 3f));
-		dataList.add(new RatioItem("3:2", 3 / 2f));
+//		dataList.add(new RatioItem("2:1", 2f));
+//		dataList.add(new RatioItem("3:1", 3f));
+//		dataList.add(new RatioItem("3:2", 3 / 2f));
 		dataList.add(new RatioItem("4:3", 4 / 3f));
 	}
 	private List<TextView> textViewList = new ArrayList<TextView>();
@@ -302,7 +302,7 @@ public class CropFragment extends BaseEditFragment {
 		}
 		try {
 			FileOutputStream out = new FileOutputStream(f);
-			bm.compress(Bitmap.CompressFormat.PNG, 90, out);
+			bm.compress(Bitmap.CompressFormat.PNG, 100, out);
 			out.flush();
 			out.close();
 		} catch (FileNotFoundException e) {
