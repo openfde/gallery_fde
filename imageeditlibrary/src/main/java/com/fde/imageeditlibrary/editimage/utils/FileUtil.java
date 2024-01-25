@@ -17,11 +17,17 @@ package com.fde.imageeditlibrary.editimage.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.OutputStream;
 
 /**
  * Created by openfde on 16/10/23.
@@ -52,20 +58,37 @@ public class FileUtil {
      * @param context
      * @param dstPath
      */
-    public static void ablumUpdate(final Context context, final String dstPath) {
-        if (TextUtils.isEmpty(dstPath) || context == null)
-            return;
+    public static void ablumUpdate(final Context context,Bitmap bitmap, final String dstPath) {
+        try {
+            if (TextUtils.isEmpty(dstPath) || context == null)
+                return;
 
-        File file = new File(dstPath);
-        if (!file.exists() || file.length() == 0) {//文件若不存在  则不操作
-            return;
+            String folder = Environment.DIRECTORY_PICTURES+"/fde/";
+            ContentValues values  =  new ContentValues();
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, folder);
+            values.put(MediaStore.Images.Media.DATA, dstPath);
+            Uri insertUri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values );
+
+            try {
+                OutputStream outputStream = context.getContentResolver().openOutputStream(insertUri, "rw");
+                if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)) {
+                    Log.i("bella", "save success");
+                } else {
+                    Log.i("bella", "save fail");
+                }
+                outputStream.flush();
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//        String res = MediaStore.Images.Media.insertImage(context.getContentResolver(), filePath, fileName, null);
+//        Log.i("bella","res "+res);
+
+            // 最后通知图库更新
+            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(dstPath)));
+        } catch (Exception e) {
+            Log.i("bella", "fail"+e.toString());
+           e.printStackTrace();
         }
-
-        Log.i("bella","dstPath "+dstPath);
-        ContentValues values = new ContentValues(2);
-        String extensionName = getExtensionName(dstPath);
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/" + (TextUtils.isEmpty(extensionName) ? "jpeg" : extensionName));
-        values.put(MediaStore.Images.Media.DATA, dstPath);
-        context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 }//end class

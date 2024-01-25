@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileUtils {
-    public static final String FOLDER_NAME = "openfde";
+    public static final String FOLDER_NAME = "fde";
 
     /**
      * file delete
@@ -252,7 +252,7 @@ public class FileUtils {
      * @return
      */
     public static File genEditFile(){
-        return FileUtils.getEmptyFile("openfde"
+        return FileUtils.getEmptyFile(""
                 + System.currentTimeMillis() + ".png");
     }
 

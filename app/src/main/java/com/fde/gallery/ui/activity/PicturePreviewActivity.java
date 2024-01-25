@@ -50,6 +50,7 @@ import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
+import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.List;

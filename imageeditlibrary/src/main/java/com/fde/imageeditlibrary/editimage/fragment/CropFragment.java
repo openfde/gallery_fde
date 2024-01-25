@@ -45,6 +45,7 @@ import com.fde.imageeditlibrary.R;
 import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.fde.imageeditlibrary.editimage.ModuleConfig;
 import com.fde.imageeditlibrary.editimage.model.RatioItem;
+import com.fde.imageeditlibrary.editimage.utils.FileUtil;
 import com.fde.imageeditlibrary.editimage.utils.Matrix3;
 import com.fde.imageeditlibrary.editimage.view.CropImageView;
 import com.fde.imageeditlibrary.editimage.view.imagezoom.ImageViewTouchBase;
@@ -305,6 +306,7 @@ public class CropFragment extends BaseEditFragment {
 			bm.compress(Bitmap.CompressFormat.PNG, 100, out);
 			out.flush();
 			out.close();
+//			FileUtil.ablumUpdate(newInstance().getContext(), filePath);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

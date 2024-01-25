@@ -16,6 +16,25 @@
 
 package com.fde.imageeditlibrary.editimage.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.Display;
+import android.view.View;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,21 +42,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory.Options;
-import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
-import android.os.Environment;
-import android.util.Log;
-import android.view.Display;
-import android.view.View;
 
 /**
  * BitmapUtils
@@ -428,25 +432,14 @@ public class BitmapUtils {
      *
      * @param bm
      */
-    public static boolean saveBitmap(Bitmap bm, String filePath) {
+    public static boolean saveBitmap(Context context,Bitmap bm, String filePath) {
         File f = new File(filePath);
         if (f.exists()) {
             f.delete();
         }
-        try {
-            FileOutputStream out = new FileOutputStream(f);
-            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
-            out.flush();
-            out.close();
-            return true;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        // System.out.println("保存文件--->" + f.getAbsolutePath());
+
+        FileUtil.ablumUpdate(context, bm,filePath);
+        return  true;
     }
 
     /**

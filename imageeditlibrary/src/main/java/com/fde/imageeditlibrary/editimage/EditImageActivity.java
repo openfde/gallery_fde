@@ -157,8 +157,8 @@ public class EditImageActivity extends BaseActivity {
     private void initView() {
         mContext = this;
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        imageWidth = metrics.widthPixels / 2;
-        imageHeight = metrics.heightPixels / 2;
+        imageWidth = metrics.widthPixels ;// 2;
+        imageHeight = metrics.heightPixels;// 2;
 
         bannerFlipper = (ViewFlipper) findViewById(R.id.banner_flipper);
         bannerFlipper.setInAnimation(this, R.anim.in_bottom_to_top);
@@ -452,8 +452,9 @@ public class EditImageActivity extends BaseActivity {
         returnIntent.putExtra(FILE_PATH, filePath);
         returnIntent.putExtra(EXTRA_OUTPUT, saveFilePath);
         returnIntent.putExtra(IMAGE_IS_EDIT, mOpTimes > 0);
+//        returnIntent.putExtra("",)
 
-        FileUtil.ablumUpdate(this, saveFilePath);
+//        FileUtil.ablumUpdate(this, saveFilePath);
         setResult(RESULT_OK, returnIntent);
         finish();
     }
@@ -470,7 +471,7 @@ public class EditImageActivity extends BaseActivity {
             if (TextUtils.isEmpty(saveFilePath))
                 return false;
             Log.i("bella","doInBackground  saveFilePath "+saveFilePath);
-            return BitmapUtils.saveBitmap(params[0], saveFilePath);
+            return BitmapUtils.saveBitmap(EditImageActivity.this,params[0], saveFilePath);
         }
 
         @Override

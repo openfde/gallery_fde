@@ -108,19 +108,24 @@ public class PicturePreviewPersenter {
 
     public void showDetailsDlg() {
         try {
-
             Multimedia pic = list.get(curPos);
+            long size = pic.getSize();
+            String strSize = "";
+            if(size > 0){
+                strSize = "size:  " + (size / 1024) + "kb\n";
+            }
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle(R.string.details);
             builder.setMessage("title:  " + pic.getTitle() + "\n"
                     + "width:  " + pic.getWidth() + "\n"
                     + "height:  " + pic.getHeight() + "\n"
+                    + strSize
                     + "date:   " + StringUtils.conversionTime(1000 * pic.getDateTaken()) + "\n"
                     + "path:  " + pic.getPath() + "\n"
             );
             builder.show();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -198,17 +203,19 @@ public class PicturePreviewPersenter {
     }
 
     public void handleEditorImage(Intent data) {
+        String oldPath = data.getStringExtra(EditImageActivity.FILE_PATH);
         String newFilePath = data.getStringExtra(EditImageActivity.EXTRA_OUTPUT);
+        LogTools.i("oldPath "+oldPath +" ,newFilePath "+newFilePath);
         boolean isImageEdit = data.getBooleanExtra(EditImageActivity.IMAGE_IS_EDIT, false);
 
         if (isImageEdit){
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            Bitmap bitmap = BitmapFactory.decodeFile(newFilePath, options);
+//            BitmapUtils.saveBitmap(context,bitmap, newFilePath);
             Toast.makeText(context, context.getString(R.string.save_path, newFilePath), Toast.LENGTH_LONG).show();
         }else{//未编辑  还是用原来的图片
             newFilePath = data.getStringExtra(EditImageActivity.FILE_PATH);;
         }
-
-        LogTools.i("image is edit: "+ isImageEdit + ",newFilePath "+newFilePath);
-
     }
 
 }
