@@ -114,7 +114,7 @@ public class CropFragment extends BaseEditFragment {
 		for (int i = 0, len = dataList.size(); i < len; i++) {
 			TextView text = new TextView(activity);
 			text.setTextColor(UNSELECTED_COLOR);
-			text.setTextSize(20);
+			text.setTextSize(14);
 			text.setText(dataList.get(i).getText());
 			textViewList.add(text);
 			ratioList.addView(text, params);
@@ -192,6 +192,7 @@ public class CropFragment extends BaseEditFragment {
 	private final class BackToMenuClick implements OnClickListener {
 		@Override
 		public void onClick(View v) {
+			activity.setSaveBtnShow(false);
 			backToMain();
 		}
 	}// end class
@@ -288,6 +289,7 @@ public class CropFragment extends BaseEditFragment {
 
             activity.changeMainBitmap(result,true);
 			activity.mCropPanel.setCropRect(activity.mainImage.getBitmapRect());
+			activity.setSaveBtnShow(true);
 			backToMain();
 		}
 	}// end inner class

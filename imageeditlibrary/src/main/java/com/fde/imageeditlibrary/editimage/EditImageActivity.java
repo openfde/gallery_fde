@@ -22,16 +22,19 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.appcompat.app.AlertDialog;
+
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -62,9 +65,9 @@ import com.fde.imageeditlibrary.editimage.widget.RedoUndoController;
  * 图片编辑 主页面
  *
  * @author openfde
- *         <p>
- *         包含 1.贴图 2.滤镜 3.剪裁 4.底图旋转 功能
- *         add new modules
+ * <p>
+ * 包含 1.贴图 2.滤镜 3.剪裁 4.底图旋转 功能
+ * add new modules
  */
 public class EditImageActivity extends BaseActivity {
     public static final String FILE_PATH = "file_path";
@@ -98,9 +101,8 @@ public class EditImageActivity extends BaseActivity {
     private View backBtn;
 
     public ViewFlipper bannerFlipper;
-    private View applyBtn;// 应用按钮
-    private View saveBtn;// 保存按钮
-
+    private TextView applyBtn;// 应用按钮
+    private TextView saveBtn;// 保存按钮
     public StickerView mStickerView;// 贴图层View
     public CropImageView mCropPanel;// 剪切操作控件
     public RotateImageView mRotatePanel;// 旋转操作控件
@@ -157,16 +159,17 @@ public class EditImageActivity extends BaseActivity {
     private void initView() {
         mContext = this;
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        imageWidth = metrics.widthPixels ;// 2;
+        imageWidth = metrics.widthPixels;// 2;
         imageHeight = metrics.heightPixels;// 2;
 
         bannerFlipper = (ViewFlipper) findViewById(R.id.banner_flipper);
         bannerFlipper.setInAnimation(this, R.anim.in_bottom_to_top);
         bannerFlipper.setOutAnimation(this, R.anim.out_bottom_to_top);
-        applyBtn = findViewById(R.id.apply);
+        applyBtn = (TextView) findViewById(R.id.apply);
         applyBtn.setOnClickListener(new ApplyBtnClick());
-        saveBtn = findViewById(R.id.save_btn);
+        saveBtn = (TextView) findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(new SaveBtnClick());
+        saveBtn.setText("");
 
         mainImage = (ImageViewTouch) findViewById(R.id.main_image);
         backBtn = findViewById(R.id.back_btn);// 退出按钮
@@ -321,17 +324,25 @@ public class EditImageActivity extends BaseActivity {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setMessage(R.string.exit_without_save)
                     .setCancelable(false).setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    mContext.finish();
-                }
-            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
+                        public void onClick(DialogInterface dialog, int id) {
+                            mContext.finish();
+                        }
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
 
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
+        }
+    }
+
+    public void setSaveBtnShow(boolean isShow) {
+        if (saveBtn != null) {
+            saveBtn.setText(isShow ? getString(R.string.save) :"");
+        }else {
+            Log.i("bella","saveBtn is null  " );
         }
     }
 
@@ -343,6 +354,7 @@ public class EditImageActivity extends BaseActivity {
     private final class ApplyBtnClick implements OnClickListener {
         @Override
         public void onClick(View v) {
+
             switch (mode) {
                 case MODE_STICKERS:
                     mStickerFragment.applyStickers();// 保存贴图
@@ -409,7 +421,7 @@ public class EditImageActivity extends BaseActivity {
 
         if (mainBitmap == null || mainBitmap != newBit) {
             if (needPushUndoStack) {
-                mRedoUndoController.switchMainBit(mainBitmap,newBit);
+                mRedoUndoController.switchMainBit(mainBitmap, newBit);
                 increaseOpTimes();
             }
             mainBitmap = newBit;
@@ -470,8 +482,8 @@ public class EditImageActivity extends BaseActivity {
         protected Boolean doInBackground(Bitmap... params) {
             if (TextUtils.isEmpty(saveFilePath))
                 return false;
-            Log.i("bella","doInBackground  saveFilePath "+saveFilePath);
-            return BitmapUtils.saveBitmap(EditImageActivity.this,params[0], saveFilePath);
+            Log.i("bella", "doInBackground  saveFilePath " + saveFilePath);
+            return BitmapUtils.saveBitmap(EditImageActivity.this, params[0], saveFilePath);
         }
 
         @Override

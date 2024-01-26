@@ -125,6 +125,7 @@ public class RotateFragment extends BaseEditFragment {
     private final class BackToMenuClick implements OnClickListener {
         @Override
         public void onClick(View v) {
+            activity.setSaveBtnShow(false);
             backToMain();
         }
     }// end class
@@ -147,6 +148,7 @@ public class RotateFragment extends BaseEditFragment {
     public void applyRotateImage() {
         // System.out.println("保存旋转图片");
         if (mSeekBar.getProgress() == 0 || mSeekBar.getProgress() == 360) {// 没有做旋转
+            activity.setSaveBtnShow(false);
             backToMain();
             return;
         } else {// 保存图片
@@ -219,6 +221,7 @@ public class RotateFragment extends BaseEditFragment {
 
             // 切换新底图
             activity.changeMainBitmap(result,true);
+            activity.setSaveBtnShow(true);
             backToMain();
         }
     }// end inner class

@@ -170,6 +170,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     private final class BackToMenuClick implements OnClickListener {
         @Override
         public void onClick(View v) {
+            activity.setSaveBtnShow(false);
             backToMain();
         }
     }// end class
@@ -242,6 +243,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
             mTextStickerView.resetView();
 
             activity.changeMainBitmap(result , true);
+            activity.setSaveBtnShow(true);
             backToMain();
         }
     }//end inner class

@@ -16,6 +16,7 @@
 package com.fde.imageeditlibrary.editimage.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +86,6 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
     public void onShow() {
         // do nothing
     }
-
     @Override
     public void backToMain() {
         //do nothing
@@ -93,6 +93,7 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        activity.setSaveBtnShow(true);
         if (v == stickerBtn) {
             onStickClick();
         } else if (v == fliterBtn) {
@@ -109,6 +110,7 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
             onBeautyClick();
         }
     }
+
 
     /**
      * 贴图模式
