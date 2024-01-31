@@ -2,6 +2,7 @@ package com.fde.gallery.utils;
 
 import android.annotation.SuppressLint;
 import android.app.RecoverableSecurityException;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -50,7 +51,7 @@ public class FileUtils {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 long id = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media._ID));
-                if(id !=-1){
+                if (id != -1) {
                     Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
                     LogTools.i("deleteImage " + imagePath + " , " + deleteUri.getPath());
                     context.getContentResolver().delete(deleteUri, null, null);
@@ -103,7 +104,7 @@ public class FileUtils {
 
             if (cursor != null) {
                 int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
-                if(idColumn != -1){
+                if (idColumn != -1) {
                     int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                     int dateTakenColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED);
                     int titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
@@ -122,8 +123,7 @@ public class FileUtils {
                         picture.setSize(cursor.getLong(sizeColumn));
                         int w = cursor.getInt(widthColumn);
                         int h = cursor.getInt(heightColumn);
-                        if (w == 0 )
-                        {
+                        if (w == 0) {
                             BitmapUtils.BitmapSize bitmapSize = BitmapUtils.getBitmapSize(picture.getPath());
                             w = bitmapSize.width;
                             h = bitmapSize.height;
@@ -133,16 +133,16 @@ public class FileUtils {
                         picture.setSelected(false);
                         picture.setShowCheckbox(false);
                         picture.setMediaType(Constant.MEDIA_PIC);
-                        if(w > 0){
+                        if (w > 0) {
                             list.add(picture);
                         }
                     }
                 }
-    //            LogTools.i("picture list size " + list.toString());
+                //            LogTools.i("picture list size " + list.toString());
                 cursor.close();
             }
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         return list;
     }
@@ -203,7 +203,7 @@ public class FileUtils {
         if (cursor != null && cursor.moveToFirst()) {
             int imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
 
-            if(imageIdIndex != -1){
+            if (imageIdIndex != -1) {
                 long currentImageId = cursor.getLong(imageIdIndex);
 
                 // 移动光标到下一张图片位置
@@ -224,7 +224,6 @@ public class FileUtils {
     }
 
     /**
-     *
      * @return
      */
     public static File createFolders() {
@@ -248,16 +247,14 @@ public class FileUtils {
     }
 
     /**
-     *
      * @return
      */
-    public static File genEditFile(){
+    public static File genEditFile() {
         return FileUtils.getEmptyFile(""
                 + System.currentTimeMillis() + ".png");
     }
 
     /**
-     *
      * @param name
      * @return
      */
@@ -270,5 +267,24 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * @param uri
+     * @return
+     */
+    public static String getFilePathFromUri(Context context, Uri uri) {
+        String filePath = null;
+        String[] projection = {MediaStore.Images.Media.DATA};
+        ContentResolver contentResolver = context.getContentResolver();
+
+        Cursor cursor = contentResolver.query(uri, projection, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            filePath = cursor.getString(columnIndex);
+            cursor.close();
+        }
+
+        return filePath;
     }
 }

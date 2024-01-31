@@ -16,15 +16,15 @@
 package com.fde.gallery.ui.activity;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.GestureDetector;
+import android.provider.MediaStore;
 import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -50,7 +50,6 @@ import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
-import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.List;
@@ -77,6 +76,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     TextView txtDetails;
     TextView txtSetWallpage;
     TextView txtSetWallpageLock;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,28 +87,43 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         List<Multimedia> tempList = FileUtils.getAllImages(context);
 
 
-
-        if(picture == null){
+        if (picture == null) {
             Uri imageUri = getIntent().getData();
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
             String realPath = StringUtils.ToString(documentFile.getUri());
-            if("".equals(realPath)){
+            if ("".equals(realPath)) {
                 startActivity(new Intent(context, MainActivity.class));
                 finish();
-            }else {
-                LogTools.i("realPath   "+realPath);
-                Multimedia m = findPicture(tempList,realPath);
-                if(m ==null){
+            } else {
+                String actionStr = getIntent().getAction();
+                LogTools.i("realPath   " + realPath + " ,actionStr " + actionStr);
+                Multimedia m = new Multimedia();
+
+                if ("android.intent.action.EDIT".equals(actionStr)) {
+                    String filePath = FileUtils.getFilePathFromUri(context, documentFile.getUri());
+                    m = findPicture(tempList, filePath);
+                    picture = m;
+                } else {
+                    m = findPicture(tempList, realPath);
+                }
+
+                if (m == null) {
                     picture = new Multimedia();
                     picture.setId(-1);
                     picture.setPath(realPath);
                 }
+
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
                 initView();
+
+                //if action is edit to go to edit page
+                if ("android.intent.action.EDIT".equals(actionStr)) {
+                    picturePreviewPersenter.editImageClick();
+                }
             }
-        }else {
-            String path = SPUtils.getUserInfo(context,"curPicPath");
-            Multimedia m = findPicture(tempList,path);
+        } else {
+            String path = SPUtils.getUserInfo(context, "curPicPath");
+            Multimedia m = findPicture(tempList, path);
             picture = m;
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
             initView();
@@ -125,7 +140,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
 //        popupWindow.setOutsideTouchable(true);
         popupWindow.setFocusable(true);
-        txtDetails = bottomSheetView. findViewById(R.id.txtDetails);
+        txtDetails = bottomSheetView.findViewById(R.id.txtDetails);
         txtSetWallpage = bottomSheetView.findViewById(R.id.txtSetWallpage);
         txtSetWallpageLock = bottomSheetView.findViewById(R.id.txtSetWallpageLock);
         txtDetails.setOnClickListener(this);
@@ -183,7 +198,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(picture.getId() > 0){
+                if (picture.getId() > 0) {
                     isShowBottomBtn = !isShowBottomBtn;
                     layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
                 }
@@ -216,15 +231,15 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 //            }
 //        });
 
-        if(picture.getId() <= 0){
+        if (picture.getId() <= 0) {
             isShowBottomBtn = false;
             imgLeft.setVisibility(View.GONE);
             imgRight.setVisibility(View.GONE);
             layoutBottomBtn.setVisibility(View.GONE);
-        }else {
+        } else {
             imgLeft.setVisibility(View.VISIBLE);
             imgRight.setVisibility(View.VISIBLE);
-            layoutBottomBtn.setVisibility(View.VISIBLE );
+            layoutBottomBtn.setVisibility(View.VISIBLE);
         }
 
         return true;
@@ -240,7 +255,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             }
         } else {
             if (resultCode == RESULT_OK) {
-                if(requestCode == Constant.ACTION_REQUEST_EDITIMAGE){
+                if (requestCode == Constant.ACTION_REQUEST_EDITIMAGE) {
                     picturePreviewPersenter.handleEditorImage(data);
                     finish();
                 }
@@ -250,7 +265,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     public void showPic(Multimedia multimedia) {
-        if (multimedia != null &&  !"".equals(multimedia.getPath() )) {
+        if (multimedia != null && !"".equals(multimedia.getPath())) {
             try {
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -261,7 +276,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                         .fitCenter()
                         .into(imageView);
             } catch (Exception e) {
-               e.printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -270,8 +285,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txtMore:
-                if(!popupWindow.isShowing()){
-                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM|Gravity.RIGHT, 10, 10);
+                if (!popupWindow.isShowing()) {
+                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM | Gravity.RIGHT, 10, 10);
                 }
                 break;
 
@@ -315,7 +330,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
             case R.id.txtSetWallpage:
                 picturePreviewPersenter.setWallpage(1);
-                Toast.makeText(context,R.string.set_wallpage_success,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.set_wallpage_success, Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
                 break;
 
@@ -331,7 +346,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     public Multimedia findPicture(List<Multimedia> listM, String path) {
-        int curPos = -1 ;
+        int curPos = -1;
         try {
             for (int i = 0; i < listM.size(); i++) {
                 if (path.equals(listM.get(i).getPath())) {

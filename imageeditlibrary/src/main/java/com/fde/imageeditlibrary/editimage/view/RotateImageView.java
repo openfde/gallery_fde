@@ -111,7 +111,11 @@ public class RotateImageView extends View {
 		canvas.drawRect(wrapRect, bottomPaint);
 		canvas.rotate(rotateAngle, canvas.getWidth() >> 1,
 				canvas.getHeight() >> 1);
-		canvas.drawBitmap(bitmap, srcRect, dstRect, null);
+		Paint drawPaint = new Paint();
+		drawPaint.setAntiAlias(true);
+		drawPaint.setFilterBitmap(true);
+		canvas.drawBitmap(bitmap, srcRect, dstRect, drawPaint);
+//		canvas.drawBitmap(bitmap, srcRect, dstRect, null);
 		canvas.restore();
 	}
 
