@@ -33,6 +33,7 @@ import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.PictureListPersenter;
 import com.fde.gallery.utils.LogTools;
 
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link PictureListFragment#newInstance} factory method to
@@ -47,7 +48,8 @@ public class PictureListFragment extends BaseFragment {
 
     public static final String[] permissions = {
             "android.permission.WRITE_EXTERNAL_STORAGE",
-            "android.permission.READ_EXTERNAL_STORAGE"};
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.MANAGE_EXTERNAL_STORAGE"};
 
     public static PictureListFragment newInstance(String param1, String param2) {
         PictureListFragment fragment = new PictureListFragment();

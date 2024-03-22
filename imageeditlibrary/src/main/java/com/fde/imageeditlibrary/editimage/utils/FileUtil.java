@@ -20,13 +20,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.OutputStream;
 
 /**
@@ -65,12 +65,26 @@ public class FileUtil {
 
             String folder = Environment.DIRECTORY_PICTURES+"/fde/";
             ContentValues values  =  new ContentValues();
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, folder);
-            values.put(MediaStore.Images.Media.DATA, dstPath);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES +"/fde");
+            }else {
+                values.put(MediaStore.Images.Media.DATA, dstPath);
+            }
+
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, "fde_" + System.currentTimeMillis() + ".png");
+
+
+//            values.put(MediaStore.Images.Media.RELATIVE_PATH, folder);
+
+            values.put(MediaStore.MediaColumns.WIDTH, 800);
+            values.put(MediaStore.MediaColumns.HEIGHT, 800);
             Uri insertUri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values );
 
             try {
                 OutputStream outputStream = context.getContentResolver().openOutputStream(insertUri, "rw");
+
                 if (bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)) {
                     Log.i("bella", "save success");
                 } else {

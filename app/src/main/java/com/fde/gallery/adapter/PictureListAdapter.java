@@ -103,6 +103,9 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
                 .error(R.mipmap.ic_launcher)
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop() // 裁剪图片以适应ImageView的大小
+                .dontTransform() // 禁用任何额外的转换
+                .dontAnimate()
                 .into(holder.imageView);
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {

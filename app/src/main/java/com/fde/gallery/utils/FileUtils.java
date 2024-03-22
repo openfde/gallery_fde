@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.RecoverableSecurityException;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Environment;
 import android.provider.MediaStore;
 
@@ -127,6 +129,7 @@ public class FileUtils {
                             BitmapUtils.BitmapSize bitmapSize = BitmapUtils.getBitmapSize(picture.getPath());
                             w = bitmapSize.width;
                             h = bitmapSize.height;
+//                            updatePicSize(context,w,h,cursor.getLong(idColumn));
                         }
                         picture.setWidth(w);
                         picture.setHeight(h);
@@ -147,6 +150,53 @@ public class FileUtils {
         return list;
     }
 
+
+    private static  void updatePicSize (Context context,int w,int h,long  id){
+        final long token = Binder.clearCallingIdentity();
+        try {
+            ContentResolver contentResolver = context.getContentResolver();
+//        String selection = MediaStore.Images.Media._ID + "=?";
+            String selection = null ;
+//        String[] selectionArgs = new String[]{String.valueOf(id)};
+            String[] selectionArgs = null ;
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DESCRIPTION, "Edited image description");
+            values.put(MediaStore.Images.Media.WIDTH,w);
+            values.put(MediaStore.Images.Media.HEIGHT,h);
+            values.put(MediaStore.Images.Media.TITLE,"fde_"+System.currentTimeMillis());
+//        Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+
+            int updatedRows = contentResolver.update(imageUri, values, selection, selectionArgs);
+            if (updatedRows > 0) {
+                LogTools.i("Image database updated successfully ");
+            } else {
+                LogTools.i("Image database selection "+selection + ",id "+id);
+                LogTools.i( "Failed to update image database  " +" ,w "+w + " ,updatedRows "+updatedRows);
+            }
+
+            try {
+                Cursor cursorQ = contentResolver.query(imageUri,null,selection,selectionArgs,null);
+                int widthColumn = cursorQ.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
+                int heightColumn = cursorQ.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
+                int dataColumn = cursorQ.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+                while (cursorQ.moveToNext()) {
+                    int ww = cursorQ.getInt(widthColumn);
+                    int hh = cursorQ.getInt(heightColumn);
+                    String path = cursorQ.getString(dataColumn);
+                    LogTools.i("cursorQ ww "+ww + " , hh "+hh + ", path "+path);
+                }
+                cursorQ.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+           e.printStackTrace();
+        } finally {
+            Binder.restoreCallingIdentity(token);
+        }
+    }
 
     /**
      * get all video

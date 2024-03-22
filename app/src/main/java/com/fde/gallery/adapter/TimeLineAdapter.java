@@ -88,9 +88,12 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
                 .load(multimedia.getPath())
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
-                .apply(new RequestOptions().frame(1000))
+//                .apply(new RequestOptions().frame(1000))
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop() // 裁剪图片以适应ImageView的大小
+                .dontTransform() // 禁用任何额外的转换
+                .dontAnimate()
                 .into(holder.imageView);
 //        Glide.with(context) // replace 'this' with your context
 //                .load(list.get(position).getPath())
