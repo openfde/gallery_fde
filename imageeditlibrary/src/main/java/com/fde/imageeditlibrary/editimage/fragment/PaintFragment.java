@@ -21,9 +21,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,12 +30,17 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.fde.imageeditlibrary.R;
 import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.fde.imageeditlibrary.editimage.ModuleConfig;
 import com.fde.imageeditlibrary.editimage.adapter.ColorListAdapter;
 import com.fde.imageeditlibrary.editimage.task.StickerTask;
+import com.fde.imageeditlibrary.editimage.ui.BottomSheetSizeDialog;
 import com.fde.imageeditlibrary.editimage.ui.ColorPicker;
+import com.fde.imageeditlibrary.editimage.utils.Utils;
 import com.fde.imageeditlibrary.editimage.view.CustomPaintView;
 import com.fde.imageeditlibrary.editimage.view.PaintModeView;
 
@@ -61,6 +63,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
     private ColorListAdapter mColorAdapter;
     private View popView;
 
+
     private CustomPaintView mPaintView;
 
     private ColorPicker mColorPicker;//颜色选择器
@@ -74,9 +77,11 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
 
     private SaveCustomPaintTask mSavePaintImageTask;
 
-    public int[] mPaintColors = {Color.BLACK,
-            Color.DKGRAY, Color.GRAY, Color.LTGRAY, Color.WHITE,
-            Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA};
+//    public int[] mPaintColors = {Color.BLACK,
+//            Color.DKGRAY, Color.GRAY, Color.LTGRAY, Color.WHITE,
+//            Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA};
+
+    public int[] mPaintColors = {Color.WHITE, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW};
 
     public static PaintFragment newInstance() {
         PaintFragment fragment = new PaintFragment();
@@ -99,7 +104,6 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         mPaintModeView = (PaintModeView) mainView.findViewById(R.id.paint_thumb);
         mColorListView = (RecyclerView) mainView.findViewById(R.id.paint_color_list);
         mEraserView = (ImageView) mainView.findViewById(R.id.paint_eraser);
-
         backToMenu.setOnClickListener(this);// 返回主菜单
 
         mColorPicker = new ColorPicker(getActivity(), 255, 0, 0);
@@ -134,7 +138,22 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         if (v == backToMenu) {//back button click
             backToMain();
         } else if (v == mPaintModeView) {//设置绘制画笔粗细
-            setStokeWidth();
+//            setStokeWidth();
+            BottomSheetSizeDialog bottomSheetColorDialog = new BottomSheetSizeDialog(getActivity(),mPaintModeView.getStokenColor(), new BottomSheetSizeDialog.ItemClick() {
+                @Override
+                public void setOnItemClick(int pos) {
+                    int progress = 10 * (pos+1);
+                    mPaintModeView.setPaintStrokeWidth(progress);
+                    updatePaintView();
+
+                    mPaintModeView.getLayoutParams().width =progress;
+                    mPaintModeView.getLayoutParams().height = progress;
+                    mPaintModeView.requestLayout();
+
+                }
+            });
+//            bottomSheetColorDialog.setContentView(R.layout.bottom_sheet_size);
+            bottomSheetColorDialog.show();
         } else if (v == mEraserView) {
             toggleEraserView();
         }//end if
@@ -238,6 +257,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
                 inflate(R.layout.view_set_stoke_width, null);
         setStokenWidthWindow = new PopupWindow(popView, ViewGroup.LayoutParams.MATCH_PARENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
+//        setStokenWidthWindow.setHeight(120);
 
         mStokenWidthSeekBar = (SeekBar) popView.findViewById(R.id.stoke_width_seekbar);
 
@@ -245,7 +265,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         setStokenWidthWindow.setOutsideTouchable(true);
         setStokenWidthWindow.setBackgroundDrawable(new BitmapDrawable());
         setStokenWidthWindow.setAnimationStyle(R.style.popwin_anim_style);
-
+//        setStokenWidthWindow.showAtLocation(popView,Gravity.CENTER,0,0);
 
         mPaintModeView.setPaintStrokeColor(Color.RED);
         mPaintModeView.setPaintStrokeWidth(10);

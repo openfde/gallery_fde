@@ -132,6 +132,7 @@ public class CustomPaintView extends View {
             case MotionEvent.ACTION_MOVE:
                 ret = true;
                 mPaintCanvas.drawLine(last_x, last_y, x, y, eraser ? mEraserPaint : mPaint);
+//                mPaintCanvas.drawBitmap();
                 last_x = x;
                 last_y = y;
                 this.postInvalidate();
