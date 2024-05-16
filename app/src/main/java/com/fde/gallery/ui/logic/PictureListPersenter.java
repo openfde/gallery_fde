@@ -21,10 +21,13 @@ import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +43,7 @@ import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,7 +154,18 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txtShare:
-                LogTools.i("list " + list.get(0).getDate());
+                try {
+                    ArrayList<Uri> imageUris = new ArrayList<>();
+                    imageUris.add( FileProvider.getUriForFile(context, "com.fde.gallery2.provider", new File(list.get(0).getPath())));
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    intent.setType("image/*"); //设置MIME类型
+                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
+//                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,imageUris);
+                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case R.id.txtDelete:
