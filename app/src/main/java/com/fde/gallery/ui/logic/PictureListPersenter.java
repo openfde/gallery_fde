@@ -156,7 +156,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
             case R.id.txtShare:
                 try {
                     ArrayList<Uri> imageUris = new ArrayList<>();
-                    imageUris.add( FileProvider.getUriForFile(context, "com.fde.gallery2.provider", new File(list.get(0).getPath())));
+                    imageUris.add( FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(0).getPath())));
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     intent.setType("image/*"); //设置MIME类型
