@@ -21,6 +21,7 @@ import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -102,19 +103,19 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
      * @param context
      */
     public void getAllImages(Context context) {
-            if(list !=null){
-                list.clear();
-            }
-            list.addAll(FileUtils.getAllImages(context));
-            if (pictureListAdapter == null) {
-                LogTools.i("pictureListAdapter is null");
-            } else {
-                pictureListAdapter.notifyDataSetChanged();
-            }
+        if (list != null) {
+            list.clear();
+        }
+        list.addAll(FileUtils.getAllImages(context));
+        if (pictureListAdapter == null) {
+            LogTools.i("pictureListAdapter is null");
+        } else {
+            pictureListAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
-    public void onRightEvent(int pos,int groupPos) {
+    public void onRightEvent(int pos, int groupPos) {
         isShowBottomBtn = !isShowBottomBtn;
 
         try {
@@ -125,29 +126,29 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
                 list.set(i, picture);
             }
             pictureListAdapter.notifyDataSetChanged();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onSelectEvent(int pos,int groupPos, boolean isSelect) {
-     try {
-         Multimedia picture = list.get(pos);
-         picture.setSelected(isSelect);
-         list.set(pos, picture);
-     }catch (Exception e){
-         e.printStackTrace();
-     }
+    public void onSelectEvent(int pos, int groupPos, boolean isSelect) {
+        try {
+            Multimedia picture = list.get(pos);
+            picture.setSelected(isSelect);
+            list.set(pos, picture);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onJumpEvent(Multimedia picture) {
-        SPUtils.putUserInfo(context,"curPicPath",picture.getPath());
+        SPUtils.putUserInfo(context, "curPicPath", picture.getPath());
         Intent intent = new Intent();
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);
-        baseFragment.getActivity().startActivityFromFragment(baseFragment,intent, Constant.REQUEST_DELETE_PHOTO);
+        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
     }
 
     @Override
@@ -156,12 +157,24 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
             case R.id.txtShare:
                 try {
                     ArrayList<Uri> imageUris = new ArrayList<>();
-                    imageUris.add( FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(0).getPath())));
-                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).isSelected()) {
+                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery2.provider", new File(list.get(i).getPath())));
+                        }
+                    }
+                    int size = imageUris.size();
+                    if (size < 1) {
+                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+                        return;
+                    } else if (size > 9) {
+                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
+                        return;
+                    }
+                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     intent.setType("image/*"); //设置MIME类型
-                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
-//                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,imageUris);
+//                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
+                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
                     baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -180,7 +193,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
                         tempList.add(picture);
                     }
                 }
-                if(delList ==null ||delList.size() <1){
+                if (delList == null || delList.size() < 1) {
                     baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
                     return;
                 }
@@ -208,10 +221,14 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
                     list.set(i, picture);
                 }
                 pictureListAdapter.notifyDataSetChanged();
-                txtAllSelected.setText(isAllSelected? context.getString(R.string.deselect_all) :context.getString(R.string.select_all) );
+                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
+                Drawable drawableTop = isAllSelected ? context.getDrawable(R.mipmap.icon_select_none) : context.getDrawable(R.mipmap.icon_select_all);
+                drawableTop.setBounds(0, 0, drawableTop.getIntrinsicWidth(), drawableTop.getIntrinsicHeight());
+                txtAllSelected.setCompoundDrawables(null, drawableTop, null, null);
                 break;
         }
     }
+
     @SuppressLint("NewApi")
     public void deleteImage() {
         if (delList != null) {
