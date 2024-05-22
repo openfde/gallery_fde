@@ -47,7 +47,7 @@ public class FilterListFragment extends BaseEditFragment {
     public static final int INDEX = ModuleConfig.INDEX_FILTER;
     public static final String TAG = FilterListFragment.class.getName();
     private View mainView;
-    private View backBtn;// 返回主菜单按钮
+    private View backBtn;// backToMenu
 
     private Bitmap fliterBit;// 滤镜处理后的bitmap
 
@@ -99,7 +99,7 @@ public class FilterListFragment extends BaseEditFragment {
     }
 
     /**
-     * 返回主菜单
+     * backToMenu
      */
     @Override
     public void backToMain() {

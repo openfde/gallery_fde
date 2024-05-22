@@ -57,7 +57,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
     public static final String TAG = PaintFragment.class.getName();
 
     private View mainView;
-    private View backToMenu;// 返回主菜单
+    private View backToMenu;// backToMenu
     private PaintModeView mPaintModeView;
     private RecyclerView mColorListView;//颜色列表View
     private ColorListAdapter mColorAdapter;
@@ -104,7 +104,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         mPaintModeView = (PaintModeView) mainView.findViewById(R.id.paint_thumb);
         mColorListView = (RecyclerView) mainView.findViewById(R.id.paint_color_list);
         mEraserView = (ImageView) mainView.findViewById(R.id.paint_eraser);
-        backToMenu.setOnClickListener(this);// 返回主菜单
+        backToMenu.setOnClickListener(this);// backToMenu
 
         mColorPicker = new ColorPicker(getActivity(), 255, 0, 0);
         initColorListView();
@@ -160,7 +160,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
     }
 
     /**
-     * 返回主菜单
+     * backToMenu
      */
     public void backToMain() {
         activity.mode = EditImageActivity.MODE_NONE;

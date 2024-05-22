@@ -47,7 +47,7 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
     public static final int INDEX = ModuleConfig.INDEX_BEAUTY;
 
     private View mainView;
-    private View backToMenu;// 返回主菜单
+    private View backToMenu;// backToMenu
 
     private SeekBar mSmoothValueBar;
     private SeekBar mWhiteValueBar;
@@ -83,7 +83,7 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         backToMenu = mainView.findViewById(R.id.back_to_main);
-        backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
+        backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
 
         mSmoothValueBar.setOnSeekBarChangeListener(this);
         mWhiteValueBar.setOnSeekBarChangeListener(this);
@@ -132,7 +132,7 @@ public class BeautyFragment extends BaseEditFragment implements SeekBar.OnSeekBa
     }// end class
 
     /**
-     * 返回主菜单
+     * backToMenu
      */
     @Override
     public void backToMain() {

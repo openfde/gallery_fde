@@ -94,7 +94,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
         mTextColorSelector = (ImageView) mainView.findViewById(R.id.text_color);
         mAutoNewLineCheck = (CheckBox) mainView.findViewById(R.id.check_auto_newline);
 
-        backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
+        backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
         mColorPicker = new ColorPicker(getActivity(), 255, 0, 0);
         mTextColorSelector.setOnClickListener(new SelectColorBtnClick());
         mInputText.addTextChangedListener(this);

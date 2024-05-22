@@ -44,7 +44,7 @@ public class RotateFragment extends BaseEditFragment {
     public static final int INDEX = ModuleConfig.INDEX_ROTATE;
     public static final String TAG = RotateFragment.class.getName();
     private View mainView;
-    private View backToMenu;// 返回主菜单
+    private View backToMenu;// backToMenu
     public SeekBar mSeekBar;// 角度设定
     private RotateImageView mRotatePanel;// 旋转效果展示控件
 
@@ -74,7 +74,7 @@ public class RotateFragment extends BaseEditFragment {
         mSeekBar.setProgress(0);
 
         this.mRotatePanel = ensureEditActivity().mRotatePanel;
-        backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
+        backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
         mSeekBar.setOnSeekBarChangeListener(new RotateAngleChange());
     }
 
@@ -131,7 +131,7 @@ public class RotateFragment extends BaseEditFragment {
     }// end class
 
     /**
-     * 返回主菜单
+     * backToMenu
      */
     @Override
     public void backToMain() {
