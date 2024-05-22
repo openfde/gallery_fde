@@ -30,7 +30,7 @@ import android.widget.TextView;
 import com.fde.imageeditlibrary.R;
 
 /**
- * 颜色选择器
+ * color select
  * Created by openfde on 2016/6/9.
  */
 public class ColorPicker extends Dialog implements SeekBar.OnSeekBarChangeListener {

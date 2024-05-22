@@ -66,7 +66,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
 
     private CustomPaintView mPaintView;
 
-    private ColorPicker mColorPicker;//颜色选择器
+    private ColorPicker mColorPicker;//color select
 
     private PopupWindow setStokenWidthWindow;
     private SeekBar mStokenWidthSeekBar;

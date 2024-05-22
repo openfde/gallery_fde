@@ -42,7 +42,7 @@ import com.fde.imageeditlibrary.editimage.view.TextStickerView;
 
 
 /**
- * 添加文本贴图
+ * add text
  *
  * @author openfde
  */
@@ -51,11 +51,11 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     public static final String TAG = AddTextFragment.class.getName();
 
     private View mainView;
-    private View backToMenu;// 返回主菜单
+    private View backToMenu;// back to menu
 
-    private EditText mInputText;//输入框
-    private ImageView mTextColorSelector;//颜色选择器
-    private TextStickerView mTextStickerView;// 文字贴图显示控件
+    private EditText mInputText;//input view
+    private ImageView mTextColorSelector;//color select
+    private TextStickerView mTextStickerView;// text view
     private CheckBox mAutoNewLineCheck;
 
     private ColorPicker mColorPicker;
@@ -123,7 +123,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     }
 
     /**
-     * 颜色选择 按钮点击
+     * color select
      */
     private final class SelectColorBtnClick implements View.OnClickListener {
         @Override
@@ -141,7 +141,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     }//end inner class
 
     /**
-     * 修改字体颜色
+     * modify text color
      *
      * @param newColor
      */
@@ -163,7 +163,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     }
 
     /**
-     * 返回按钮逻辑
+     * back
      *
      * @author openfde
      */
@@ -176,7 +176,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     }// end class
 
     /**
-     * 返回主菜单
+     * banckto menu
      */
     @Override
     public void backToMain() {
@@ -198,7 +198,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     }
 
     /**
-     * 保存贴图图片
+     * save image
      */
     public void applyTextImage() {
         if (mSaveTask != null) {
@@ -211,8 +211,8 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     }
 
     /**
-     * 文字合成任务
-     * 合成最终图片
+     * text merge
+     *
      */
     private final class SaveTextStickerTask extends StickerTask {
 

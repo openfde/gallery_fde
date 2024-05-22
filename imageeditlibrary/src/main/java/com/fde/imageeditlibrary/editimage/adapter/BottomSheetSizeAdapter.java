@@ -94,7 +94,7 @@ public class BottomSheetSizeAdapter extends RecyclerView.Adapter<BottomSheetSize
         }
         holder.imageView.getLayoutParams().width = Utils.ToInt(w * 1.5);
         holder.imageView.getLayoutParams().height = Utils.ToInt(h * 1.5);
-        holder.imageView.requestLayout(); // 
+        holder.imageView.requestLayout(); //
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
