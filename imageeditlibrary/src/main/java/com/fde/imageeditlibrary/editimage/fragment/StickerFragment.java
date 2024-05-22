@@ -61,7 +61,7 @@ public class StickerFragment extends BaseEditFragment {
 
     private View mainView;
     private ViewFlipper flipper;
-    private View backToMenu;// 返回主菜单
+    private View backToMenu;// backToMenu
     private RecyclerView typeList;// 贴图分类列表
     private RecyclerView stickerList;// 贴图素材列表
     private View backToType;// 返回类型选择
@@ -122,7 +122,7 @@ public class StickerFragment extends BaseEditFragment {
         mStickerAdapter = new StickerAdapter(this);
         stickerList.setAdapter(mStickerAdapter);
 
-        backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
+        backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
         backToType.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {// 返回上一级列表
@@ -251,7 +251,7 @@ public class StickerFragment extends BaseEditFragment {
     }
 
     /**
-     * 返回主菜单页面
+     * backToMenu page
      *
      * @author openfde
      */

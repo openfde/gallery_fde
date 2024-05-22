@@ -61,8 +61,8 @@ public class CropFragment extends BaseEditFragment {
     public static final int INDEX = ModuleConfig.INDEX_CROP;
 	public static final String TAG = CropFragment.class.getName();
 	private View mainView;
-	private View backToMenu;// 返回主菜单
-	public CropImageView mCropPanel;// 剪裁操作面板
+	private View backToMenu;// backToMenu
+	public CropImageView mCropPanel;//
 	private LinearLayout ratioList;
 	private static List<RatioItem> dataList = new ArrayList<RatioItem>();
 	static {
@@ -158,7 +158,7 @@ public class CropFragment extends BaseEditFragment {
         ratioList = (LinearLayout) mainView.findViewById(R.id.ratio_list_group);
         setUpRatioList();
         this.mCropPanel = ensureEditActivity().mCropPanel;
-		backToMenu.setOnClickListener(new BackToMenuClick());// 返回主菜单
+		backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
 	}
 
     @Override
@@ -198,7 +198,7 @@ public class CropFragment extends BaseEditFragment {
 	}// end class
 
 	/**
-	 * 返回主菜单
+	 * backToMenu
 	 */
 	@Override
 	public void backToMain() {

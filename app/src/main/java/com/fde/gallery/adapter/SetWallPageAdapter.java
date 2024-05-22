@@ -79,10 +79,10 @@ public class SetWallPageAdapter extends RecyclerView.Adapter<SetWallPageAdapter.
                     int height  = DeviceUtils.getSreenHight(context);
 //                    int width = ((RecyclerView) holder.rootView.getParent()).getWidth();
                     if (height != 0) {
-                        // 获取RecyclerView的宽度
-                        // 计算item的宽度和高度
+                        // get RecyclerView width
+                        // calc RecyclerView width and height
                         int size = height / 4;
-                        // 设置item的宽度和高度
+                        // set item width and height
                         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
                         layoutParams.width = size;
                         layoutParams.height = size;

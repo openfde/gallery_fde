@@ -11,7 +11,7 @@
     <string name="rotate">rotate</string>
     <string name="text">text</string>
     <string name="edit">edit</string>
-
+    <string name="paint">paint</string>
 
 
     <string name="materialcolorpicker__app_name">Android Material Color Picker Dialog</string>
@@ -52,4 +52,10 @@
     <string name="smooth">smooth</string>
     <string name="white_skin">white skin</string>
     <string name="default_text">default</string>
+
+    <string name="text_minimum">Minimum</string>
+    <string name="text_small">Small</string>
+    <string name="text_medium">Medium</string>
+    <string name="text_large">Large </string>
+    <string name="text_largest">Largest</string>
 </resources>

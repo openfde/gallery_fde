@@ -28,6 +28,7 @@
     <string name="details">details</string>
     <string name="collect">collect</string>
     <string name="can_not_choose_empty">please choose one</string>
+    <string name="can_not_choose_too_more">please choose not greater than</string>
     <string name="more">more</string>
     <string name="set_wallpage">set wallpaper</string>
     <string name="set_wallpage_lock">set wallpaper lock</string>

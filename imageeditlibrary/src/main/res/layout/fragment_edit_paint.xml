@@ -13,8 +13,10 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/paint_color_list"
         android:layout_width="0dp"
@@ -26,6 +28,7 @@
     <ImageView
         android:id="@+id/paint_eraser"
         android:layout_width="25dp"
+        android:visibility="gone"
         android:layout_height="25dp"
         android:layout_gravity="center_vertical"
         android:layout_margin="5dp"

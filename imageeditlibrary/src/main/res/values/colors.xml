@@ -13,4 +13,5 @@
     <color name="materialcolorpicker__dialogcolor">#009688</color>
     <color name="hint_foreground_material_light">#00000000</color>
     <color name="hint_foreground_material_dark">#00000000</color>
+    <color name="main_bg">#f2f2f2</color>
 </resources>
