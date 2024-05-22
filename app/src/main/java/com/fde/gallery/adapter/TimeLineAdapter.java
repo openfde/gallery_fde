@@ -65,10 +65,10 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
                 if (holder.rootView.getParent() != null) {
                     int width = ((RecyclerView) holder.rootView.getParent()).getWidth();
                     if (width != 0) {
-                        // 获取RecyclerView的宽度
-                        // 计算item的宽度和高度
+                        // get RecyclerView width
+                        // calc RecyclerView width and height
                         int size = width / numberOfColumns; // replace 3 with the number of columns
-                        // 设置item的宽度和高度
+                        //  // set item width and height
                         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
                         layoutParams.width = size;
                         layoutParams.height = size;
@@ -91,8 +91,8 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
 //                .apply(new RequestOptions().frame(1000))
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop() // 裁剪图片以适应ImageView的大小
-                .dontTransform() // 禁用任何额外的转换
+                .centerCrop() //
+                .dontTransform() //
                 .dontAnimate()
                 .into(holder.imageView);
 //        Glide.with(context) // replace 'this' with your context

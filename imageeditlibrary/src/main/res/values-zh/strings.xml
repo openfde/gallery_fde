@@ -49,4 +49,10 @@
     <string name="white_skin">美白</string>
 
     <string name="default_text">默认</string>
+
+    <string name="text_minimum">极小</string>
+    <string name="text_small">小</string>
+    <string name="text_medium">中</string>
+    <string name="text_large">大 </string>
+    <string name="text_largest">极小</string>
 </resources>

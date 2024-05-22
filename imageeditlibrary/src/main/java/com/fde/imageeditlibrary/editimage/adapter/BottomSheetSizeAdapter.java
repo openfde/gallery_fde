@@ -55,38 +55,38 @@ public class BottomSheetSizeAdapter extends RecyclerView.Adapter<BottomSheetSize
 
         switch (position) {
             case 0:
-                holder.txtTitle.setText("极小");
+                holder.txtTitle.setText(context.getString(R.string.text_minimum));
                 holder.txtTitle.setTextSize(10.0f);
                 w = 10;
                 h = 10;
                 break;
             case 1:
-                holder.txtTitle.setText("小");
+                holder.txtTitle.setText(context.getString(R.string.text_small));
                 holder.txtTitle.setTextSize(20.0f);
                 w = 20;
                 h = 20;
                 break;
             case 2:
-                holder.txtTitle.setText("中");
+                holder.txtTitle.setText(context.getString(R.string.text_medium));
                 holder.txtTitle.setTextSize(30.0f);
                 w = 30;
                 h = 30;
                 break;
             case 3:
-                holder.txtTitle.setText("大");
+                holder.txtTitle.setText(context.getString(R.string.text_large));
                 holder.txtTitle.setTextSize(40.0f);
                 w = 40;
                 h = 40;
                 break;
             case 4:
-                holder.txtTitle.setText("超大");
+                holder.txtTitle.setText(context.getString(R.string.text_largest));
                 holder.txtTitle.setTextSize(50.0f);
                 w = 50;
                 h = 50;
                 break;
 
             default:
-                holder.txtTitle.setText("中");
+                holder.txtTitle.setText(context.getString(R.string.text_medium));
                 holder.txtTitle.setTextSize(32.0f);
                 w = 30;
                 h = 30;

@@ -72,10 +72,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 if (holder.rootView.getParent() != null) {
                     int width = ((RecyclerView) holder.rootView.getParent()).getWidth();
                     if (width != 0) {
-                        // 获取RecyclerView的宽度
-                        // 计算item的宽度和高度
+                        // get RecyclerView width
+                        // calc RecyclerView width and height
                         int size = width / numberOfColumns; // replace 3 with the number of columns
-                        // 设置item的宽度和高度
+                        // set item width and height
                         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
                         layoutParams.width = size;
                         layoutParams.height = size;
