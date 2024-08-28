@@ -16,13 +16,14 @@
 package com.fde.gallery.ui.activity;
 
 import android.app.Activity;
-import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -96,8 +97,9 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 finish();
             } else {
                 String actionStr = getIntent().getAction();
-                LogTools.i("realPath   " + realPath + " ,actionStr " + actionStr);
+                LogTools.i("realPath   " + realPath + " ,documentFile " + documentFile);
                 Multimedia m = new Multimedia();
+
 
                 if ("android.intent.action.EDIT".equals(actionStr)) {
                     String filePath = FileUtils.getFilePathFromUri(context, documentFile.getUri());
@@ -108,8 +110,15 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 }
 
                 if (m == null) {
+                    String docId = FileUtils.getMediaStoreIdFromUri(context, imageUri);
+                    LogTools.i("docId   " + docId);
                     picture = new Multimedia();
-                    picture.setId(-1);
+                    if(docId !=null){
+                        picture.setId(StringUtils.ToInt(docId));
+                    }else{
+                        picture.setId(-1);
+                    }
+
                     picture.setPath(realPath);
                 }
 
@@ -127,6 +136,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             picture = m;
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
             initView();
+            LogTools.i("picture " + picture);
         }
 
         popupWindow = new PopupWindow(this);
@@ -158,6 +168,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
     }
+
 
     public boolean initView() {
         imageView = (PhotoView) findViewById(R.id.imageView);
