@@ -20,11 +20,14 @@ import android.app.AlertDialog;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,6 +40,7 @@ import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +137,30 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.txtShare:
-                LogTools.i("list " + list.toString());
+                try {
+                    ArrayList<Uri> imageUris = new ArrayList<>();
+                    for (int i = 0; i < list.size(); i++) {
+                        if (list.get(i).isSelected()) {
+                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
+                        }
+                    }
+                    int size = imageUris.size();
+                    if (size < 1) {
+                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+                        return;
+                    } else if (size > 9) {
+                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
+                        return;
+                    }
+                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    intent.setType("image/*"); //set MIME type
+//                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
+                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case R.id.txtDelete:
