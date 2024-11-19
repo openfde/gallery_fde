@@ -342,28 +342,32 @@ public class FileUtils {
     public static String getMediaStoreIdFromUri(Context context, Uri uri) {
         String mediaId = null;
 
-        if (DocumentsContract.isDocumentUri(context, uri)) {
-            String docId = DocumentsContract.getDocumentId(uri);
-            String[] split = docId.split(":");
-            String type = split[0];
+        try {
+            if (DocumentsContract.isDocumentUri(context, uri)) {
+                String docId = DocumentsContract.getDocumentId(uri);
+                String[] split = docId.split(":");
+                String type = split[0];
 
-            Uri contentUri = null;
-            if ("primary".equalsIgnoreCase(type)) {
-                // 构建与 MediaStore 兼容的 URI
-                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            }
+                Uri contentUri = null;
+                if ("primary".equalsIgnoreCase(type)) {
+                    // 构建与 MediaStore 兼容的 URI
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                }
 
-            // 查询 _ID
-            String[] projection = {MediaStore.MediaColumns._ID};
-            String selection = MediaStore.Images.Media.DATA + "=?";
-            String[] selectionArgs = new String[]{"/storage/emulated/0/" + split[1]};
+                // 查询 _ID
+                String[] projection = {MediaStore.MediaColumns._ID};
+                String selection = MediaStore.Images.Media.DATA + "=?";
+                String[] selectionArgs = new String[]{"/storage/emulated/0/" + split[1]};
 
-            try (Cursor cursor = context.getContentResolver().query(contentUri, projection, selection, selectionArgs, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int idColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID);
-                    mediaId = cursor.getString(idColumnIndex);
+                try (Cursor cursor = context.getContentResolver().query(contentUri, projection, selection, selectionArgs, null)) {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        int idColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID);
+                        mediaId = cursor.getString(idColumnIndex);
+                    }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return mediaId;
