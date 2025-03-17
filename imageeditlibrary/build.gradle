@@ -21,6 +21,11 @@ android {
         targetSdkVersion rootProject.ext.sdkVersion
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            // 指定需要支持的 ABI 类型
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
     }
 }
 
