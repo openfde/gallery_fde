@@ -55,6 +55,7 @@
             android:name=".ui.activity.VideoPlayActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|density|screenSize|smallestScreenSize"
             android:exported="true"
+            android:documentLaunchMode="always"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -67,6 +68,7 @@
         <activity
             android:name=".ui.activity.PicturePreviewActivity"
             android:exported="true"
+            android:documentLaunchMode="always"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

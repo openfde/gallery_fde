@@ -97,7 +97,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 finish();
             } else {
                 String actionStr = getIntent().getAction();
-                LogTools.i("realPath   " + realPath + " ,documentFile " + documentFile);
+                LogTools.i("realPath   " + realPath + " ,documentFile " + documentFile +",actionStr "+actionStr);
                 Multimedia m = new Multimedia();
 
 
