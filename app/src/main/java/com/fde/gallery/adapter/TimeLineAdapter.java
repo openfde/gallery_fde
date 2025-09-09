@@ -89,7 +89,8 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
                 .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
 //                .apply(new RequestOptions().frame(1000))
-                .format(DecodeFormat.PREFER_RGB_565)
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .frame(1000000)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop() //
                 .dontTransform() //
