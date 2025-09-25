@@ -20,11 +20,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 
-import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.fde.gallery.adapter.SectionsPagerAdapter;
@@ -57,6 +57,15 @@ public class MainActivity extends BaseActivity {
         context = this;
         initView();
 
+        triggerSystemMediaScan();
+    }
+
+    public void triggerSystemMediaScan() {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File externalDir = Environment.getExternalStorageDirectory();
+        Uri contentUri = Uri.fromFile(externalDir);
+        mediaScanIntent.setData(contentUri);
+        context.sendBroadcast(mediaScanIntent);
     }
 
     private void initView() {
@@ -75,6 +84,7 @@ public class MainActivity extends BaseActivity {
 //        readImages();
         LogTools.i("getAppVersionCode: "+ DeviceUtils.getAppVersionCode(context));
     }
+
 
     private void readImages() {
         File file = new File("/mnt/sdcard/");
