@@ -89,12 +89,14 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
         txtDelete.setOnClickListener(this);
         txtAllSelected.setOnClickListener(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
-
         recyclerView.setLayoutManager(gridLayoutManager);
 //        recyclerView.addItemDecoration(new SpacesItemDecoration(2));
         list = new ArrayList<>();
         pictureListAdapter = new PictureListAdapter(context, list, numberOfColumns, this);
+//        gridLayoutManager.setSpanCount(numberOfColumns);
         recyclerView.setAdapter(pictureListAdapter);
+        recyclerView.setItemAnimator(null);
+
         return true;
     }
 
@@ -103,10 +105,15 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
      * @param context
      */
     public void getAllImages(Context context) {
-        if (list != null) {
-            list.clear();
+
+//        if (list != null) {
+//            list.clear();
+//        }
+        if(list == null || list.isEmpty()){
+            LogTools.w("getAllImages........... ");
+            list.addAll(FileUtils.getAllImages(context));
         }
-        list.addAll(FileUtils.getAllImages(context));
+
         if (pictureListAdapter == null) {
             LogTools.i("pictureListAdapter is null");
         } else {
@@ -153,80 +160,80 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.txtShare:
-                try {
-                    ArrayList<Uri> imageUris = new ArrayList<>();
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).isSelected()) {
-                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
-                        }
-                    }
-                    int size = imageUris.size();
-                    if (size < 1) {
-                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
-                        return;
-                    } else if (size > 9) {
-                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
-                        return;
-                    }
-                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    intent.setType("image/*"); //set MIME type
-//                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
-                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
-                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case R.id.txtDelete:
-                List<Multimedia> tempList = new ArrayList<>();
-                delList = new ArrayList<>();
-
-                for (int i = 0; i < list.size(); i++) {
-                    Multimedia picture = list.get(i);
-                    if (picture.isSelected()) {
-                        delList.add(picture);
-                    } else {
-                        tempList.add(picture);
-                    }
-                }
-                if (delList == null || delList.size() < 1) {
-                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
-                    return;
-                }
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(R.string.is_delete);
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int pos) {
-
-                        list.clear();
-                        list.addAll(tempList);
-                        deleteImage();
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, null);
-                builder.show();
-
-                break;
-
-            case R.id.txtAllSelected:
-                isAllSelected = !isAllSelected;
-                for (int i = 0; i < list.size(); i++) {
-                    Multimedia picture = list.get(i);
-                    picture.setSelected(isAllSelected);
-                    list.set(i, picture);
-                }
-                pictureListAdapter.notifyDataSetChanged();
-                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
-                Drawable drawableTop = isAllSelected ? context.getDrawable(R.mipmap.icon_select_none) : context.getDrawable(R.mipmap.icon_select_all);
-                drawableTop.setBounds(0, 0, drawableTop.getIntrinsicWidth(), drawableTop.getIntrinsicHeight());
-                txtAllSelected.setCompoundDrawables(null, drawableTop, null, null);
-                break;
-        }
+//        switch (view.getId()) {
+//            case R.id.txtShare:
+//                try {
+//                    ArrayList<Uri> imageUris = new ArrayList<>();
+//                    for (int i = 0; i < list.size(); i++) {
+//                        if (list.get(i).isSelected()) {
+//                            imageUris.add(FileProvider.getUriForFile(context, context.getString(R.string.file_provider_authorities_debug), new File(list.get(i).getPath())));
+//                        }
+//                    }
+//                    int size = imageUris.size();
+//                    if (size < 1) {
+//                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+//                        return;
+//                    } else if (size > 9) {
+//                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
+//                        return;
+//                    }
+//                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+//                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                    intent.setType("image/*"); //set MIME type
+////                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
+//                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+//                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                break;
+//
+//            case R.id.txtDelete:
+//                List<Multimedia> tempList = new ArrayList<>();
+//                delList = new ArrayList<>();
+//
+//                for (int i = 0; i < list.size(); i++) {
+//                    Multimedia picture = list.get(i);
+//                    if (picture.isSelected()) {
+//                        delList.add(picture);
+//                    } else {
+//                        tempList.add(picture);
+//                    }
+//                }
+//                if (delList == null || delList.size() < 1) {
+//                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+//                    return;
+//                }
+//                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                builder.setTitle(R.string.is_delete);
+//                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int pos) {
+//
+//                        list.clear();
+//                        list.addAll(tempList);
+//                        deleteImage();
+//                    }
+//                });
+//                builder.setNegativeButton(R.string.cancel, null);
+//                builder.show();
+//
+//                break;
+//
+//            case R.id.txtAllSelected:
+//                isAllSelected = !isAllSelected;
+//                for (int i = 0; i < list.size(); i++) {
+//                    Multimedia picture = list.get(i);
+//                    picture.setSelected(isAllSelected);
+//                    list.set(i, picture);
+//                }
+//                pictureListAdapter.notifyDataSetChanged();
+//                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
+//                Drawable drawableTop = isAllSelected ? context.getDrawable(R.mipmap.icon_select_none) : context.getDrawable(R.mipmap.icon_select_all);
+//                drawableTop.setBounds(0, 0, drawableTop.getIntrinsicWidth(), drawableTop.getIntrinsicHeight());
+//                txtAllSelected.setCompoundDrawables(null, drawableTop, null, null);
+//                break;
+//        }
     }
 
     @SuppressLint("NewApi")

@@ -20,9 +20,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.View;
 
 import androidx.core.content.FileProvider;
 import androidx.viewpager.widget.ViewPager;
@@ -48,7 +50,10 @@ public class MainActivity extends BaseActivity {
     SectionsPagerAdapter sectionsPagerAdapter;
     Context context;
 
-
+    public static final String[] permissions = {
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.MANAGE_EXTERNAL_STORAGE"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +61,9 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         context = this;
         initView();
-
-        triggerSystemMediaScan();
     }
 
-    public void triggerSystemMediaScan() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File externalDir = Environment.getExternalStorageDirectory();
-        Uri contentUri = Uri.fromFile(externalDir);
-        mediaScanIntent.setData(contentUri);
-        context.sendBroadcast(mediaScanIntent);
-    }
+
 
     private void initView() {
         videoFragment = new VideoListFragment();

@@ -21,7 +21,9 @@
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
           android:minSdkVersion="33" />
-
+    <uses-permission
+        android:name="android.permission.MANAGE_MEDIA"
+        tools:ignore="ProtectedPermissions" />
     <application
         android:name=".GalleryApplication"
         android:allowBackup="true"
@@ -105,7 +107,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="@string/file_provider_authorities"
+            android:authorities="@string/file_provider_authorities_debug"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

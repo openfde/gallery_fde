@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
@@ -371,5 +372,13 @@ public class FileUtils {
         }
 
         return mediaId;
+    }
+
+    public static  void triggerSystemMediaScan(Context context,Uri contentUri) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        File externalDir = Environment.getExternalStorageDirectory();
+//        Uri contentUri = Uri.fromFile(externalDir);
+        mediaScanIntent.setData(contentUri);
+        context.sendBroadcast(mediaScanIntent);
     }
 }

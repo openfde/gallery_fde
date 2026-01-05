@@ -25,7 +25,7 @@ android {
     }
     version = appVersion
     defaultConfig {
-        applicationId "com.android.gallery3d"
+        applicationId "com.android.gallery3d.debug"
         minSdk 26
         targetSdk 34
         versionCode Integer.parseInt(new Date().format("yyyyMMdd"))
@@ -48,7 +48,7 @@ android {
         }
 
         debug {
-            applicationIdSuffix ".debug"
+            applicationIdSuffix ""
         }
     }
 
@@ -77,7 +77,7 @@ dependencies {
     implementation project(":photoview")
     implementation project(':imageeditlibrary')
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
-    implementation group: 'com.github.bumptech.glide', name: 'glide', version: '5.0.4'
+    implementation group: 'com.github.bumptech.glide', name: 'glide', version: '5.0.5'
 
 
 }

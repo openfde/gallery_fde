@@ -135,77 +135,77 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.txtShare:
-                try {
-                    ArrayList<Uri> imageUris = new ArrayList<>();
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).isSelected()) {
-                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
-                        }
-                    }
-                    int size = imageUris.size();
-                    if (size < 1) {
-                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
-                        return;
-                    } else if (size > 9) {
-                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
-                        return;
-                    }
-                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    intent.setType("image/*"); //set MIME type
-//                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
-                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
-                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case R.id.txtDelete:
-                List<Multimedia> tempList = new ArrayList<>();
-                delList = new ArrayList<>();
-
-                for (int i = 0; i < list.size(); i++) {
-                    Multimedia video = list.get(i);
-                    if (video.isSelected()) {
-                        delList.add(video);
-                    } else {
-                        tempList.add(video);
-                    }
-                }
-                if(delList ==null ||delList.size() <1){
-                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
-                    return;
-                }
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(R.string.is_delete);
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int pos) {
-
-                        list.clear();
-                        list.addAll(tempList);
-                        deleteVideo();
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, null);
-                builder.show();
-
-                break;
-
-            case R.id.txtAllSelected:
-                isAllSelected = !isAllSelected;
-                for (int i = 0; i < list.size(); i++) {
-                    Multimedia video = list.get(i);
-                    video.setSelected(isAllSelected);
-                    list.set(i, video);
-                }
-                videoListAdapter.notifyDataSetChanged();
-                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
-                break;
-        }
+//        switch (view.getId()) {
+//            case R.id.txtShare:
+//                try {
+//                    ArrayList<Uri> imageUris = new ArrayList<>();
+//                    for (int i = 0; i < list.size(); i++) {
+//                        if (list.get(i).isSelected()) {
+//                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
+//                        }
+//                    }
+//                    int size = imageUris.size();
+//                    if (size < 1) {
+//                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+//                        return;
+//                    } else if (size > 9) {
+//                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
+//                        return;
+//                    }
+//                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+//                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                    intent.setType("image/*"); //set MIME type
+////                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
+//                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+//                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                break;
+//
+//            case R.id.txtDelete:
+//                List<Multimedia> tempList = new ArrayList<>();
+//                delList = new ArrayList<>();
+//
+//                for (int i = 0; i < list.size(); i++) {
+//                    Multimedia video = list.get(i);
+//                    if (video.isSelected()) {
+//                        delList.add(video);
+//                    } else {
+//                        tempList.add(video);
+//                    }
+//                }
+//                if(delList ==null ||delList.size() <1){
+//                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
+//                    return;
+//                }
+//                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//                builder.setTitle(R.string.is_delete);
+//                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int pos) {
+//
+//                        list.clear();
+//                        list.addAll(tempList);
+//                        deleteVideo();
+//                    }
+//                });
+//                builder.setNegativeButton(R.string.cancel, null);
+//                builder.show();
+//
+//                break;
+//
+//            case R.id.txtAllSelected:
+//                isAllSelected = !isAllSelected;
+//                for (int i = 0; i < list.size(); i++) {
+//                    Multimedia video = list.get(i);
+//                    video.setSelected(isAllSelected);
+//                    list.set(i, video);
+//                }
+//                videoListAdapter.notifyDataSetChanged();
+//                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
+//                break;
+//        }
     }
 
     @SuppressLint("NewApi")

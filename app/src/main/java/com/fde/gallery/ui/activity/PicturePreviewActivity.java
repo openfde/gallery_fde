@@ -90,6 +90,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
         if (picture == null) {
             Uri imageUri = getIntent().getData();
+            FileUtils.triggerSystemMediaScan(context,imageUri);
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
             String realPath = StringUtils.ToString(documentFile.getUri());
             if ("".equals(realPath)) {
@@ -294,66 +295,66 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.txtMore:
-                if (!popupWindow.isShowing()) {
-                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM | Gravity.RIGHT, 10, 10);
-                }
-                break;
-
-            case R.id.txtDelete:
-                picturePreviewPersenter.showDelDlg();
-                break;
-
-
-            case R.id.txtEdit:
-//                MultiTransformation mation3 = new MultiTransformation(new CircleCrop());
-//                RequestOptions options1 = new RequestOptions();
-//                options1.override(200,200);
-//                MultiTransformation mation1 = new MultiTransformation(new CenterCrop());
-////                MultiTransformation mation3 = new MultiTransformation(new GranularRoundedCorners());
-//                Glide.with(context) // replace 'this' with your context
-//                        .load(picture.getPath())
-////                        .apply(RequestOptions.bitmapTransform(mation1))
-////                        .apply(RequestOptions.bitmapTransform(new MultiTransformation<Bitmap>(new GrayscaleTransformation())))
-////                        .apply(options1)
-//                        .into(imageView);
-
-
-//                picturePreviewPersenter.startCrop();
-                picturePreviewPersenter.editImageClick();
-                break;
-
-            case R.id.imgLeft:
-                Multimedia prePic = picturePreviewPersenter.getPrePic();
-                showPic(prePic);
-                break;
-
-            case R.id.imgRight:
-                Multimedia nextPic = picturePreviewPersenter.getNextPic();
-                showPic(nextPic);
-                break;
-
-            case R.id.txtDetails:
-                picturePreviewPersenter.showDetailsDlg();
-                popupWindow.dismiss();
-                break;
-
-            case R.id.txtSetWallpage:
-                picturePreviewPersenter.setWallpage(1);
-                Toast.makeText(context, R.string.set_wallpage_success, Toast.LENGTH_SHORT).show();
-                popupWindow.dismiss();
-                break;
-
-            case R.id.txtSetWallpageLock:
-                picturePreviewPersenter.setWallpage(2);
-                popupWindow.dismiss();
-                break;
-
-            default:
-
-                break;
-        }
+//        switch (view.getId()) {
+//            case R.id.txtMore:
+//                if (!popupWindow.isShowing()) {
+//                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM | Gravity.RIGHT, 10, 10);
+//                }
+//                break;
+//
+//            case R.id.txtDelete:
+//                picturePreviewPersenter.showDelDlg();
+//                break;
+//
+//
+//            case R.id.txtEdit:
+////                MultiTransformation mation3 = new MultiTransformation(new CircleCrop());
+////                RequestOptions options1 = new RequestOptions();
+////                options1.override(200,200);
+////                MultiTransformation mation1 = new MultiTransformation(new CenterCrop());
+//////                MultiTransformation mation3 = new MultiTransformation(new GranularRoundedCorners());
+////                Glide.with(context) // replace 'this' with your context
+////                        .load(picture.getPath())
+//////                        .apply(RequestOptions.bitmapTransform(mation1))
+//////                        .apply(RequestOptions.bitmapTransform(new MultiTransformation<Bitmap>(new GrayscaleTransformation())))
+//////                        .apply(options1)
+////                        .into(imageView);
+//
+//
+////                picturePreviewPersenter.startCrop();
+//                picturePreviewPersenter.editImageClick();
+//                break;
+//
+//            case R.id.imgLeft:
+//                Multimedia prePic = picturePreviewPersenter.getPrePic();
+//                showPic(prePic);
+//                break;
+//
+//            case R.id.imgRight:
+//                Multimedia nextPic = picturePreviewPersenter.getNextPic();
+//                showPic(nextPic);
+//                break;
+//
+//            case R.id.txtDetails:
+//                picturePreviewPersenter.showDetailsDlg();
+//                popupWindow.dismiss();
+//                break;
+//
+//            case R.id.txtSetWallpage:
+//                picturePreviewPersenter.setWallpage(1);
+//                Toast.makeText(context, R.string.set_wallpage_success, Toast.LENGTH_SHORT).show();
+//                popupWindow.dismiss();
+//                break;
+//
+//            case R.id.txtSetWallpageLock:
+//                picturePreviewPersenter.setWallpage(2);
+//                popupWindow.dismiss();
+//                break;
+//
+//            default:
+//
+//                break;
+//        }
     }
 
     public Multimedia findPicture(List<Multimedia> listM, String path) {

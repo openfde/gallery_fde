@@ -28,6 +28,7 @@ import com.fde.gallery.MainActivity;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.StringUtils;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -63,6 +64,7 @@ public class VideoPlayActivity extends BaseActivity {
         videoData = (Multimedia) getIntent().getSerializableExtra("video_data");
         if(videoData == null){
             Uri imageUri = getIntent().getData();
+            FileUtils.triggerSystemMediaScan(context,imageUri);
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
             String realPath = StringUtils.ToString(documentFile.getUri());
             videoData = new Multimedia();

@@ -19,6 +19,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
@@ -72,11 +74,13 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
     @Override
     public void onViewAttachedToWindow(@NonNull PictureListViewHolder holder) {
         super.onViewAttachedToWindow(holder);
+//        LogTools.w("onViewAttachedToWindow...........");
         holder.rootView.post(new Runnable() {
             @Override
             public void run() {
                 if (holder.rootView.getParent() != null) {
                     int width = ((RecyclerView) holder.rootView.getParent()).getWidth();
+//                    LogTools.w("onViewAttachedToWindow...........width "+width);
                     if (width != 0) {
                         // get RecyclerView width
                         // calc RecyclerView width and height
@@ -94,19 +98,36 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
     }
 
     @Override
+    public void onBindViewHolder(@NonNull PictureListViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty() && payloads.contains(1)) {
+//            holder.updateSize(itemSizePx);
+            return; // ⭐ 不重新 Glide load
+        }
+        onBindViewHolder(holder, position);
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull PictureListViewHolder holder, @SuppressLint("RecyclerView")  final int position) {
 //        holder.imageView.setImageURI(Uri.parse(list.get(position).getPath()));
         Multimedia picture = list.get(position);
-        Glide.with(context)
-                .load(Uri.fromFile(new File(list.get(position).getPath())))
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
-                .format(DecodeFormat.PREFER_RGB_565)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop() // imageview size
-                .dontTransform() // forbid resize
-                .dontAnimate()
-                .into(holder.imageView);
+
+        Uri uri = Uri.fromFile(new File(list.get(position).getPath()));
+        String url = uri.getPath();
+        if (!TextUtils.equals((String) holder.imageView.getTag(), url)) {
+            holder.imageView.setTag(url);
+            Glide.with(context)
+                    .load(uri)
+//                    .placeholder(R.mipmap.ic_launcher)
+//                    .error(R.mipmap.ic_launcher)
+                    .format(DecodeFormat.PREFER_RGB_565)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop() // imageview size
+                    .dontTransform() // forbid resize
+                    .dontAnimate()
+                    .apply(RequestOptions.noAnimation())
+                    .into(holder.imageView);
+        }
+
 
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override

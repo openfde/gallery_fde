@@ -66,12 +66,27 @@ public class PictureListFragment extends BaseFragment {
         pictureListPersenter = new PictureListPersenter(this, view);
         pictureListPersenter.initView();
 
-        if (Build.VERSION.SDK_INT >= 23) {
-            int iGetPerm = context.checkSelfPermission(permissions[1]);
-            if (iGetPerm == -1) {
-                requestPermissions(permissions, 888);
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= 23) {
+//            int iGetPerm = context.checkSelfPermission(permissions[2]);
+//            if (iGetPerm == -1) {
+//                requestPermissions(permissions, 888);
+//            }
+//        }
+
+//        View root = getActivity().getWindow().getDecorView();
+//        root.addOnLayoutChangeListener((v,
+//                                        left, top, right, bottom,
+//                                        oldLeft, oldTop, oldRight, oldBottom) -> {
+//            int newW = right - left;
+//            int newH = bottom - top;
+//            int oldW = oldRight - oldLeft;
+//            int oldH = oldBottom - oldTop;
+//
+//            if (newW != oldW || newH != oldH) {
+//                LogTools.w("newW "+newW +",oldW : "+oldW);
+//                pictureListPersenter.getAllImages(context);
+//            }
+//        });
 
         return view;
     }
@@ -104,6 +119,7 @@ public class PictureListFragment extends BaseFragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        LogTools.w("onRequestPermissionsResult requestCode: "+requestCode);
         pictureListPersenter.getAllImages(context);
     }
 }
