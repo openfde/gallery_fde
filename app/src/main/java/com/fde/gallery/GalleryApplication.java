@@ -23,6 +23,5 @@ public class GalleryApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LogTools.i("-----------GalleryApplication---------");
     }
 }

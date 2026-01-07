@@ -12,21 +12,28 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rootView"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_height="wrap_content">
+    android:paddingVertical="@dimen/activity_vertical_margin">
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/item_size"
+        android:layout_height="@dimen/item_size"
+        android:layout_margin="@dimen/item_spacing"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/txtTitle"
-        android:layout_margin="@dimen/activity_vertical_margin"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="@dimen/activity_vertical_margin" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-</LinearLayout>
+</RelativeLayout>

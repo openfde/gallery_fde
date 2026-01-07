@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -21,13 +20,27 @@
     tools:context=".ui.fragment.PictureListFragment">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_weight="1"
-        android:id="@+id/recyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_gravity="center|top"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
-    <include layout="@layout/layout_bottom_button"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
+            android:scrollbars="none" />
+
+        <com.fde.gallery.view.CustomScrollBarView
+            android:id="@+id/scrollBar"
+            android:layout_width="16dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:padding="4dp" />
+
+    </FrameLayout>
+
+    <include layout="@layout/layout_bottom_button" />
 
 </LinearLayout>

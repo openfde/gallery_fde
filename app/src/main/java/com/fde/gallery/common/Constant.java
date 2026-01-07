@@ -25,5 +25,7 @@ public class Constant {
 
     public static final int ACTION_REQUEST_EDITIMAGE = 9;
 
+    public static final int ACTION_REQUEST_UPDATE = 200;
+
     public static final String SP_STR = "open_fde";
 }

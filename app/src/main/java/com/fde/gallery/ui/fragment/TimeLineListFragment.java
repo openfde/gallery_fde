@@ -85,7 +85,7 @@ public class TimeLineListFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         LogTools.i("onActivityResult requestCode: "+requestCode +" ,resultCode:  "+resultCode);
-        if(requestCode == Constant.REQUEST_DELETE_PHOTO){
+        if(requestCode == Constant.REQUEST_DELETE_PHOTO ||requestCode == Constant.ACTION_REQUEST_UPDATE){
             timeLinePersenter.getAllMedia(context);
         }else {
             timeLinePersenter.deleteMultiMedia();

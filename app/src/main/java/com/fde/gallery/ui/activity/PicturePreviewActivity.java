@@ -161,7 +161,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogTools.i("------PicturePreviewActivity-----onDestroy------");
     }
 
     @Override
@@ -284,6 +283,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
                 Glide.with(context) // replace 'this' with your context
                         .load(multimedia.getPath())
+                        .error(R.mipmap.ic_launcher)
                         .fitCenter()
                         .into(imageView);
             } catch (Exception e) {

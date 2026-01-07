@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -29,9 +28,10 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabTextColor="@color/colorPrimary"
+            android:background="@color/mainbg"
+            app:tabIndicatorFullWidth="false"
             app:tabSelectedTextColor="@color/colorPrimaryDark"
-            android:background="@color/mainbg" />
+            app:tabTextColor="@color/colorPrimary" />
     </com.google.android.material.appbar.AppBarLayout>
 
 

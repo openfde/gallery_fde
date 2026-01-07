@@ -89,7 +89,6 @@ public class BaseFragment extends Fragment {
                 isFragmentVisible = true;
             }
         }else{
-            LogTools.i("----rootView is null--------");
         }
         super.onViewCreated(isReuseView ? rootView : view, savedInstanceState);
     }

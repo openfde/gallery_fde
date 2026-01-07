@@ -3,46 +3,45 @@ package com.fde.gallery.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DecodeFormat;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.fde.gallery.R;
+import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.bean.MultGroup;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
-import com.fde.gallery.ui.activity.PicturePreviewActivity;
-import com.fde.gallery.ui.activity.VideoPlayActivity;
+import com.fde.gallery.ui.activity.TimeLineActivity;
 import com.fde.gallery.utils.LogTools;
-import com.fde.gallery.utils.StringUtils;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapter.TimeLineListViewHolder> {
     Context context;
+    BaseFragment baseFragment;
     List<MultGroup> list;
     int numberOfColumns;
     ViewEvent viewEvent;
+    int itemSizePx;
+    static final int PAYLOAD_SIZE = 1;
 
-    TimeLineAdapter timeLineAdapter;
-
-    public TimeLineListAdapter(Context context, List<MultGroup> list, int numberOfColumns, ViewEvent viewEvent) {
+    public TimeLineListAdapter(Context context, BaseFragment baseFragment, List<MultGroup> list, int numberOfColumns) {
         this.context = context;
         this.list = list;
         this.numberOfColumns = numberOfColumns;
-        this.viewEvent = viewEvent;
+//        this.viewEvent = viewEvent;
+        this.baseFragment = baseFragment;
     }
 
     @NonNull
@@ -54,15 +53,32 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, @SuppressLint("RecyclerView")  final int position) {
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty() && payloads.contains(PAYLOAD_SIZE)) {
+            holder.updateSize(itemSizePx);
+            return;
+        }
+        onBindViewHolder(holder, position);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         MultGroup multGroup = list.get(position);
-        holder.txtTitle.setText(multGroup.getTitle());
+        holder.bind(multGroup, itemSizePx);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
-        timeLineAdapter = new TimeLineAdapter(context,multGroup.getList(),position,numberOfColumns,viewEvent);
-        holder.recyclerView.setLayoutManager(gridLayoutManager);
-        holder.recyclerView.setAdapter(timeLineAdapter);
-
+        holder.rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("title", multGroup.getTitle());
+                Bundle b = new Bundle();
+                b.putSerializable("picList", (Serializable) multGroup.getList());
+                intent.putExtras(b);
+                intent.setClass(context, TimeLineActivity.class);
+                baseFragment.getActivity().startActivityFromFragment(baseFragment,intent, Constant.ACTION_REQUEST_UPDATE);
+//                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -70,16 +86,50 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
         return list.size();
     }
 
+
+    public void updateItemSize(int sizePx) {
+        if (itemSizePx != sizePx) {
+            itemSizePx = sizePx;
+            notifyItemRangeChanged(0, getItemCount(), PAYLOAD_SIZE);
+        }
+    }
+
     class TimeLineListViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout rootView;
-        RecyclerView recyclerView;
+        RelativeLayout rootView;
+        ImageView imageView;
         TextView txtTitle;
+        String path;
 
         public TimeLineListViewHolder(@NonNull View itemView) {
             super(itemView);
-            rootView = (LinearLayout) itemView.findViewById(R.id.rootView);
-            recyclerView = (RecyclerView) itemView.findViewById(R.id.recyclerView);
+            rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
+            imageView = (ImageView) itemView.findViewById(R.id.imageView);
             txtTitle = (TextView) itemView.findViewById(R.id.txtTitle);
+        }
+
+        void bind(MultGroup item, int sizePx) {
+            updateSize(sizePx);
+
+            if (!item.getList().get(0).getPath().equals(path)) {
+                path = item.getList().get(0).getPath();
+                Glide.with(imageView)
+                        .load(path)
+                        .error(R.mipmap.ic_launcher)
+                        .thumbnail(0.1f) // ⭐ 首帧快
+                        .dontAnimate()
+                        .centerCrop()
+                        .into(imageView);
+                txtTitle.setText(item.getTitle());
+            }
+        }
+
+        void updateSize(int sizePx) {
+            ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+            if (lp.width != sizePx) {
+                lp.width = sizePx;
+                lp.height = sizePx;
+                imageView.setLayoutParams(lp);
+            }
         }
     }
 }

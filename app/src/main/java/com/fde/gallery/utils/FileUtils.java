@@ -31,7 +31,6 @@ public class FileUtils {
         File file = new File(path);
         if (file.exists() && file.isFile()) {
             boolean isSuccess = file.delete();
-            LogTools.i("isSuccess " + isSuccess);
             return isSuccess;
         }
         return false;
@@ -98,12 +97,13 @@ public class FileUtils {
         List<Multimedia> list = new ArrayList<>();
         try {
             // Query the content provider
+            Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             Cursor cursor = context.getContentResolver().query(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // The content URI of the words table
+                    uri, // The content URI of the words table
                     null,
                     null,         // Selection criteria
                     null,         // Selection criteria
-                    MediaStore.Images.Media.DATE_ADDED + " desc");        // The sort order for the returned rows
+                    MediaStore.Images.Media.DATE_MODIFIED + " desc");        // The sort order for the returned rows
 
             if (cursor != null) {
                 int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
@@ -118,6 +118,8 @@ public class FileUtils {
 
                     while (cursor.moveToNext()) {
                         Multimedia picture = new Multimedia();
+                        long id = cursor.getLong(idColumn);
+                        Uri contentUri = ContentUris.withAppendedId(uri, id);
                         picture.setId(cursor.getLong(idColumn));
                         picture.setPath(cursor.getString(dataColumn));
                         long date = cursor.getLong(dateTakenColumn);
@@ -137,6 +139,7 @@ public class FileUtils {
                         picture.setSelected(false);
                         picture.setShowCheckbox(false);
                         picture.setMediaType(Constant.MEDIA_PIC);
+//                        picture.setUri(contentUri);
                         if (w > 0) {
                             list.add(picture);
                         }
@@ -186,7 +189,6 @@ public class FileUtils {
                     int ww = cursorQ.getInt(widthColumn);
                     int hh = cursorQ.getInt(heightColumn);
                     String path = cursorQ.getString(dataColumn);
-                    LogTools.i("cursorQ ww "+ww + " , hh "+hh + ", path "+path);
                 }
                 cursorQ.close();
             } catch (Exception e) {
@@ -206,12 +208,13 @@ public class FileUtils {
      */
     public static List<Multimedia> getAllVideos(Context context) {
         List<Multimedia> list = new ArrayList<>();
+        Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(
-                MediaStore.Video.Media.EXTERNAL_CONTENT_URI, // The content URI of the words table
+                uri, // The content URI of the words table
                 null,   // The columns to return for each row
                 null,         // Selection criteria
                 null,         // Selection criteria
-                MediaStore.Images.Media.DATE_ADDED + " desc");        // The sort order for the returned rows
+                MediaStore.Images.Media.DATE_MODIFIED + " desc");        // The sort order for the returned rows
 
         if (cursor != null) {
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID);
@@ -226,7 +229,9 @@ public class FileUtils {
 
             while (cursor.moveToNext()) {
                 Multimedia video = new Multimedia();
-                video.setId(cursor.getLong(idColumn));
+                long id = cursor.getLong(idColumn);
+                Uri contentUri = ContentUris.withAppendedId(uri, id);
+                video.setId(id);
                 video.setPath(cursor.getString(dataColumn));
                 video.setSize(cursor.getLong(sizeColumn));
                 video.setDuration(cursor.getInt(durationColumn));
@@ -234,6 +239,7 @@ public class FileUtils {
                 long date = cursor.getLong(dateTakenColumn);
                 video.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
                 video.setMediaType(Constant.MEDIA_VIDEO);
+//                video.setUri(contentUri);
                 list.add(video);
             }
 //            LogTools.i("video list size " + list.toString());
@@ -249,7 +255,7 @@ public class FileUtils {
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection, null, null,
-                MediaStore.Images.Media.DATE_ADDED + " DESC");
+                MediaStore.Images.Media.DATE_MODIFIED + " DESC");
 
         if (cursor != null && cursor.moveToFirst()) {
             int imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
