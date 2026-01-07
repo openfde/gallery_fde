@@ -39,12 +39,12 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
     int numberOfColumns;
 
     ViewEvent viewEvent;
+    int itemSizePx;
+    static final int PAYLOAD_SIZE = 1;
 
-    public TimeLineAdapter(Context context, List<Multimedia> list, int groupPos,int numberOfColumns, ViewEvent viewEvent) {
+    public TimeLineAdapter(Context context, List<Multimedia> list, ViewEvent viewEvent) {
         this.context = context;
         this.list = list;
-        this.groupPos = groupPos;
-        this.numberOfColumns = numberOfColumns;
         this.viewEvent = viewEvent;
     }
 
@@ -56,50 +56,21 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
         return holder;
     }
 
-    @Override
-    public void onViewAttachedToWindow(@NonNull TimeLineAdapter.TimeLineListViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        holder.rootView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (holder.rootView.getParent() != null) {
-                    int width = ((RecyclerView) holder.rootView.getParent()).getWidth();
-                    if (width != 0) {
-                        // get RecyclerView width
-                        // calc RecyclerView width and height
-                        int size = width / numberOfColumns; // replace 3 with the number of columns
-                        //  // set item width and height
-                        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-                        layoutParams.width = size;
-                        layoutParams.height = size;
-                        holder.itemView.setLayoutParams(layoutParams);
-                    }
-                }
-            }
-        });
-    }
 
+    @Override
+    public void onBindViewHolder(@NonNull TimeLineListViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty() && payloads.contains(PAYLOAD_SIZE)) {
+            holder.updateSize(itemSizePx);
+            return;
+        }
+        onBindViewHolder(holder, position);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull TimeLineListViewHolder holder,@SuppressLint("RecyclerView")  final  int position) {
         Multimedia multimedia = list.get(position);
-        Glide.with(context)
-//                .load(Uri.fromFile(new File(list.get(position).getPath())))
-                .load(multimedia.getPath())
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
-//                .apply(new RequestOptions().frame(1000))
-                .format(DecodeFormat.PREFER_ARGB_8888)
-                .frame(1000000)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop() //
-                .dontTransform() //
-                .dontAnimate()
-                .into(holder.imageView);
-//        Glide.with(context) // replace 'this' with your context
-//                .load(list.get(position).getPath())
-//                .apply(new RequestOptions().frame(1000)) // frame at 1 second into the video
-//                .into(holder.imageView);
+        holder.bind(multimedia, itemSizePx);
+
         holder.checkBox.setVisibility(multimedia.isShowCheckbox() ? View.VISIBLE : View.GONE);
         holder.checkBox.setChecked(multimedia.isSelected());
         holder.txtDate.setText(StringUtils.conversionTime(1000* multimedia.getDateTaken()));
@@ -108,7 +79,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
             @Override
             public void onClick(View view) {
                 Multimedia multimedia = list.get(position);
-                LogTools.i("multimedia" + multimedia.toString());
                 Intent intent = new Intent();
                 if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
                     SPUtils.putUserInfo(context,"curPicPath",multimedia.getPath());
@@ -145,12 +115,25 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
         return list.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return  list.get(position).getId();
+    }
+
+    public void updateItemSize(int sizePx) {
+        if (itemSizePx != sizePx) {
+            itemSizePx = sizePx;
+            notifyItemRangeChanged(0, getItemCount(), PAYLOAD_SIZE);
+        }
+    }
+
     class TimeLineListViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         RelativeLayout rootView;
 
         TextView txtDate;
         CheckBox checkBox;
+        String path;
 
         public TimeLineListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -158,6 +141,35 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
             txtDate =(TextView) itemView.findViewById(R.id.txtDate);
+        }
+
+        void bind(Multimedia item, int sizePx) {
+            updateSize(sizePx);
+
+            if (!item.getPath().equals(path)) {
+                path = item.getPath();
+
+                Glide.with(context)
+                        .load(item.getPath())
+                        .format(DecodeFormat.PREFER_ARGB_8888)
+                        .error(R.mipmap.ic_launcher)
+                        .frame(1000000)
+                        .thumbnail(0.1f)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop() // 裁剪图片以适应ImageView的大小
+                        .dontTransform() // 禁用任何额外的转换
+                        .dontAnimate()
+                        .into(imageView);
+            }
+        }
+
+        void updateSize(int sizePx) {
+            ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+            if (lp.width != sizePx) {
+                lp.width = sizePx;
+                lp.height = sizePx;
+                imageView.setLayoutParams(lp);
+            }
         }
     }
 }

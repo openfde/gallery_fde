@@ -39,6 +39,8 @@ import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
+import com.fde.gallery.view.CustomScrollBarView;
+import com.fde.gallery.view.RecyclerScrollBinder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +58,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     List<Multimedia> list;
     List<Multimedia> delList;
     int numberOfColumns = 3;
-
+    GridLayoutManager gridLayoutManager;
     boolean isAllSelected;
 
     boolean isShowBottomBtn = false;
@@ -76,16 +78,41 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
         txtShare = (TextView) view.findViewById(R.id.txtShare);
         txtDelete = (TextView) view.findViewById(R.id.txtDelete);
         txtAllSelected = (TextView) view.findViewById(R.id.txtAllSelected);
+        CustomScrollBarView bar = (CustomScrollBarView) view.findViewById(R.id.scrollBar);
         txtShare.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtAllSelected.setOnClickListener(this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
+        gridLayoutManager = new GridLayoutManager(context, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
+        listenWindowResize();
 //        recyclerView.addItemDecoration(new SpacesItemDecoration(2));  // Here 16 is the space size
         list = new ArrayList<>();
         videoListAdapter = new VideoListAdapter(context, list, numberOfColumns, this);
+        videoListAdapter.setHasStableIds(true);
         recyclerView.setAdapter(videoListAdapter);
+        recyclerView.setNestedScrollingEnabled(false);
+        RecyclerScrollBinder.bind(recyclerView, bar);
         return true;
+    }
+
+    private void listenWindowResize() {
+        View root = baseFragment.getActivity().getWindow().getDecorView();
+        root.addOnLayoutChangeListener(
+                (v, l, t, r, b, ol, ot, orr, ob) -> {
+                    int newW = r - l;
+                    int oldW = orr - ol;
+                    if (newW != oldW) {
+                        onWindowWidthChanged(newW);
+                    }
+                });
+    }
+
+    private void onWindowWidthChanged(int widthPx) {
+        int minItemPx = DeviceUtils.dpToPx(context, 100);
+        int span = Math.max(1, widthPx / minItemPx);
+        gridLayoutManager.setSpanCount(span);
+        int itemSize = widthPx / span;
+        videoListAdapter.updateItemSize(itemSize);
     }
 
     /**
@@ -175,7 +202,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                         tempList.add(video);
                     }
                 }
-                if(delList ==null ||delList.size() <1){
+                if (delList == null || delList.size() < 1) {
                     baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
                     return;
                 }

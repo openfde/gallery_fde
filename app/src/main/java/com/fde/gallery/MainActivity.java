@@ -15,6 +15,7 @@
  */
 package com.fde.gallery;
 
+import android.app.ComponentCaller;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,6 +25,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -117,4 +120,5 @@ public class MainActivity extends BaseActivity {
             cursor.close();
         }
     }
+
 }

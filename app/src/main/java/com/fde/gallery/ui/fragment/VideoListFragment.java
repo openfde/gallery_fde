@@ -29,6 +29,7 @@ import com.fde.gallery.R;
 import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.ui.logic.VideoListPersenter;
+import com.fde.gallery.utils.LogTools;
 
 import java.util.List;
 

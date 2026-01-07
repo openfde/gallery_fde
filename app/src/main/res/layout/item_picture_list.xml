@@ -13,37 +13,29 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:id="@+id/rootView"
     android:gravity="center"
     android:layout_gravity="center"
     android:background="@color/white"
     android:orientation="vertical">
 
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_marginRight="2dp"
-      android:layout_marginTop="2dp"
-      android:layout_centerInParent="true"
-      android:layout_height="match_parent">
 
-      <ImageView
-          android:id="@+id/imageView"
-          android:layout_width="match_parent"
-          android:scaleType="centerCrop"
-          android:layout_height="match_parent"/>
-
-  </LinearLayout>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/item_size"
+        android:scaleType="centerCrop"
+        android:layout_height="@dimen/item_size"/>
 
 
     <CheckBox
         android:id="@+id/checkBox"
         android:visibility="gone"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-</RelativeLayout>
+
+</FrameLayout>

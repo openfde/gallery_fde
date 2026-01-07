@@ -18,6 +18,7 @@ package com.fde.gallery.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +46,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     List<Multimedia> list;
     Context context;
     int numberOfColumns;
-
     ViewEvent viewEvent;
+    int itemSizePx;
+    static final int PAYLOAD_SIZE = 1;
 
     public VideoListAdapter(Context context, List<Multimedia> list, int numberOfColumns, ViewEvent viewEvent) {
         this.list = list;
@@ -63,59 +65,43 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return holder;
     }
 
+
     @Override
-    public void onViewAttachedToWindow(@NonNull VideoListViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-        holder.rootView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (holder.rootView.getParent() != null) {
-                    int width = ((RecyclerView) holder.rootView.getParent()).getWidth();
-                    if (width != 0) {
-                        // get RecyclerView width
-                        // calc RecyclerView width and height
-                        int size = width / numberOfColumns; // replace 3 with the number of columns
-                        // set item width and height
-                        ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-                        layoutParams.width = size;
-                        layoutParams.height = size;
-                        holder.itemView.setLayoutParams(layoutParams);
-                    }
-                }
-            }
-        });
+    public void onBindViewHolder(@NonNull VideoListViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty() && payloads.contains(PAYLOAD_SIZE)) {
+            holder.updateSize(itemSizePx);
+            return;
+        }
+        onBindViewHolder(holder, position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull VideoListViewHolder holder,@SuppressLint("RecyclerView")  final int position) {
         Multimedia video = list.get(position);
-        Glide.with(context)
-//                .load(Uri.fromFile(new File(list.get(position).getPath())))
-                .load(video.getPath())
-                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
-//                .apply(new RequestOptions().frame(1000))
-                .format(DecodeFormat.PREFER_ARGB_8888)
-                .frame(1000000)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop() // 裁剪图片以适应ImageView的大小
-                .dontTransform() // 禁用任何额外的转换
-                .dontAnimate()
-                .into(holder.imageView);
-//        Glide.with(context) // replace 'this' with your context
-//                .load(list.get(position).getPath())
-//                .apply(new RequestOptions().frame(1000)) // frame at 1 second into the video
+        holder.bind(video, itemSizePx);
+
+//        Glide.with(context)
+////                .load(Uri.fromFile(new File(list.get(position).getPath())))
+//                .load(video.getPath())
+//                .placeholder(R.mipmap.ic_launcher)
+//                .error(R.mipmap.ic_launcher)
+////                .apply(new RequestOptions().frame(1000))
+//                .format(DecodeFormat.PREFER_ARGB_8888)
+//                .frame(1000000)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                .centerCrop() // 裁剪图片以适应ImageView的大小
+//                .dontTransform() // 禁用任何额外的转换
+//                .dontAnimate()
 //                .into(holder.imageView);
-        holder.checkBox.setVisibility(video.isShowCheckbox() ? View.VISIBLE : View.GONE);
-        holder.checkBox.setChecked(video.isSelected());
-
-
-
+//        holder.checkBox.setVisibility(video.isShowCheckbox() ? View.VISIBLE : View.GONE);
+//        holder.checkBox.setChecked(video.isSelected());
+//
+//
+//
         holder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Multimedia video = list.get(position);
-                LogTools.i("video" + video.toString());
                 Intent intent = new Intent();
                 intent.putExtra("video_data", video);
                 intent.setClass(context, VideoPlayActivity.class);
@@ -145,17 +131,64 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         return list.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return  list.get(position).getId();
+    }
+
+    public void updateItemSize(int sizePx) {
+        if (itemSizePx != sizePx) {
+            itemSizePx = sizePx;
+            notifyItemRangeChanged(0, getItemCount(), PAYLOAD_SIZE);
+        }
+    }
+
     class VideoListViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         RelativeLayout rootView;
-
         CheckBox checkBox;
-
+        String path;
         public VideoListViewHolder(@NonNull View itemView) {
             super(itemView);
             rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
             checkBox = (CheckBox) itemView.findViewById(R.id.checkBox);
+        }
+
+        void bind(Multimedia item, int sizePx) {
+            updateSize(sizePx);
+
+            if (!item.getPath().equals(path)) {
+                path = item.getPath();
+//                Glide.with(imageView)
+//                        .load(item.getPath())
+//                        .thumbnail(0.1f) // ⭐ 首帧快
+//                        .dontAnimate()
+//                        .centerCrop()
+//                        .into(imageView);
+                Glide.with(context)
+//                .load(Uri.fromFile(new File(list.get(position).getPath())))
+                .load(item.getPath())
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.mipmap.ic_launcher)
+//                .apply(new RequestOptions().frame(1000))
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .frame(1000000)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop() // 裁剪图片以适应ImageView的大小
+                .dontTransform() // 禁用任何额外的转换
+                .dontAnimate()
+                .into(imageView);
+            }
+        }
+
+        void updateSize(int sizePx) {
+            ViewGroup.LayoutParams lp = imageView.getLayoutParams();
+            if (lp.width != sizePx) {
+                lp.width = sizePx;
+                lp.height = sizePx;
+                imageView.setLayoutParams(lp);
+            }
         }
     }
 

@@ -15,6 +15,7 @@
  */
 package com.fde.gallery.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MultGroup {

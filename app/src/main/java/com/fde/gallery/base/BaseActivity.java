@@ -22,6 +22,8 @@ import android.content.DialogInterface;
 import android.content.IntentSender;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,7 +36,7 @@ import com.fde.gallery.R;
 import com.fde.gallery.common.Constant;
 
 public class BaseActivity extends AppCompatActivity {
-    protected  Context context ;
+    protected Context context;
 
     private AlertDialog mAlertDialog;
 
@@ -111,6 +113,20 @@ public class BaseActivity extends AppCompatActivity {
         builder.setPositiveButton(positiveText, onPositiveButtonClickListener);
         builder.setNegativeButton(negativeText, onNegativeButtonClickListener);
         mAlertDialog = builder.show();
+    }
+
+    private Toast toast;
+
+    public void showShortToast(String text) {
+        if (!TextUtils.isEmpty(text)) {
+            if (toast != null) {
+                toast.cancel();
+                toast = null;
+            }
+            toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+            toast.show();
+
+        }
     }
 
 

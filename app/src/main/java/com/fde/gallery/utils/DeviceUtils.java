@@ -27,8 +27,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import com.fde.gallery.base.BaseActivity;
-
 
 /**
  * Created by xudq on 16/5/11.
@@ -165,5 +163,9 @@ public class DeviceUtils {
         }
         return versionCode;
 
+    }
+
+    public static int dpToPx(Context context,int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 }

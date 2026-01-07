@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,6 +44,8 @@ import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
+import com.fde.gallery.view.CustomScrollBarView;
+import com.fde.gallery.view.RecyclerScrollBinder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
+public class TimeLineListPersenter {
     Context context;
     View view;
     RecyclerView recyclerView;
@@ -63,14 +66,7 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
     List<MultGroup> listGroup;
     List<Multimedia> delList;
     int numberOfColumns = 3;
-
-    LinearLayout layoutBottomBtn;
-    TextView txtShare;
-    TextView txtDelete;
-    TextView txtAllSelected;
-
-    boolean isAllSelected;
-    boolean isShowBottomBtn = false;
+    GridLayoutManager gridLayoutManager;
 
     BaseFragment baseFragment;
 
@@ -85,19 +81,35 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         list = new ArrayList<>();
         listGroup = new ArrayList<>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        layoutBottomBtn = (LinearLayout) view.findViewById(R.id.layoutBottomBtn);
-        txtShare = (TextView) view.findViewById(R.id.txtShare);
-        txtDelete = (TextView) view.findViewById(R.id.txtDelete);
-        txtAllSelected = (TextView) view.findViewById(R.id.txtAllSelected);
-        txtShare.setOnClickListener(this);
-        txtDelete.setOnClickListener(this);
-        txtAllSelected.setOnClickListener(this);
-        timeLineListAdapter = new TimeLineListAdapter(context, listGroup, numberOfColumns, this);
-        LinearLayoutManager gridLayoutManager = new LinearLayoutManager(context);
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, numberOfColumns);
+        CustomScrollBarView bar = (CustomScrollBarView) view.findViewById(R.id.scrollBar);
+        timeLineListAdapter = new TimeLineListAdapter(context, baseFragment, listGroup, numberOfColumns);
+        gridLayoutManager = new GridLayoutManager(context, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(timeLineListAdapter);
+        RecyclerScrollBinder.bind(recyclerView, bar);
+        listenWindowResize();
         return true;
+    }
+
+    private void listenWindowResize() {
+        View root = baseFragment.getActivity().getWindow().getDecorView();
+        root.addOnLayoutChangeListener(
+                (v, l, t, r, b, ol, ot, orr, ob) -> {
+                    int newW = r - l;
+                    int oldW = orr - ol;
+                    if (newW != oldW) {
+                        onWindowWidthChanged(newW);
+                    }
+                });
+    }
+
+    private void onWindowWidthChanged(int widthPx) {
+        int minItemPx = DeviceUtils.dpToPx(context, 200);
+        int span = Math.max(1, widthPx / minItemPx);
+
+        gridLayoutManager.setSpanCount(span);
+        int itemSize = widthPx / span;
+        timeLineListAdapter.updateItemSize(itemSize);
     }
 
     public void getAllMedia(Context context) {
@@ -113,12 +125,11 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
                 .collect(Collectors.groupingBy(Multimedia::getDate));
 
         for (Map.Entry<String, List<Multimedia>> entry : groupedMult.entrySet()) {
-            LogTools.i("Group by date: " + entry.getKey());
+//            LogTools.i("Group by date: " + entry.getKey());
             MultGroup multGroup = new MultGroup();
             List<Multimedia> tempList = new ArrayList<>();
             for (Multimedia data : entry.getValue()) {
                 tempList.add(data);
-                LogTools.i("\t" + data.getTitle() + ", " + StringUtils.conversionTime(data.getDateTaken() * 1000));
             }
 
             Collections.sort(tempList, new Comparator<Multimedia>() {
@@ -141,133 +152,33 @@ public class TimeLineListPersenter implements ViewEvent, View.OnClickListener {
         timeLineListAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onRightEvent(int pos, int groupPos) {
-        LogTools.i("onRightEvent " + pos + " ,groupPos " + groupPos);
-        isShowBottomBtn = !isShowBottomBtn;
-        try {
-            layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-            for (int i = 0; i < listGroup.size(); i++) {
-                MultGroup multGroup = listGroup.get(i);
-                List<Multimedia> tl = multGroup.getList();
-                for (int j = 0; j < tl.size(); j++) {
-                    Multimedia multimedia = tl.get(j);
-                    multimedia.setShowCheckbox(isShowBottomBtn);
-                    tl.set(j, multimedia);
-                }
-                multGroup.setList(tl);
-                listGroup.set(i, multGroup);
-            }
-            timeLineListAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    @Override
-    public void onSelectEvent(int pos, int groupPos, boolean isSelect) {
-        LogTools.i("onSelectEvent " + pos + " ,groupPos " + groupPos);
-        try {
-            MultGroup multGroup = listGroup.get(groupPos);
-            List<Multimedia> tempList = multGroup.getList();
-            Multimedia multimedia = tempList.get(pos);
-            multimedia.setSelected(isSelect);
-            tempList.set(pos, multimedia);
-            multGroup.setList(tempList);
-            listGroup.set(groupPos, multGroup);
-//            timeLineListAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @Override
+//    public void onSelectEvent(int pos, int groupPos, boolean isSelect) {
+//        LogTools.i("onSelectEvent " + pos + " ,groupPos " + groupPos);
+//        try {
+//            MultGroup multGroup = listGroup.get(groupPos);
+//            List<Multimedia> tempList = multGroup.getList();
+//            Multimedia multimedia = tempList.get(pos);
+//            multimedia.setSelected(isSelect);
+//            tempList.set(pos, multimedia);
+//            multGroup.setList(tempList);
+//            listGroup.set(groupPos, multGroup);
 
-    @Override
-    public void onJumpEvent(Multimedia picture) {
-        SPUtils.putUserInfo(context,"curPicPath",picture.getPath());
-        Intent intent = new Intent();
-        intent.putExtra("picture_data", picture);
-        intent.setClass(context, PicturePreviewActivity.class);
-        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.txtShare:
-                try {
-                    ArrayList<Uri> imageUris = new ArrayList<>();
-                    for (int i = 0; i < list.size(); i++) {
-                        if (list.get(i).isSelected()) {
-                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
-                        }
-                    }
-                    int size = imageUris.size();
-                    if (size < 1) {
-                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
-                        return;
-                    } else if (size > 9) {
-                        baseFragment.showShortToast(context.getString(R.string.can_not_choose_too_more));
-                        return;
-                    }
-                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    intent.setType("image/*"); //set MIME type
-//                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
-                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
-                    baseFragment.getActivity().startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            case R.id.txtDelete:
-                delList = new ArrayList<>();
-                for (int i = 0; i < listGroup.size(); i++) {
-                    MultGroup multGroup = listGroup.get(i);
-                    for (int j = 0; j < multGroup.getList().size(); j++) {
-                        Multimedia multimedia = multGroup.getList().get(j);
-                        if (multimedia.isSelected()) {
-                            delList.add(multimedia);
-                        }
-                    }
-                }
-                if(delList ==null ||delList.size() <1){
-                    baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
-                    return;
-                }
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(R.string.is_delete);
-                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int pos) {
-                        deleteMultiMedia();
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, null);
-                builder.show();
-                break;
-
-            case R.id.txtAllSelected:
-                isAllSelected = !isAllSelected;
-
-                for (int i = 0; i < listGroup.size(); i++) {
-                    MultGroup multGroup = listGroup.get(i);
-                    List<Multimedia> tl = multGroup.getList();
-                    for (int j = 0; j < tl.size(); j++) {
-                        Multimedia multimedia = tl.get(j);
-                        multimedia.setSelected(isAllSelected);
-                        tl.set(j, multimedia);
-                    }
-                    multGroup.setList(tl);
-                    listGroup.set(i, multGroup);
-                }
-
-                timeLineListAdapter.notifyDataSetChanged();
-                txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
-                break;
-        }
-    }
-
+    /// /            timeLineListAdapter.notifyDataSetChanged();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Override
+//    public void onJumpEvent(Multimedia picture) {
+//        SPUtils.putUserInfo(context,"curPicPath",picture.getPath());
+//        Intent intent = new Intent();
+//        intent.putExtra("picture_data", picture);
+//        intent.setClass(context, PicturePreviewActivity.class);
+//        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
+//    }
     @SuppressLint("NewApi")
     public void deleteMultiMedia() {
         if (delList != null) {

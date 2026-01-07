@@ -18,7 +18,7 @@ package com.fde.gallery.utils;
 import android.util.Log;
 
 public class LogTools {
-    public static final String TAG = "bella";
+    public static final String TAG = "bellaGallery";
 
     public  static  void d(String msg){
         Log.d(TAG,msg);

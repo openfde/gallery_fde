@@ -81,9 +81,11 @@ public class PictureListFragment extends BaseFragment {
         super.onFragmentVisibleChange(isVisible);
         if (isVisible) {
             LogTools.i("----onFragmentVisibleChange--------");
-            pictureListPersenter.getAllImages(context);
+//            pictureListPersenter.getAllImages(context);
         }
     }
+
+
 
     @Override
     protected void onFragmentFirstVisible() {

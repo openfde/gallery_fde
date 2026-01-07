@@ -49,4 +49,5 @@ public class ZoomImageView extends ImageView {
         }
         return super.onGenericMotionEvent(event);
     }
+
 }
