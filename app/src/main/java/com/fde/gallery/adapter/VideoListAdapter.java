@@ -169,7 +169,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 Glide.with(context)
 //                .load(Uri.fromFile(new File(list.get(position).getPath())))
                 .load(item.getPath())
-                .placeholder(R.mipmap.ic_launcher)
+//                .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
 //                .apply(new RequestOptions().frame(1000))
                 .format(DecodeFormat.PREFER_ARGB_8888)

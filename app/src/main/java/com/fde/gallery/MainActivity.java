@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
         context = this;
         initView();
 
-        triggerSystemMediaScan();
+//        triggerSystemMediaScan();
     }
 
     public void triggerSystemMediaScan() {
