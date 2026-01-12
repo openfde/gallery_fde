@@ -2,7 +2,6 @@ package com.fde.gallery.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ComponentCaller;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
