@@ -18,6 +18,9 @@ public class CustomScrollBarView extends View {
     private float lastY;
     private OnScrollChangeListener listener;
 
+    private final String color_normal = "#FF999999";
+    private final String color_scroll = "#40000000";
+
     public interface OnScrollChangeListener {
         void onScroll(float progress);
     }
@@ -32,7 +35,7 @@ public class CustomScrollBarView extends View {
         trackPaint.setColor(Color.parseColor("#f2f2f2"));
 
         thumbPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        thumbPaint.setColor(Color.parseColor("#999999"));
+        thumbPaint.setColor(Color.parseColor(color_normal));
     }
 
     @Override
@@ -53,20 +56,24 @@ public class CustomScrollBarView extends View {
             case MotionEvent.ACTION_DOWN:
                 lastY = event.getY();
                 return true;
+            case MotionEvent.ACTION_UP:
+                thumbPaint.setColor(Color.parseColor(color_normal));
+                invalidate();
+                return true;
 
             case MotionEvent.ACTION_MOVE:
                 float dy = event.getY() - lastY;
                 lastY = event.getY();
-
                 thumbTop += dy;
                 limitThumb();
-
+                thumbPaint.setColor(Color.parseColor(color_scroll));
                 invalidate();
                 notifyProgress();
                 return true;
         }
         return super.onTouchEvent(event);
     }
+
 
     private void limitThumb() {
         float max = getHeight() - thumbHeight;
