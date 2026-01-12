@@ -15,7 +15,6 @@
  */
 package com.fde.gallery;
 
-import android.app.ComponentCaller;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
