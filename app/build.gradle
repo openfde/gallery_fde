@@ -21,11 +21,11 @@ android {
     }
 
     ext {
-        appVersion = project.findProperty('appVersion') ?: "1.0.0"
+        appVersion = project.findProperty('appVersion') ?: "2.0.0"
     }
     version = appVersion
     defaultConfig {
-        applicationId "com.android.gallery3d"
+        applicationId "com.android.gallery3d.debug"
         minSdk 26
         targetSdk 34
         versionCode Integer.parseInt(new Date().format("yyyyMMdd"))
@@ -48,7 +48,7 @@ android {
         }
 
         debug {
-            applicationIdSuffix ".debug"
+            applicationIdSuffix
         }
     }
 

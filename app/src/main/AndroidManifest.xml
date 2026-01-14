@@ -75,6 +75,7 @@
         <activity
             android:name=".ui.activity.PicturePreviewActivity"
             android:documentLaunchMode="always"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
