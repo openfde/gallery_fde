@@ -36,7 +36,7 @@
 
         <com.fde.gallery.view.CustomScrollBarView
             android:id="@+id/scrollBar"
-            android:layout_width="16dp"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:padding="4dp" />

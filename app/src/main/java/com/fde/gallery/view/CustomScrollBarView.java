@@ -46,8 +46,8 @@ public class CustomScrollBarView extends View {
         canvas.drawRect(0, 0, getWidth(), getHeight(), trackPaint);
 
         // thumb
-        canvas.drawRect(0, thumbTop, getWidth(),
-                thumbTop + thumbHeight, thumbPaint);
+        canvas.drawRoundRect(0, thumbTop, getWidth(),
+                thumbTop + thumbHeight,getWidth(),getWidth(), thumbPaint);
     }
 
     @Override
