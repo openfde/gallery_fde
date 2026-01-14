@@ -5,8 +5,8 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +18,6 @@ import com.fde.gallery.R;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.utils.DeviceUtils;
-import com.fde.gallery.utils.LogTools;
 
 import java.io.File;
 import java.util.List;
@@ -95,12 +94,12 @@ public class SetWallPageAdapter extends RecyclerView.Adapter<SetWallPageAdapter.
     }
 
     class SetWallPageHolder extends RecyclerView.ViewHolder {
-        RelativeLayout rootView;
+        FrameLayout rootView;
         ImageView imageView;
 
         public SetWallPageHolder(@NonNull View itemView) {
             super(itemView);
-            rootView = (RelativeLayout) itemView.findViewById(R.id.rootView);
+            rootView = (FrameLayout) itemView.findViewById(R.id.rootView);
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
         }
     }
