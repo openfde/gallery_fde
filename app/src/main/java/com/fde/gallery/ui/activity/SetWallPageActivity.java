@@ -126,7 +126,6 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
     public void setPic(Multimedia picture) {
         Glide.with(context)
                 .load(Uri.fromFile(new File(picture.getPath())))
-                .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
