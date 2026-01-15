@@ -80,6 +80,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         Multimedia video = list.get(position);
         holder.bind(video, itemSizePx);
 
+        holder.checkBox.setVisibility(video.isShowCheckbox() ? View.VISIBLE : View.GONE);
+        holder.checkBox.setChecked(video.isSelected());
+
 //        Glide.with(context)
 ////                .load(Uri.fromFile(new File(list.get(position).getPath())))
 //                .load(video.getPath())
