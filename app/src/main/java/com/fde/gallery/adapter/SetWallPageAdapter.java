@@ -49,7 +49,6 @@ public class SetWallPageAdapter extends RecyclerView.Adapter<SetWallPageAdapter.
         Multimedia picture = list.get(position);
         Glide.with(context)
                 .load(Uri.fromFile(new File(list.get(position).getPath())))
-                .placeholder(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .format(DecodeFormat.PREFER_RGB_565)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
