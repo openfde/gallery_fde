@@ -47,6 +47,7 @@ import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.ui.logic.PicturePreviewPersenter;
+import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
@@ -279,11 +280,12 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             try {
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .override(2800, 2800);
+                        .override(StringUtils.ToInt(DeviceUtils.getSystemProperty("openfde.display_width")),StringUtils.ToInt(DeviceUtils.getSystemProperty("openfde.display_height")));
 
                 Glide.with(context) // replace 'this' with your context
                         .load(multimedia.getPath())
                         .error(R.mipmap.ic_launcher)
+                        .apply(options)
                         .fitCenter()
                         .into(imageView);
             } catch (Exception e) {

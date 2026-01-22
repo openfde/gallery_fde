@@ -27,6 +27,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import java.lang.reflect.Method;
+
 
 /**
  * Created by xudq on 16/5/11.
@@ -167,5 +169,16 @@ public class DeviceUtils {
 
     public static int dpToPx(Context context,int dp) {
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    }
+
+    public static String getSystemProperty(String key) {
+        try {
+            Class<?> sp = Class.forName("android.os.SystemProperties");
+            Method get = sp.getMethod("get", String.class);
+            return (String) get.invoke(null, key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
