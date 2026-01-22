@@ -17,7 +17,11 @@ package com.fde.gallery.ui.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +65,18 @@ public class VideoListFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
         videoListPersenter = new VideoListPersenter(this, view);
         videoListPersenter.initView();
+
+        context.getContentResolver().registerContentObserver(
+                MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                true,
+                new ContentObserver(new Handler(Looper.getMainLooper())) {
+                    @Override
+                    public void onChange(boolean selfChange) {
+                        videoListPersenter.getAllVideos(context);
+                    }
+                }
+        );
+
         return view;
     }
 

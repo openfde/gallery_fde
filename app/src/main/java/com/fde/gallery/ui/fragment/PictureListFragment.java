@@ -15,10 +15,15 @@
  */
 package com.fde.gallery.ui.fragment;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +78,18 @@ public class PictureListFragment extends BaseFragment {
             }
         }
 
+
+        context.getContentResolver().registerContentObserver(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                true,
+                new ContentObserver(new Handler(Looper.getMainLooper())) {
+                    @Override
+                    public void onChange(boolean selfChange) {
+                        pictureListPersenter.getAllImages(context);
+                    }
+                }
+        );
+
         return view;
     }
 
@@ -86,7 +103,6 @@ public class PictureListFragment extends BaseFragment {
     }
 
 
-
     @Override
     protected void onFragmentFirstVisible() {
         super.onFragmentFirstVisible();
@@ -95,10 +111,10 @@ public class PictureListFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogTools.i("onActivityResult requestCode: "+requestCode +" ,resultCode:  "+resultCode);
-        if(requestCode == Constant.REQUEST_DELETE_PHOTO){
+        LogTools.i("onActivityResult requestCode: " + requestCode + " ,resultCode:  " + resultCode);
+        if (requestCode == Constant.REQUEST_DELETE_PHOTO) {
             pictureListPersenter.getAllImages(context);
-        }else {
+        } else {
             pictureListPersenter.deleteImage();
         }
     }
