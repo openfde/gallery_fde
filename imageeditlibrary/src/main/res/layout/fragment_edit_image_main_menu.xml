@@ -4,6 +4,7 @@
     android:scrollbars="none"
     android:layout_width="wrap_content"
     android:layout_gravity="center"
+    android:background="@color/main_backgroud"
     android:layout_height="fill_parent">
 
     <LinearLayout

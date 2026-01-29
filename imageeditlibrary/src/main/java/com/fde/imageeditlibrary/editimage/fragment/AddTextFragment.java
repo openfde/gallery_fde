@@ -103,6 +103,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
         //统一颜色设置
         mTextColorSelector.setBackgroundColor(mColorPicker.getColor());
         mTextStickerView.setTextColor(mColorPicker.getColor());
+        onShow();
     }
 
     @Override
@@ -186,6 +187,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
         activity.mainImage.setVisibility(View.VISIBLE);
         activity.bannerFlipper.showPrevious();
         mTextStickerView.setVisibility(View.GONE);
+        activity.switchFragmentMain();
     }
 
     @Override

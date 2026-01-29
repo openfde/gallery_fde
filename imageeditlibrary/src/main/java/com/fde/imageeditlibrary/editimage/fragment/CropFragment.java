@@ -159,6 +159,7 @@ public class CropFragment extends BaseEditFragment {
         setUpRatioList();
         this.mCropPanel = ensureEditActivity().mCropPanel;
 		backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
+		onShow();
 	}
 
     @Override
@@ -211,6 +212,7 @@ public class CropFragment extends BaseEditFragment {
 		}
 		mCropPanel.setRatioCropRect(activity.mainImage.getBitmapRect(), -1);
 		activity.bannerFlipper.showPrevious();
+		activity.switchFragmentMain();
 	}
 
 	/**

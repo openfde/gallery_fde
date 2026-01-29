@@ -114,6 +114,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
 
         mEraserView.setOnClickListener(this);
         updateEraserView();
+        onShow();
     }
 
     /**
@@ -169,6 +170,7 @@ public class PaintFragment extends BaseEditFragment implements View.OnClickListe
         activity.bannerFlipper.showPrevious();
 
         this.mPaintView.setVisibility(View.GONE);
+        activity.switchFragmentMain();
     }
 
     public void onShow() {

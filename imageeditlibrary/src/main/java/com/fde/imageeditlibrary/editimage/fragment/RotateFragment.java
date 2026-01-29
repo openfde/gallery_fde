@@ -76,6 +76,7 @@ public class RotateFragment extends BaseEditFragment {
         this.mRotatePanel = ensureEditActivity().mRotatePanel;
         backToMenu.setOnClickListener(new BackToMenuClick());// backToMenu
         mSeekBar.setOnSeekBarChangeListener(new RotateAngleChange());
+        onShow();
     }
 
     @Override
@@ -140,6 +141,7 @@ public class RotateFragment extends BaseEditFragment {
         activity.mainImage.setVisibility(View.VISIBLE);
         this.mRotatePanel.setVisibility(View.GONE);
         activity.bannerFlipper.showPrevious();
+        activity.switchFragmentMain();
     }
 
     /**

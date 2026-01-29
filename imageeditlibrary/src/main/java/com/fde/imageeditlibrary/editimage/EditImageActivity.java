@@ -214,6 +214,34 @@ public class EditImageActivity extends BaseActivity {
         });
 
         mRedoUndoController = new RedoUndoController(this, findViewById(R.id.redo_uodo_panel));
+        switchFragmentMain();
+    }
+
+    public void switchFragmentText(){
+        switchFragment(mAddTextFragment);
+    }
+
+    public void switchFragmentPaint(){
+        switchFragment(mPaintFragment);
+    }
+
+    public void switchFragmentRotate(){
+        switchFragment(mRotateFragment);
+    }
+
+    public void switchFragmentCrop(){
+        switchFragment(mCropFragment);
+    }
+
+    public void switchFragmentMain(){
+        switchFragment(mMainMenuFragment);
+    }
+
+    private void switchFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
     /**

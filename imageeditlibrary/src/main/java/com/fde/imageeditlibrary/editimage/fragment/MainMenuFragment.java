@@ -99,13 +99,18 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
         } else if (v == fliterBtn) {
             onFilterClick();
         } else if (v == cropBtn) {
-            onCropClick();
+            activity.switchFragmentCrop();
+//            onCropClick();
         } else if (v == rotateBtn) {
-            onRotateClick();
+            activity.bottomGallery.setCurrentItem(RotateFragment.INDEX);
+            activity.switchFragmentRotate();
+//            onRotateClick();
         } else if (v == mTextBtn) {
-            onAddTextClick();
+//            onAddTextClick();
+            activity.switchFragmentText();
         } else if (v == mPaintBtn) {
-            onPaintClick();
+            activity.switchFragmentPaint();
+//            onPaintClick();
         }else if(v == mBeautyBtn){
             onBeautyClick();
         }
@@ -120,6 +125,7 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
     private void onStickClick() {
         activity.bottomGallery.setCurrentItem(StickerFragment.INDEX);
         activity.mStickerFragment.onShow();
+
     }
 
     /**
