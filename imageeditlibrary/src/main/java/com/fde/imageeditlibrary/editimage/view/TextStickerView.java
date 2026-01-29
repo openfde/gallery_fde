@@ -119,7 +119,7 @@ public class TextStickerView extends View {
         debugPaint.setColor(Color.parseColor("#66ff0000"));
 
         mDeleteBitmap = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.sticker_delete);
+                R.drawable.icon_delete);
         mRotateBitmap = BitmapFactory.decodeResource(context.getResources(),
                 R.drawable.sticker_rotate);
 
@@ -188,7 +188,7 @@ public class TextStickerView extends View {
 
         //draw x and rotate button
         int offsetValue = ((int) mDeleteDstRect.width()) >> 1;
-        mDeleteDstRect.offsetTo(mHelpBoxRect.left - offsetValue, mHelpBoxRect.top - offsetValue);
+        mDeleteDstRect.offsetTo(mHelpBoxRect.left - offsetValue-12, mHelpBoxRect.top - offsetValue-12);
         mRotateDstRect.offsetTo(mHelpBoxRect.right - offsetValue, mHelpBoxRect.bottom - offsetValue);
 
         RectUtil.rotateRect(mDeleteDstRect, mHelpBoxRect.centerX(),
