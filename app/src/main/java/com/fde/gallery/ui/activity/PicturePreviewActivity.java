@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -39,8 +40,14 @@ import androidx.annotation.Nullable;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.fde.baselib.Animation.AnimDrawablePlayer;
+import com.fde.baselib.Animation.AnimFactory;
 import com.fde.gallery.MainActivity;
 import com.fde.gallery.R;
 import com.fde.gallery.base.BaseActivity;
@@ -79,11 +86,15 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     TextView txtSetWallpage;
     TextView txtSetWallpageLock;
 
+    AnimDrawablePlayer animDrawablePlayer ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogTools.i("------PicturePreviewActivity-----onCreate------");
         setContentView(R.layout.activity_picture_preview);
+        initView();
+        animDrawablePlayer = AnimFactory.INSTANCE.loading(this,imgDetails);
+        startAnimation();
 //        View view = getLayoutInflater().inflate(R.layout.activity_picture_preview,null);
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
         List<Multimedia> tempList = FileUtils.getAllImages(context);
@@ -100,7 +111,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 String actionStr = getIntent().getAction();
                 LogTools.i("realPath   " + realPath + " ,documentFile " + documentFile +",actionStr "+actionStr);
                 Multimedia m = new Multimedia();
-
 
                 if ("android.intent.action.EDIT".equals(actionStr)) {
                     String filePath = FileUtils.getFilePathFromUri(context, documentFile.getUri());
@@ -124,7 +134,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 }
 
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
-                initView();
+                initData();
 
                 //if action is edit to go to edit page
                 if ("android.intent.action.EDIT".equals(actionStr)) {
@@ -136,7 +146,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             Multimedia m = findPicture(tempList, path);
             picture = m;
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
-            initView();
+            initData();
             LogTools.i("picture " + picture);
         }
 
@@ -170,7 +180,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
 
-    public boolean initView() {
+
+    public void initView() {
         imageView = (PhotoView) findViewById(R.id.imageView);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
         imgLeft = (ImageView) findViewById(R.id.imgLeft);
@@ -185,27 +196,10 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgLeft.setOnClickListener(this);
         imgRight.setOnClickListener(this);
 
+    }
+
+    private void initData(){
         showPic(picture);
-
-//        imageView.setOnContextClickListener(new View.OnContextClickListener() {
-//            @Override
-//            public boolean onContextClick(View view) {
-//                isShowBottomBtn = !isShowBottomBtn;
-//                layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-//                return false;
-//            }
-//        });
-//
-//        imageView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                isShowBottomBtn = !isShowBottomBtn;
-//                layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-//                return false;
-//            }
-//        });
-
-
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,32 +209,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 }
             }
         });
-
-//        imageView.setOnGenericMotionListener(new View.OnGenericMotionListener() {
-//            @Override
-//            public boolean onGenericMotion(View view, MotionEvent motionEvent) {
-//                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-//                    float x = motionEvent.getX();
-//                    float y = motionEvent.getY();
-//                    int w = DeviceUtils.getSreenWidth(context);
-//                    LogTools.i("onGenericMotion x " + x + " , y: " + y + " ,w " + w);
-//                }
-//                return false;
-//            }
-//        });
-
-//        imageView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//                if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-//                    float x = motionEvent.getX();
-//                    float y = motionEvent.getY();
-//                    int w = DeviceUtils.getSreenWidth(context);
-//                    LogTools.i("onTouch x "+x +" , y: "+y + " ,w "+w);
-//                }
-//                return false;
-//            }
-//        });
 
         if (picture.getId() <= 0) {
             isShowBottomBtn = false;
@@ -252,8 +220,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             imgRight.setVisibility(View.VISIBLE);
             layoutBottomBtn.setVisibility(View.VISIBLE);
         }
-
-        return true;
     }
 
     @Override
@@ -275,6 +241,18 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         }
     }
 
+    private void startAnimation(){
+        imgDetails.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.GONE);
+        animDrawablePlayer.start();
+    }
+
+    private void stopAnimation(){
+        animDrawablePlayer.stop();
+        imageView.setVisibility(View.VISIBLE);
+        imgDetails.setVisibility(View.GONE);
+    }
+
     public void showPic(Multimedia multimedia) {
         if (multimedia != null && !"".equals(multimedia.getPath())) {
             try {
@@ -287,9 +265,24 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                         .error(R.mipmap.ic_launcher)
                         .apply(options)
                         .fitCenter()
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                stopAnimation();
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                stopAnimation();
+                                return false;
+                            }
+                        })
                         .into(imageView);
+
             } catch (Exception e) {
                 e.printStackTrace();
+           stopAnimation();
             }
         }
     }
@@ -327,23 +320,32 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 break;
 
             case R.id.imgLeft:
+                startAnimation();
+
                 Multimedia prePic = picturePreviewPersenter.getPrePic();
                 showPic(prePic);
                 break;
 
             case R.id.imgRight:
+                startAnimation();
                 Multimedia nextPic = picturePreviewPersenter.getNextPic();
                 showPic(nextPic);
                 break;
 
             case R.id.txtDetails:
-                picturePreviewPersenter.showDetailsDlg();
-                popupWindow.dismiss();
+//                picturePreviewPersenter.showDetailsDlg();
+//                popupWindow.dismiss();
                 break;
 
             case R.id.txtSetWallpage:
-                picturePreviewPersenter.setWallpage(1);
-                Toast.makeText(context, R.string.set_wallpage_success, Toast.LENGTH_SHORT).show();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        picturePreviewPersenter.setWallpage(1);
+                    }
+                }).start();
+
+
                 popupWindow.dismiss();
                 break;
 
