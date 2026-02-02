@@ -25,6 +25,7 @@ import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.ui.activity.VideoPlayActivity;
+import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
@@ -149,17 +150,22 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
             if (!item.getPath().equals(path)) {
                 path = item.getPath();
 
-                Glide.with(context)
-                        .load(item.getPath())
-                        .format(DecodeFormat.PREFER_ARGB_8888)
-                        .error(R.mipmap.ic_launcher)
-                        .frame(1000000)
-                        .thumbnail(0.1f)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop() // 裁剪图片以适应ImageView的大小
-                        .dontTransform() // 禁用任何额外的转换
-                        .dontAnimate()
-                        .into(imageView);
+                if(path.toLowerCase().endsWith(".flv")){
+                    Glide.with(context).load(FileUtils.getFlvBitmap(path)).into(imageView);
+                }else {
+                    Glide.with(context)
+                            .load(item.getPath())
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                            .error(R.mipmap.ic_launcher)
+                            .frame(1000000)
+                            .thumbnail(0.1f)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop() // 裁剪图片以适应ImageView的大小
+                            .dontTransform() // 禁用任何额外的转换
+                            .dontAnimate()
+                            .into(imageView);
+                }
+
             }
         }
 

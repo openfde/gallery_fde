@@ -18,6 +18,7 @@ package com.fde.gallery.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,9 +39,12 @@ import com.fde.gallery.R;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.VideoPlayActivity;
+import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 
 import java.util.List;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoListViewHolder> {
     List<Multimedia> list;
@@ -143,6 +147,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         void bind(Multimedia item, int sizePx) {
             updateSize(sizePx);
 
+
+
+
             if (!item.getPath().equals(path)) {
                 path = item.getPath();
 //                Glide.with(imageView)
@@ -151,19 +158,23 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 //                        .dontAnimate()
 //                        .centerCrop()
 //                        .into(imageView);
-                Glide.with(context)
+
+                if(path.toLowerCase().endsWith(".flv")){
+                    Glide.with(context).load(FileUtils.getFlvBitmap(path)).into(imageView);
+                }else {
+                    Glide.with(context)
 //                .load(Uri.fromFile(new File(list.get(position).getPath())))
-                .load(item.getPath())
-//                .placeholder(R.mipmap.ic_launcher)
-                .error(R.mipmap.ic_launcher)
+                            .load(item.getPath())
+                            .error(R.mipmap.ic_launcher)
 //                .apply(new RequestOptions().frame(1000))
-                .format(DecodeFormat.PREFER_ARGB_8888)
-                .frame(0)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop() // 裁剪图片以适应ImageView的大小
-                .dontTransform() // 禁用任何额外的转换
-                .dontAnimate()
-                .into(imageView);
+                            .format(DecodeFormat.PREFER_ARGB_8888)
+                            .frame(0)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .centerCrop() // 裁剪图片以适应ImageView的大小
+                            .dontTransform() // 禁用任何额外的转换
+                            .dontAnimate()
+                            .into(imageView);
+                }
             }
         }
 

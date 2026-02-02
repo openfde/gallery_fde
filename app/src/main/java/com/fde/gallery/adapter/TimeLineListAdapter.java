@@ -22,6 +22,7 @@ import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.ui.activity.TimeLineActivity;
+import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 
 import java.io.Serializable;
@@ -112,13 +113,17 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
 
             if (!item.getList().get(0).getPath().equals(path)) {
                 path = item.getList().get(0).getPath();
-                Glide.with(imageView)
-                        .load(path)
-                        .error(R.mipmap.ic_launcher)
-                        .thumbnail(0.1f) // ⭐ 首帧快
-                        .dontAnimate()
-                        .centerCrop()
-                        .into(imageView);
+                if(path.toLowerCase().endsWith(".flv")){
+                    Glide.with(context).load(FileUtils.getFlvBitmap(path)).into(imageView);
+                }else {
+                    Glide.with(imageView)
+                            .load(path)
+                            .error(R.mipmap.ic_launcher)
+                            .thumbnail(0.1f) // ⭐ 首帧快
+                            .dontAnimate()
+                            .centerCrop()
+                            .into(imageView);
+                }
                 txtTitle.setText(item.getTitle());
             }
         }
