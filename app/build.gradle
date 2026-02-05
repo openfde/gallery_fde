@@ -21,7 +21,7 @@ android {
     }
 
     ext {
-        appVersion = project.findProperty('appVersion') ?: "2.0.4"
+        appVersion = project.findProperty('appVersion') ?: "2.0.5"
     }
     version = appVersion
     defaultConfig {
@@ -73,11 +73,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-
     implementation project(":photoview")
     implementation project(':imageeditlibrary')
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation group: 'com.github.bumptech.glide', name: 'glide', version: '5.0.4'
-
-
+    implementation files('libs/baselib.aar')
+    implementation("com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14")
 }

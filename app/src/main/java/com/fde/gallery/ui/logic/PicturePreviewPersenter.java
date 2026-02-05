@@ -196,6 +196,12 @@ public class PicturePreviewPersenter {
                 wallpaperManager.setBitmap(wallpaperBitmap);
                 wallpaperManager.setBitmap(wallpaperBitmap, null, true, WallpaperManager.FLAG_LOCK);
             }
+            baseActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, R.string.set_wallpage_success, Toast.LENGTH_SHORT).show();
+                }
+            });
             // wallpaperManager.setResource(R.drawable.your_image);
         } catch (IOException e) {
             e.printStackTrace();

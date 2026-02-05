@@ -7,6 +7,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
@@ -20,6 +21,8 @@ import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import wseemann.media.FFmpegMediaMetadataRetriever;
 
 public class FileUtils {
     public static final String FOLDER_NAME = "fde";
@@ -155,19 +158,19 @@ public class FileUtils {
     }
 
 
-    private static  void updatePicSize (Context context,int w,int h,long  id){
+    private static void updatePicSize(Context context, int w, int h, long id) {
         final long token = Binder.clearCallingIdentity();
         try {
             ContentResolver contentResolver = context.getContentResolver();
 //        String selection = MediaStore.Images.Media._ID + "=?";
-            String selection = null ;
+            String selection = null;
 //        String[] selectionArgs = new String[]{String.valueOf(id)};
-            String[] selectionArgs = null ;
+            String[] selectionArgs = null;
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.DESCRIPTION, "Edited image description");
-            values.put(MediaStore.Images.Media.WIDTH,w);
-            values.put(MediaStore.Images.Media.HEIGHT,h);
-            values.put(MediaStore.Images.Media.TITLE,"fde_"+System.currentTimeMillis());
+            values.put(MediaStore.Images.Media.WIDTH, w);
+            values.put(MediaStore.Images.Media.HEIGHT, h);
+            values.put(MediaStore.Images.Media.TITLE, "fde_" + System.currentTimeMillis());
 //        Uri imageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
 
@@ -175,12 +178,12 @@ public class FileUtils {
             if (updatedRows > 0) {
                 LogTools.i("Image database updated successfully ");
             } else {
-                LogTools.i("Image database selection "+selection + ",id "+id);
-                LogTools.i( "Failed to update image database  " +" ,w "+w + " ,updatedRows "+updatedRows);
+                LogTools.i("Image database selection " + selection + ",id " + id);
+                LogTools.i("Failed to update image database  " + " ,w " + w + " ,updatedRows " + updatedRows);
             }
 
             try {
-                Cursor cursorQ = contentResolver.query(imageUri,null,selection,selectionArgs,null);
+                Cursor cursorQ = contentResolver.query(imageUri, null, selection, selectionArgs, null);
                 int widthColumn = cursorQ.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH);
                 int heightColumn = cursorQ.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT);
                 int dataColumn = cursorQ.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -195,7 +198,7 @@ public class FileUtils {
                 e.printStackTrace();
             }
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         } finally {
             Binder.restoreCallingIdentity(token);
         }
@@ -344,6 +347,7 @@ public class FileUtils {
 
         return filePath;
     }
+
     // 获取 MediaStore.MediaColumns._ID
     public static String getMediaStoreIdFromUri(Context context, Uri uri) {
         String mediaId = null;
@@ -377,5 +381,18 @@ public class FileUtils {
         }
 
         return mediaId;
+    }
+
+    public static Bitmap getFlvBitmap(String path) {
+        Bitmap bitmap = null;
+        try {
+            FFmpegMediaMetadataRetriever mmr = new FFmpegMediaMetadataRetriever();
+            mmr.setDataSource(path);
+            bitmap = mmr.getFrameAtTime(0, FFmpegMediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            mmr.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }
