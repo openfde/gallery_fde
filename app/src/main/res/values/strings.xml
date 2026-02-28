@@ -63,5 +63,6 @@
     <string name="channel_name">ucrop_chanel</string>
     <string name="channel_description">ucrop result image</string>
     <string name="save_path">save path : %s</string>
+    <string name="not_pic">No optional images</string>
 
 </resources>

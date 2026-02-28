@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,8 +33,8 @@ import java.util.List;
 
 public class SetWallPageActivity extends BaseActivity implements ViewEvent {
     ImageView imageView;
-    ImageView imageOk;
-    ImageView imageCancel;
+    TextView txtOk;
+    TextView txtCancel;
 
     RecyclerView recyclerView;
 
@@ -47,8 +48,8 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_wall_page);
         imageView = (ImageView) findViewById(R.id.imageView);
-        imageOk = (ImageView) findViewById(R.id.imageOk);
-        imageCancel = (ImageView) findViewById(R.id.imageCancel);
+        txtOk = (TextView) findViewById(R.id.txtOk);
+        txtCancel = (TextView) findViewById(R.id.txtCancel);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         list = new ArrayList<>();
@@ -62,14 +63,14 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
 
         getAllImages();
 
-        imageCancel.setOnClickListener(new View.OnClickListener() {
+        txtCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        imageOk.setOnClickListener(new View.OnClickListener() {
+        txtOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Multimedia pic = list.get(curPos);
@@ -118,6 +119,11 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
             LogTools.i("pictureListAdapter is null");
         } else {
             pictureListAdapter.notifyDataSetChanged();
+        }
+        if(list == null || list.size() == 0){
+            Toast.makeText(context,R.string.not_pic,Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
         Multimedia picture = list.get(0);
         setPic(picture);

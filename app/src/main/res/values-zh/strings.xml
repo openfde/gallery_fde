@@ -24,5 +24,6 @@
     <string name="notification_image_saved_click_to_preview">图片已保存。点击预览。</string>
 
     <string name="menu_download">下载</string>
+    <string name="not_pic">没有可选图片</string>
 
 </resources>
