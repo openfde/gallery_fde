@@ -218,6 +218,7 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
         SPUtils.putUserInfo(context, "curPicPath", multimedia.getPath());
         Intent intent = new Intent();
         intent.putExtra("picture_data", multimedia);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setClass(context, PicturePreviewActivity.class);
         startActivityForResult(intent, Constant.REQUEST_DELETE_PHOTO);
     }

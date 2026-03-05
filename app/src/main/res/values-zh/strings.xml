@@ -24,5 +24,8 @@
     <string name="notification_image_saved_click_to_preview">图片已保存。点击预览。</string>
 
     <string name="menu_download">下载</string>
+    <string name="not_pic">没有可选图片</string>
+    <string name="show_pic_tips">此处只展示宽度>799且高度>599的图片，如果要选择其它图片请去图库设置</string>
+    <string name="set_pic_tips">壁纸比较大，需要设置时间可能有点长</string>
 
 </resources>

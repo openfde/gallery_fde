@@ -84,9 +84,11 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
                 if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
                     SPUtils.putUserInfo(context,"curPicPath",multimedia.getPath());
                     intent.putExtra("picture_data", multimedia);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setClass(context, PicturePreviewActivity.class);
                 } else {
                     intent.putExtra("video_data", multimedia);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setClass(context, VideoPlayActivity.class);
                 }
                 context.startActivity(intent);

@@ -93,6 +93,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 Multimedia video = list.get(position);
                 Intent intent = new Intent();
                 intent.putExtra("video_data", video);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.setClass(context, VideoPlayActivity.class);
                 context.startActivity(intent);
             }

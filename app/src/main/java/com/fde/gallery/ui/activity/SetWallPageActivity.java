@@ -8,14 +8,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.fde.baselib.Animation.AnimDrawablePlayer;
+import com.fde.baselib.Animation.AnimFactory;
 import com.fde.gallery.R;
 import com.fde.gallery.adapter.PictureListAdapter;
 import com.fde.gallery.adapter.SetWallPageAdapter;
@@ -32,8 +36,9 @@ import java.util.List;
 
 public class SetWallPageActivity extends BaseActivity implements ViewEvent {
     ImageView imageView;
-    ImageView imageOk;
-    ImageView imageCancel;
+    TextView txtPicTitle;
+    TextView txtOk;
+    TextView txtCancel;
 
     RecyclerView recyclerView;
 
@@ -47,58 +52,65 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_wall_page);
         imageView = (ImageView) findViewById(R.id.imageView);
-        imageOk = (ImageView) findViewById(R.id.imageOk);
-        imageCancel = (ImageView) findViewById(R.id.imageCancel);
+        txtOk = (TextView) findViewById(R.id.txtOk);
+        txtCancel = (TextView) findViewById(R.id.txtCancel);
+        txtPicTitle = (TextView) findViewById(R.id.txtPicTitle);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         list = new ArrayList<>();
-        LinearLayoutManager gridLayoutManager = new LinearLayoutManager(context);
+        LinearLayoutManager gridLayoutManager = new GridLayoutManager(context,2,RecyclerView.HORIZONTAL,false);
         gridLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
 
         recyclerView.setLayoutManager(gridLayoutManager);
         list = new ArrayList<>();
         pictureListAdapter = new SetWallPageAdapter(context, list, numberOfColumns, this);
         recyclerView.setAdapter(pictureListAdapter);
-
         getAllImages();
-
-        imageCancel.setOnClickListener(new View.OnClickListener() {
+        txtCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        imageOk.setOnClickListener(new View.OnClickListener() {
+        txtOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Multimedia pic = list.get(curPos);
-                Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
-                WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-                int w = wallpaperBitmap.getWidth();
-                int h = wallpaperBitmap.getHeight();
-                LogTools.i("w " + w + " h : " + h);
-//                final int width = wallpaperManager.getDesiredMinimumWidth();
-//                final int height = wallpaperManager.getDesiredMinimumHeight();
-//                Bitmap wallpaper = Bitmap.createScaledBitmap(wallpaperBitmap, w, h, true);
-//                LogTools.i("width " + width + " height : " + height);
-                if (w != 0 && h != 0) {
-                    if (w > h) {
-                        wallpaperManager.suggestDesiredDimensions(w, h);
-                    } else {
-                        wallpaperManager.suggestDesiredDimensions(h, w);
-                    }
-                } else {
-                    wallpaperManager.suggestDesiredDimensions(1280, 1706);
+                if(pic.getWidth() > 3999 && pic.getHeight()> 3999){
+                    Toast.makeText(context,R.string.set_pic_tips,Toast.LENGTH_SHORT).show();
                 }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
+                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+                        int w = wallpaperBitmap.getWidth();
+                        int h = wallpaperBitmap.getHeight();
+                        if (w != 0 && h != 0) {
+                            if (w > h) {
+                                wallpaperManager.suggestDesiredDimensions(w, h);
+                            } else {
+                                wallpaperManager.suggestDesiredDimensions(h, w);
+                            }
+                        } else {
+                            wallpaperManager.suggestDesiredDimensions(1280, 1706);
+                        }
 
-                try {
-                    wallpaperManager.setBitmap(wallpaperBitmap);
-                    Toast.makeText(context,R.string.set_wallpage_success,Toast.LENGTH_SHORT).show();
-                    finish();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                        try {
+                            wallpaperManager.setBitmap(wallpaperBitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        });
+                    }
+                }).start();
             }
         });
 
@@ -113,17 +125,29 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
         if (list != null) {
             list.clear();
         }
-        list.addAll(FileUtils.getAllImages(context));
+
+        List<Multimedia> tempList = FileUtils.getAllImages(context);
+        for(Multimedia m: tempList){
+            if(m.getWidth() >= 800 && m.getHeight() >= 600){
+                list.add(m);
+            }
+        }
         if (pictureListAdapter == null) {
             LogTools.i("pictureListAdapter is null");
         } else {
             pictureListAdapter.notifyDataSetChanged();
+        }
+        if(list == null || list.size() == 0){
+            Toast.makeText(context,R.string.not_pic,Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
         Multimedia picture = list.get(0);
         setPic(picture);
     }
 
     public void setPic(Multimedia picture) {
+        txtPicTitle.setText(picture.getTitle()+"("+picture.getWidth() +"x"+picture.getHeight()+")");
         Glide.with(context)
                 .load(Uri.fromFile(new File(picture.getPath())))
                 .error(R.mipmap.ic_launcher)
