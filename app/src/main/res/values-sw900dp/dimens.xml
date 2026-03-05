@@ -22,8 +22,9 @@
     <dimen name="scrollbar_size">16dp</dimen>
     <dimen name="item_spacing">4dp</dimen>
 
-    <dimen name="item_width">140dp</dimen>
-    <dimen name="item_height">96dp</dimen>
-    <dimen name="img_width">384dp</dimen>
-    <dimen name="img_height">216dp</dimen>
+    <dimen name="item_width">240dp</dimen>
+    <dimen name="item_height">140dp</dimen>
+    <dimen name="img_width">576dp</dimen>
+    <dimen name="img_height">324dp</dimen>
+
 </resources>

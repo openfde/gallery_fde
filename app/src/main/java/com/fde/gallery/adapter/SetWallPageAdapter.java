@@ -18,6 +18,7 @@ import com.fde.gallery.R;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.utils.DeviceUtils;
+import com.fde.gallery.utils.LogTools;
 
 import java.io.File;
 import java.util.List;
@@ -39,7 +40,7 @@ public class SetWallPageAdapter extends RecyclerView.Adapter<SetWallPageAdapter.
     @NonNull
     @Override
     public SetWallPageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_picture_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_wallpage_list, parent, false);
         SetWallPageAdapter.SetWallPageHolder holder = new SetWallPageAdapter.SetWallPageHolder(view);
         return holder;
     }
@@ -82,8 +83,8 @@ public class SetWallPageAdapter extends RecyclerView.Adapter<SetWallPageAdapter.
                         int size = height / 4;
                         // set item width and height
                         ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-                        layoutParams.width = size;
-                        layoutParams.height = size;
+                        layoutParams.width = height / 4;
+                        layoutParams.height = height / 5;
                         holder.itemView.setLayoutParams(layoutParams);
                     }
                 }

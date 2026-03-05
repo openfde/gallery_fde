@@ -180,6 +180,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
         Intent intent = new Intent();
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
     }
 
