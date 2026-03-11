@@ -34,7 +34,7 @@ import com.fde.imageeditlibrary.BaseActivity;
 import com.fde.imageeditlibrary.R;
 import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.fde.imageeditlibrary.editimage.ModuleConfig;
-import com.fde.imageeditlibrary.editimage.fliter.PhotoProcessing;
+import com.xinlan.imageeditlibrary.editimage.fliter.PhotoProcessing;
 import com.fde.imageeditlibrary.editimage.view.imagezoom.ImageViewTouchBase;
 
 

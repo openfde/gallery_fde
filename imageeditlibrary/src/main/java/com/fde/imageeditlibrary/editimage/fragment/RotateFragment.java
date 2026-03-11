@@ -186,32 +186,8 @@ public class RotateFragment extends BaseEditFragment {
         @SuppressWarnings("WrongThread")
         @Override
         protected Bitmap doInBackground(Bitmap... params) {
-            RectF imageRect = mRotatePanel.getImageNewRect();
             Bitmap originBit = params[0];
-            Bitmap result = Bitmap.createBitmap((int) imageRect.width(),
-                    (int) imageRect.height(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(result);
-            int w = originBit.getWidth() >> 1;
-            int h = originBit.getHeight() >> 1;
-            float centerX = imageRect.width() / 2;
-            float centerY = imageRect.height() / 2;
-
-            float left = centerX - w;
-            float top = centerY - h;
-
-            RectF dst = new RectF(left, top, left + originBit.getWidth(), top
-                    + originBit.getHeight());
-            canvas.save();
-            //bug fixed  应用时不需要考虑图片缩放问题 重新加载图片时 缩放控件会自动填充屏幕
-//            canvas.scale(mRotatePanel.getScale(), mRotatePanel.getScale(),
-//                    imageRect.width() / 2, imageRect.height() / 2);
-            canvas.rotate(mRotatePanel.getRotateAngle(), imageRect.width() / 2,
-                    imageRect.height() / 2);
-
-            canvas.drawBitmap(originBit, new Rect(0, 0, originBit.getWidth(),
-                    originBit.getHeight()), dst, null);
-            canvas.restore();
-            return result;
+            return rotate90AndSave(originBit);
         }
 
         @Override
@@ -227,4 +203,33 @@ public class RotateFragment extends BaseEditFragment {
             backToMain();
         }
     }// end inner class
+
+    public Bitmap rotate90AndSave(Bitmap originBit ){
+        RectF imageRect = mRotatePanel.getImageNewRect();
+//        Bitmap originBit = params[0];
+        Bitmap result = Bitmap.createBitmap((int) imageRect.width(),
+                (int) imageRect.height(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(result);
+        int w = originBit.getWidth() >> 1;
+        int h = originBit.getHeight() >> 1;
+        float centerX = imageRect.width() / 2;
+        float centerY = imageRect.height() / 2;
+
+        float left = centerX - w;
+        float top = centerY - h;
+
+        RectF dst = new RectF(left, top, left + originBit.getWidth(), top
+                + originBit.getHeight());
+        canvas.save();
+        //bug fixed  应用时不需要考虑图片缩放问题 重新加载图片时 缩放控件会自动填充屏幕
+//            canvas.scale(mRotatePanel.getScale(), mRotatePanel.getScale(),
+//                    imageRect.width() / 2, imageRect.height() / 2);
+        canvas.rotate(mRotatePanel.getRotateAngle(), imageRect.width() / 2,
+                imageRect.height() / 2);
+
+        canvas.drawBitmap(originBit, new Rect(0, 0, originBit.getWidth(),
+                originBit.getHeight()), dst, null);
+        canvas.restore();
+        return  result;
+    }
 }// end class

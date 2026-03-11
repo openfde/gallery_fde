@@ -16,11 +16,19 @@ android {
         }
     }
 
+//    externalNativeBuild {
+//        cmake {
+//            path "src/main/cpp/CMakeLists.txt"
+//        }
+//    }
+
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.sdkVersion
         versionCode 1
         versionName "1.0"
+
+
 
         ndk {
             // 指定需要支持的 ABI 类型
@@ -38,5 +46,6 @@ dependencies {
     api 'androidx.recyclerview:recyclerview:1.0.0'
     api 'androidx.appcompat:appcompat:1.0.0'
     implementation 'com.google.android.material:material:1.10.0'
+    api project(":photoview")
 
 }

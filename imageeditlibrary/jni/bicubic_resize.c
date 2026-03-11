@@ -15,7 +15,7 @@
  */
 
 #include <stdlib.h>
-#include <mem_utils.h>
+#include "mem_utils.h"
 
 int resizeChannelBicubic(const unsigned char *src, int srcWidth, int srcHeight, unsigned char *dst, int dstWidth, int dstHeight) {
 	unsigned char *xVector;

@@ -26,6 +26,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.fde.imageeditlibrary.editimage.utils.PaintUtil;
+import com.github.chrisbanes.photoview.PhotoView;
 
 /**
  * 旋转图片
@@ -33,7 +34,7 @@ import com.fde.imageeditlibrary.editimage.utils.PaintUtil;
  * @author openfde
  * 
  */
-public class RotateImageView extends View {
+public class RotateImageView extends PhotoView {
 	private Rect srcRect;
 	private RectF dstRect;
 	private Rect maxRect;// 最大限制矩形框
