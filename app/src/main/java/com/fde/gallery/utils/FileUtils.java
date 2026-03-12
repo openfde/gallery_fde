@@ -8,6 +8,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
@@ -19,6 +21,8 @@ import com.fde.gallery.common.Constant;
 import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -394,5 +398,49 @@ public class FileUtils {
             e.printStackTrace();
         }
         return bitmap;
+    }
+
+    public static void rotateImage90AndSave(String inputPath, String outputPath) {
+        // 1. 读取图片
+        Bitmap bitmap = BitmapFactory.decodeFile(inputPath);
+        if (bitmap == null) {
+            System.out.println("图片加载失败: " + inputPath);
+            return;
+        }
+
+        // 2. 创建旋转矩阵
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        // 3. 创建旋转后的 Bitmap
+        Bitmap rotatedBitmap = Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bitmap.getWidth(),
+                bitmap.getHeight(),
+                matrix,
+                true
+        );
+
+        // 4. 保存到文件
+        File outFile = new File(outputPath);
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(outFile);
+            rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 5. 回收 Bitmap
+        bitmap.recycle();
+        rotatedBitmap.recycle();
     }
 }

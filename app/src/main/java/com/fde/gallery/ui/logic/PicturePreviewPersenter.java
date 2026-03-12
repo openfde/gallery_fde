@@ -75,7 +75,16 @@ public class PicturePreviewPersenter {
         }
     }
 
-
+    public  Multimedia getCurPic() {
+        try {
+            Multimedia pic = list.get(curPos);
+            SPUtils.putUserInfo(context, "curPicPath", pic.getPath());
+            return pic;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }
 
     public Multimedia getNextPic() {
         try {

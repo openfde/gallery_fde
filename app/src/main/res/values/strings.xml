@@ -22,8 +22,10 @@
     <string name="select_all">all</string>
     <string name="deselect_all">all not</string>
     <string name="edit">edit</string>
+    <string name="rotate">rotate</string>
     <string name="ok">OK</string>
     <string name="is_delete">is Delete?</string>
+    <string name="is_set_wallpaper">Are you sure to set wallpaper?</string>
     <string name="cancel">cancel</string>
     <string name="details">details</string>
     <string name="collect">collect</string>

@@ -225,6 +225,19 @@ public class EditImageActivity extends BaseActivity {
         switchFragment(mPaintFragment);
     }
 
+    public void switchFragmentBeauty(){
+        switchFragment(mBeautyFragment);
+    }
+
+    public void switchFragmentSticker(){
+        switchFragment(mStickerFragment);
+    }
+
+    public void switchFragmentFilter(){
+        switchFragment(mFilterListFragment);
+    }
+
+
     public void switchFragmentRotate(){
         switchFragment(mRotateFragment);
     }

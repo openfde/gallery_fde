@@ -95,9 +95,11 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
     public void onClick(View v) {
         activity.setSaveBtnShow(true);
         if (v == stickerBtn) {
-            onStickClick();
+//            onStickClick();
+            activity.switchFragmentSticker();
         } else if (v == fliterBtn) {
-            onFilterClick();
+//            onFilterClick();
+            activity.switchFragmentFilter();
         } else if (v == cropBtn) {
             activity.switchFragmentCrop();
 //            onCropClick();
@@ -112,7 +114,8 @@ public class MainMenuFragment extends BaseEditFragment implements View.OnClickLi
             activity.switchFragmentPaint();
 //            onPaintClick();
         }else if(v == mBeautyBtn){
-            onBeautyClick();
+            activity.switchFragmentBeauty();
+//            onBeautyClick();
         }
     }
 

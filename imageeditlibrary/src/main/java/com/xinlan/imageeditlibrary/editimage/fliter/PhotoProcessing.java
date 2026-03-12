@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.fde.imageeditlibrary.editimage.fliter;
+package com.xinlan.imageeditlibrary.editimage.fliter;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -26,6 +26,10 @@ import android.graphics.Bitmap.Config;
 public class PhotoProcessing {
     private static final String TAG = "PhotoProcessing";
 
+    // /////////////////////////////////////////////
+    static {
+        System.loadLibrary("photoprocessing");
+    }
 
     public static Bitmap filterPhoto(Bitmap bitmap, int position) {
         if(position == 12){//马赛克滤镜
@@ -78,10 +82,7 @@ public class PhotoProcessing {
         return filteredBitmap;
     }
 
-    // /////////////////////////////////////////////
-    static {
-        System.loadLibrary("photoprocessing");
-    }
+
 
     public static native int nativeInitBitmap(int width, int height);
 

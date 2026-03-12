@@ -16,24 +16,35 @@
 package com.fde.gallery.ui.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.InputDevice;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,34 +70,54 @@ import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
 import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
+import com.fde.imageeditlibrary.editimage.EditImageActivity;
+import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
+import com.fde.imageeditlibrary.editimage.view.RotateImageView;
+import com.xinlan.imageeditlibrary.editimage.fliter.PhotoProcessing;
 import com.github.chrisbanes.photoview.PhotoView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
-public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener {
+public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener ,View.OnTouchListener{
     Multimedia picture;
     LinearLayout layoutBottomBtn;
-    PhotoView imageView;
+    RotateImageView imageView;
     ImageView imgDetails;
     ImageView imgLeft;
     ImageView imgRight;
 
-    TextView txtEdit;
+    ImageView txtEdit;
+    ImageView txtRotate;
+    ImageView imgZoomIn;
+    ImageView imgZoomOut;
 
-    TextView txtDelete;
+    TextView txtScale ;
 
-    TextView txtMore;
+    ImageView txtDelete;
+
     PicturePreviewPersenter picturePreviewPersenter;
 
     boolean isShowBottomBtn = true;
 
-    PopupWindow popupWindow;
-    View bottomSheetView;
-    TextView txtDetails;
-    TextView txtSetWallpage;
+//    PopupWindow popupWindow;
+//    View bottomSheetView;
+    ImageView txtDetails;
+    ImageView txtSetWallpage;
     TextView txtSetWallpageLock;
 
+    private static int rotateAngle = 0;
+    private static float currentScale = 1;
+    private  float scaleMax = 10.0f;
+    private  float scaleMin = 0.1f;
+    private  float step = 1.1f;
+
     AnimDrawablePlayer animDrawablePlayer ;
+
+    Bitmap rotatedBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,11 +160,13 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                     }else{
                         picture.setId(-1);
                     }
-
                     picture.setPath(realPath);
                 }
 
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
+                if(m == null && picturePreviewPersenter.getCurPic() !=null){
+                    picture = picturePreviewPersenter.getCurPic();
+                }
                 initData();
 
                 //if action is edit to go to edit page
@@ -150,28 +183,32 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             LogTools.i("picture " + picture);
         }
 
-        popupWindow = new PopupWindow(this);
-        bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
-        popupWindow.setContentView(bottomSheetView);
-        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.4);
-
-        popupWindow.setWidth(width);
-        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
+//        popupWindow = new PopupWindow(this);
+//        bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
+//        popupWindow.setContentView(bottomSheetView);
+//        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.4);
+//        popupWindow.setWidth(width);
+//        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+//        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 //        popupWindow.setOutsideTouchable(true);
-        popupWindow.setFocusable(true);
-        txtDetails = bottomSheetView.findViewById(R.id.txtDetails);
-        txtSetWallpage = bottomSheetView.findViewById(R.id.txtSetWallpage);
-        txtSetWallpageLock = bottomSheetView.findViewById(R.id.txtSetWallpageLock);
-        txtDetails.setOnClickListener(this);
-        txtSetWallpage.setOnClickListener(this);
-        txtSetWallpageLock.setOnClickListener(this);
+//        popupWindow.setFocusable(true);
+//        txtDetails = bottomSheetView.findViewById(R.id.txtDetails);
+//        txtSetWallpage = bottomSheetView.findViewById(R.id.txtSetWallpage);
+//        txtSetWallpageLock = bottomSheetView.findViewById(R.id.txtSetWallpageLock);
+//        txtDetails.setOnClickListener(this);
+//        txtSetWallpage.setOnClickListener(this);
+//        txtSetWallpageLock.setOnClickListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(rotatedBitmap !=null && picture !=null){
+            if(rotateAngle % 360 == 0){
+                return;
+            }
+            BitmapUtils.saveBitmap(context, rotatedBitmap, picture.getPath());
+        }
     }
 
     @Override
@@ -179,27 +216,57 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_SCROLL &&
+                event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            float vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
+            float hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
+            if (vScroll > 0) {
+                setImgZoomOut();
+            } else if (vScroll < 0) {
+                setImgZoomIn();
+            }
+            return true;
+        }
+        return super.onGenericMotionEvent(event);
+    }
 
+    private float startX = 0f; // 按下起点
+    private boolean dragging = false;
 
     public void initView() {
-        imageView = (PhotoView) findViewById(R.id.imageView);
+        imageView = (RotateImageView) findViewById(R.id.imageView);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
         imgLeft = (ImageView) findViewById(R.id.imgLeft);
         imgRight = (ImageView) findViewById(R.id.imgRight);
-        txtDelete = (TextView) findViewById(R.id.txtDelete);
-        txtMore = (TextView) findViewById(R.id.txtMore);
-        txtEdit = (TextView) findViewById(R.id.txtEdit);
+        txtDelete = (ImageView) findViewById(R.id.txtDelete);
+        txtDetails = (ImageView) findViewById(R.id.txtDetails);
+        txtSetWallpage = (ImageView) findViewById(R.id.txtSetWallpage);
+        txtEdit = (ImageView) findViewById(R.id.txtEdit);
+        txtRotate = (ImageView) findViewById(R.id.txtRotate);
+        imgZoomIn = (ImageView) findViewById(R.id.imgZoomIn);
+        imgZoomOut = (ImageView) findViewById(R.id.imgZoomOut);
+        txtScale = (TextView) findViewById(R.id.txtScale);
         layoutBottomBtn = (LinearLayout) findViewById(R.id.layoutBottomBtn);
-        txtMore.setOnClickListener(this);
+        txtDetails.setOnClickListener(this);
+        txtSetWallpage.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtEdit.setOnClickListener(this);
+        txtRotate.setOnClickListener(this);
         imgLeft.setOnClickListener(this);
         imgRight.setOnClickListener(this);
-
+        imgZoomOut.setOnClickListener(this);
+        imgZoomIn.setOnClickListener(this);
+        imageView.setOnDoubleTapListener(null);
+        imageView.setOnTouchListener(this);
     }
 
     private void initData(){
+        imageView.setMaximumScale(scaleMax);
+        imageView.setMinimumScale(scaleMin);
         showPic(picture);
+        float scale = imageView.getMaximumScale();
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -290,11 +357,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txtMore:
-                if (!popupWindow.isShowing()) {
-                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM | Gravity.RIGHT, 10, 10);
-                }
-                break;
+//            case R.id.txtMore:
+//                if (!popupWindow.isShowing()) {
+//                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM | Gravity.RIGHT, 10, 10);
+//                }
+//                break;
 
             case R.id.txtDelete:
                 picturePreviewPersenter.showDelDlg();
@@ -319,45 +386,180 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 picturePreviewPersenter.editImageClick();
                 break;
 
-            case R.id.imgLeft:
-                startAnimation();
+            case R.id.txtRotate:
+                setRotate();
+                break;
 
-                Multimedia prePic = picturePreviewPersenter.getPrePic();
-                showPic(prePic);
+            case R.id.imgZoomIn:
+                setImgZoomIn();
+                break;
+            case R.id.imgZoomOut:
+                setImgZoomOut();
+                break;
+            case R.id.imgLeft:
+                prePic();
                 break;
 
             case R.id.imgRight:
-                startAnimation();
-                Multimedia nextPic = picturePreviewPersenter.getNextPic();
-                showPic(nextPic);
+                nextPic();
                 break;
 
             case R.id.txtDetails:
-//                picturePreviewPersenter.showDetailsDlg();
+                picturePreviewPersenter.showDetailsDlg();
 //                popupWindow.dismiss();
                 break;
 
             case R.id.txtSetWallpage:
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        picturePreviewPersenter.setWallpage(1);
-                    }
-                }).start();
-
-
-                popupWindow.dismiss();
+                    setSetWallpage();
+//                popupWindow.dismiss();
                 break;
 
             case R.id.txtSetWallpageLock:
                 picturePreviewPersenter.setWallpage(2);
-                popupWindow.dismiss();
+//                popupWindow.dismiss();
                 break;
 
             default:
 
                 break;
         }
+    }
+
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (!event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            return false;
+        }
+
+        int button = event.getButtonState();
+        float x = event.getX();
+
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                // 只处理左键按下
+                if ((button & MotionEvent.BUTTON_PRIMARY) != 0) {
+                    startX = x;
+                    dragging = true;
+                    return true;
+                }
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                // 拖拽过程中，可以加动画或滑动效果
+                if (dragging) {
+                    float dx = x - startX;
+                }
+                break;
+
+            case MotionEvent.ACTION_UP:
+                if (dragging) {
+                    float dx = x - startX;
+                    dragging = false;
+                    // 设置阈值，比如 50px 才算翻页
+                    float threshold = 50f;
+
+                    if (dx > threshold) {
+                        prePic();
+                    } else if (dx < -threshold) {
+                        nextPic();
+                    }
+
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    private void setSetWallpage(){
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.is_set_wallpaper);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            picturePreviewPersenter.setWallpage(1);
+                        }
+                    }).start();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void setRotate(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                Multimedia pic = list.get(curPos);
+                Bitmap bitmap = BitmapFactory.decodeFile(picture.getPath());
+                Matrix matrix = new Matrix();
+                rotateAngle+=90;
+                matrix.postRotate(rotateAngle);
+
+                rotatedBitmap = Bitmap.createBitmap(
+                        bitmap,
+                        0,
+                        0,
+                        bitmap.getWidth(),
+                        bitmap.getHeight(),
+                        matrix,
+                        true
+                );
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageView.setImageBitmap(rotatedBitmap);
+                    }
+                });
+
+            }
+        }).start();
+    }
+
+    /**
+     * 上一页
+     */
+    public void prePic() {
+        startAnimation();
+        Multimedia prePic = picturePreviewPersenter.getPrePic();
+        showPic(prePic);
+    }
+
+    /**
+     * 下一页
+     */
+    public void nextPic() {
+        startAnimation();
+        Multimedia nextPic = picturePreviewPersenter.getNextPic();
+        showPic(nextPic);
+    }
+
+    private  void setImgZoomIn(){
+        currentScale = currentScale * step;
+        if(currentScale >= scaleMax){
+            currentScale = scaleMax;
+        }
+        imageView.setScale(currentScale);
+        txtScale.setText(String.format("%.0f%%", currentScale * 100));
+    }
+
+    private  void setImgZoomOut(){
+        currentScale = currentScale / step;
+        if(currentScale <= scaleMin){
+            currentScale = scaleMin;
+        }
+        imageView.setScale(currentScale);
+        txtScale.setText(String.format("%.0f%%", currentScale * 100));
     }
 
     public Multimedia findPicture(List<Multimedia> listM, String path) {
@@ -374,5 +576,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         }
         return null;
     }
+
+
 
 }

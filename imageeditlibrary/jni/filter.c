@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include <bitmap.h>
-#include <mem_utils.h>
-#include <colour_space.h>
+#include "bitmap.h"
+#include "mem_utils.h"
+#include "colour_space.h"
 #include <math.h>
 #include <android/log.h>
 #include <stdlib.h>

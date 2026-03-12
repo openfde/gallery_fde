@@ -19,9 +19,10 @@
     android:layout_width="match_parent"
     android:id="@+id/rootView"
     android:layout_height="match_parent"
+    android:background="#f2f2f2"
     tools:context=".ui.activity.PicturePreviewActivity">
 
-    <com.github.chrisbanes.photoview.PhotoView
+    <com.fde.imageeditlibrary.editimage.view.RotateImageView
         android:id="@+id/imageView"
         android:visibility="gone"
         android:layout_width="match_parent"
@@ -38,12 +39,14 @@
     <include
         android:layout_alignParentBottom="true"
         layout="@layout/layout_details_bottom_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="6dp"
         android:layout_height="wrap_content"/>
 
     <ImageView
         android:id="@+id/imgLeft"
-        android:src="@mipmap/round_left_fill"
+        android:src="@drawable/ic_left_page"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="16dp"
@@ -53,7 +56,7 @@
 
     <ImageView
         android:id="@+id/imgRight"
-        android:src="@mipmap/round_right_fill"
+        android:src="@drawable/ic_right_page"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="16dp"

@@ -3,7 +3,7 @@
 // http://incubator.quasimondo.com/processing/stackblur.pde
 // and altered to process each colour channel (r, g, b) separately.
 
-#include <mem_utils.h>
+#include "mem_utils.h"
 #include <stdlib.h>
 #include <android/log.h>
 

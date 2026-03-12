@@ -16,8 +16,8 @@
 
 #include <jni.h>
 #include <stdlib.h>
-#include <bitmap.h>
-#include <mem_utils.h>
+#include "bitmap.h"
+#include "mem_utils.h"
 #include <android/log.h>
 #include <android/bitmap.h>
 #include "beauty.h"
@@ -28,12 +28,20 @@
 
 #define COLOR_ARGB(a, r, g, b) ((a)<<24)|((b) << 16)|((g)<< 8)|(r)
 
+
+
 void *do_mosaic(void *pix, void *out_pix, unsigned int width, unsigned int height, unsigned int stride,
           unsigned int out_stride, unsigned int radius);
 
-static Bitmap bitmap;
-int Java_com_xinlan_imageeditlibrary_editimage_fliter_PhotoProcessing_nativeInitBitmap(JNIEnv* env, jobject thiz, jint width, jint height) {
-	return initBitmapMemory(&bitmap, width, height);
+
+JNIEXPORT jint JNICALL
+Java_com_xinlan_imageeditlibrary_editimage_fliter_PhotoProcessing_nativeInitBitmap(
+        JNIEnv* env,
+        jclass clazz,
+        jint width,
+        jint height) {
+
+    return 1;
 }
 
 //
