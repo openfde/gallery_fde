@@ -108,7 +108,8 @@ public class VideoPlayActivity extends BaseActivity {
             startActivity(new Intent(context, MainActivity.class));
             finish();
         }else {
-            mStyledPlayerView.setControllerAutoShow(false);
+            mStyledPlayerView.setControllerAutoShow(true);
+            mStyledPlayerView.setControllerShowTimeoutMs(3000);
             mStyledPlayerView.setShowNextButton(false);
             mStyledPlayerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_NEVER);
             player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector(),loadControl);
@@ -118,7 +119,8 @@ public class VideoPlayActivity extends BaseActivity {
             MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse(videoData.getPath()));
             player.prepare(videoSource);
-            player.setPlayWhenReady(false);
+            player.setPlayWhenReady(true);
+
         }
     }
 
