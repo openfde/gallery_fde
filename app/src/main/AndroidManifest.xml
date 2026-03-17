@@ -70,11 +70,7 @@
             android:documentLaunchMode="always"
             android:exported="true"
             android:screenOrientation="portrait">
-            <layout
-                android:minWidth="1000dp"
-                android:minHeight="600dp"
-                android:defaultWidth="1000dp"
-                android:defaultHeight="600dp" />
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -90,11 +86,7 @@
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density"
             android:exported="true"
             android:screenOrientation="portrait">
-            <layout
-                android:minWidth="1000dp"
-                android:minHeight="600dp"
-                android:defaultWidth="1000dp"
-                android:defaultHeight="600dp" />
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
