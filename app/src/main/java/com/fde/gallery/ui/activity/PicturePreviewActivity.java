@@ -72,6 +72,7 @@ import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.utils.StringUtils;
 import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
+import com.fde.imageeditlibrary.editimage.utils.Utils;
 import com.fde.imageeditlibrary.editimage.view.RotateImageView;
 import com.xinlan.imageeditlibrary.editimage.fliter.PhotoProcessing;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -325,7 +326,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             try {
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .override(StringUtils.ToInt(DeviceUtils.getSystemProperty("openfde.display_width")),StringUtils.ToInt(DeviceUtils.getSystemProperty("openfde.display_height")));
+                        .override(StringUtils.ToInt(Utils.getSystemProperty("openfde.display_width")),StringUtils.ToInt(Utils.getSystemProperty("openfde.display_height")));
 
                 Glide.with(context) // replace 'this' with your context
                         .load(multimedia.getPath())
