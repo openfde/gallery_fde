@@ -21,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -34,6 +35,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
@@ -49,6 +52,7 @@ import com.fde.imageeditlibrary.editimage.fragment.PaintFragment;
 import com.fde.imageeditlibrary.editimage.fragment.RotateFragment;
 import com.fde.imageeditlibrary.editimage.fragment.StickerFragment;
 import com.fde.imageeditlibrary.editimage.utils.FileUtil;
+import com.fde.imageeditlibrary.editimage.utils.Utils;
 import com.fde.imageeditlibrary.editimage.view.CropImageView;
 import com.fde.imageeditlibrary.editimage.view.CustomPaintView;
 import com.fde.imageeditlibrary.editimage.view.CustomViewPager;
@@ -148,6 +152,8 @@ public class EditImageActivity extends BaseActivity {
         setContentView(R.layout.activity_image_edit);
         initView();
         getData();
+
+        Utils.setSystemProperty(getPackageName()+"_forcedPortraitMode", "true");
     }
 
     private void getData() {
@@ -474,6 +480,7 @@ public class EditImageActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Utils.setSystemProperty(getPackageName()+"_forcedPortraitMode", "false");
         if (mLoadImageTask != null) {
             mLoadImageTask.cancel(true);
         }
