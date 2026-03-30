@@ -20,19 +20,24 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.openfde.AppTaskControllerProxy;
+import android.openfde.AppTaskStatusListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListPopupWindow;
+import android.widget.PopupMenu;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.fde.baselib.view.CustomTitleBar;
 import com.fde.gallery.adapter.SectionsPagerAdapter;
 import com.fde.gallery.base.BaseActivity;
+import com.fde.gallery.common.Constant;
+import com.fde.gallery.ui.activity.PicturePreviewActivity;
 import com.fde.gallery.ui.fragment.PictureListFragment;
 import com.fde.gallery.ui.fragment.TimeLineListFragment;
 import com.fde.gallery.ui.fragment.VideoListFragment;
@@ -41,6 +46,9 @@ import com.fde.gallery.utils.LogTools;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends BaseActivity {
     VideoListFragment videoFragment;
@@ -49,16 +57,28 @@ public class MainActivity extends BaseActivity {
     TimeLineListFragment timeLineFragment ;
     ViewPager viewPager;
     TabLayout tabLayout;
+
+    CustomTitleBar customTitleBar;
     SectionsPagerAdapter sectionsPagerAdapter;
     Context context;
 
-
+    private AppTaskControllerProxy appTaskController ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+
+        appTaskController = AppTaskControllerProxy.create();
+        appTaskController.initCustomCaption(new WeakReference<>(this),true, new AppTaskStatusListener() {
+            @Override
+            public void onStatusChanged(int windowingMode, boolean isSystemBarVisible) {
+                customTitleBar.setButtonBackground(CustomTitleBar.Type.MAXIMIZE, windowingMode == 5 ? com.fde.baselib.R.drawable.icon_maximize : com.fde.baselib.R.drawable.icon_exitmaximize);
+                customTitleBar.setButtonBackground(CustomTitleBar.Type.FULLSCREEN, isSystemBarVisible ? com.fde.baselib.R.drawable.icon_fullscreen : com.fde.baselib.R.drawable.icon_exitfullscreen);
+            }
+        });
+
         initView();
 
 //        triggerSystemMediaScan();
@@ -90,8 +110,77 @@ public class MainActivity extends BaseActivity {
 //        readImages();
         LogTools.i("getAppVersionCode: "+ DeviceUtils.getAppVersionCode(context));
 
+        customTitleBar = (CustomTitleBar) findViewById(R.id.customTitleBar);
+        customTitleBar.setTitle(getString(R.string.app_name));
+        customTitleBar.setOnButtonClickListener(new CustomTitleBar.OnButtonClickListener() {
+            @Override
+            public void onLeftClick() {
+                finish(); // 左上角返回
+            }
+
+            @Override
+            public void onCloseClick() {
+                appTaskController.closeTask();
+            }
+
+            @Override
+            public void onFullscreenClick() {
+                // 全屏逻辑
+                appTaskController.enterOrExitFullscreen();
+            }
+
+            @Override
+            public void onImportClick() {
+                ListPopupWindow listPopupWindow = new ListPopupWindow(context);
+                List<String> data = Arrays.asList(getString(R.string.open), getString(R.string.exit));
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        context,
+                        android.R.layout.simple_list_item_1,
+                        data
+                );
+
+                listPopupWindow.setAnchorView(customTitleBar.getButton(CustomTitleBar.Type.OPTION)); // 绑定按钮
+                listPopupWindow.setAdapter(adapter);
+                listPopupWindow.setWidth(150);
+
+                listPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
+                    if (position == 0) {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.setType("image/*");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivityForResult(intent, Constant.REQUEST_SELECT_PHOTO);
+                    } else {
+                        appTaskController.closeTask();
+                    }
+                    listPopupWindow.dismiss();
+                });
+                listPopupWindow.show();
+            }
+
+            @Override
+            public void onMinimizeClick() {
+                appTaskController.minimize();
+            }
+
+            @Override
+            public void onMaximizeClick() {
+                appTaskController.maximizeOrNot();
+            }
+        });
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        LogTools.i("onActivityResult requestCode "+requestCode + " resultCode "+resultCode);
+        if (requestCode == Constant.REQUEST_SELECT_PHOTO && resultCode == RESULT_OK) {
+            data.setClass(context, PicturePreviewActivity.class);
+            data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(data);
+        }
+    }
 
     private void readImages() {
         File file = new File("/mnt/sdcard/");

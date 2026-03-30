@@ -27,6 +27,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,7 +47,10 @@ import com.fde.gallery.utils.SPUtils;
 import com.fde.gallery.view.CustomScrollBarView;
 import com.fde.gallery.view.RecyclerScrollBinder;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +82,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
     public PictureListPersenter(BaseFragment baseFragment, View view) {
         this.baseFragment = baseFragment;
         this.view = view;
-        context = baseFragment.getActivity();
+        context = baseFragment.requireActivity();
     }
 
     public boolean initView() {
@@ -181,8 +186,11 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
+        baseFragment.getActivity().startActivity(intent);
+//        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
     }
+
+
 
     @Override
     public void onClick(View view) {

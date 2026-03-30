@@ -21,7 +21,7 @@ android {
     }
 
     ext {
-        appVersion = project.findProperty('appVersion') ?: "2.0.5"
+        appVersion = project.findProperty('appVersion') ?: "2.0.8"
     }
     version = appVersion
     defaultConfig {
@@ -78,5 +78,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation group: 'com.github.bumptech.glide', name: 'glide', version: '5.0.4'
     implementation files('libs/baselib.aar')
+    compileOnly files('libs/openfde_sdk.jar')
     implementation("com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14")
+    implementation 'com.google.mlkit:text-recognition-chinese:16.0.1'
 }

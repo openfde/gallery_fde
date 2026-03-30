@@ -28,9 +28,10 @@
     <string name="is_set_wallpaper">Are you sure to set wallpaper?</string>
     <string name="cancel">cancel</string>
     <string name="details">details</string>
+    <string name="ocr">ocr</string>
     <string name="collect">collect</string>
     <string name="can_not_choose_empty">please choose one</string>
-    <string name="can_not_choose_too_more">please choose not greater than</string>
+    <string name="can_not_choose_too_more">please choose not greater than 9 cards</string>
     <string name="more">more</string>
     <string name="set_wallpage">set wallpaper</string>
     <string name="set_wallpage_lock">set wallpaper lock</string>
@@ -68,4 +69,7 @@
     <string name="not_pic">No optional images</string>
     <string name="show_pic_tips">Only Show a width > 799 and a height > 599 . If you want to select other images, go to the gallery</string>
     <string name="set_pic_tips">The wallpaper is relatively large and may take a bit longer to set</string>
+    <string name="no_more_pic">No more pictures</string>
+    <string name="open">Open</string>
+    <string name="exit">Exit</string>
 </resources>

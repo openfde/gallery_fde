@@ -19,6 +19,7 @@ import android.annotation.SuppressLint;
 import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.IntentSender;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,11 +27,17 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.fde.gallery.utils.LogTools;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class BaseFragment extends Fragment {
     private boolean isFragmentVisible;
@@ -138,5 +145,6 @@ public class BaseFragment extends Fragment {
             ex.printStackTrace();
         }
     }
+
 
 }

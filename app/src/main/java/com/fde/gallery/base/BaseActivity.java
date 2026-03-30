@@ -20,11 +20,14 @@ import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentSender;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -34,6 +37,10 @@ import androidx.core.app.ActivityCompat;
 
 import com.fde.gallery.R;
 import com.fde.gallery.common.Constant;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class BaseActivity extends AppCompatActivity {
     protected Context context;
@@ -128,6 +135,7 @@ public class BaseActivity extends AppCompatActivity {
 
         }
     }
+
 
 
 }

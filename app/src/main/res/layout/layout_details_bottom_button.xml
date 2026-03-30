@@ -14,8 +14,7 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:id="@+id/layoutBottomBtn"
+    android:layout_width="match_parent"
     android:visibility="visible"
     android:gravity="center"
     android:layout_gravity="center"
@@ -27,7 +26,6 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_weight="3"
             android:paddingLeft="16dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -64,7 +62,6 @@
 
         <ImageView
             android:id="@+id/txtEdit"
-            android:layout_weight="1"
             android:src="@drawable/ic_edit"
             android:tooltipText="@string/edit"
             style="@style/list_bottom_icon"
@@ -74,7 +71,6 @@
         <ImageView
             android:id="@+id/txtRotate"
             android:tooltipText="@string/rotate"
-            android:layout_weight="1"
             android:src="@drawable/ic_right_rotate"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
@@ -82,25 +78,31 @@
 
         <ImageView
             android:id="@+id/txtDelete"
-            android:layout_weight="1"
             android:src="@drawable/ic_delete"
             android:tooltipText="@string/delete"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
+
+        <ImageView
+            android:id="@+id/txtOcr"
+            android:src="@drawable/ic_ocr"
+            android:tooltipText="OCR"
+            style="@style/list_bottom_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
         <ImageView
             android:id="@+id/txtDetails"
-            android:layout_weight="1"
             android:src="@drawable/ic_details"
-            android:tooltipText="@string/delete"
+            android:tooltipText="@string/details"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/txtSetWallpage"
-            android:layout_weight="1"
             android:src="@drawable/ic_wallpaper"
             android:tooltipText="@string/set_wallpage"
             style="@style/list_bottom_icon"
