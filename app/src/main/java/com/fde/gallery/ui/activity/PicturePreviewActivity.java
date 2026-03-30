@@ -41,6 +41,7 @@ import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -74,6 +75,10 @@ import com.fde.imageeditlibrary.editimage.EditImageActivity;
 import com.fde.imageeditlibrary.editimage.utils.BitmapUtils;
 import com.fde.imageeditlibrary.editimage.utils.Utils;
 import com.fde.imageeditlibrary.editimage.view.RotateImageView;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions;
 import com.xinlan.imageeditlibrary.editimage.fliter.PhotoProcessing;
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -88,6 +93,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     View layoutBottomBtn;
     RotateImageView imageView;
     ImageView imgDetails;
+    ImageView txtOcr;
     ImageView imgLeft;
     ImageView imgRight;
 
@@ -95,6 +101,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     ImageView txtRotate;
     ImageView imgZoomIn;
     ImageView imgZoomOut;
+
+    EditText editOcrText;
 
     TextView txtScale ;
 
@@ -141,7 +149,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 finish();
             } else {
                 String actionStr = getIntent().getAction();
-                LogTools.i("realPath   " + realPath + " ,documentFile " + documentFile +",actionStr "+actionStr);
+                LogTools.d("realPath   " + realPath + " ,documentFile " + documentFile +",actionStr "+actionStr);
                 Multimedia m = new Multimedia();
 
                 if ("android.intent.action.EDIT".equals(actionStr)) {
@@ -239,6 +247,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     public void initView() {
         imageView = (RotateImageView) findViewById(R.id.imageView);
         imgDetails = (ImageView) findViewById(R.id.imgDetails);
+        txtOcr = (ImageView) findViewById(R.id.txtOcr);
         imgLeft = (ImageView) findViewById(R.id.imgLeft);
         imgRight = (ImageView) findViewById(R.id.imgRight);
         txtDelete = (ImageView) findViewById(R.id.txtDelete);
@@ -249,11 +258,13 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgZoomIn = (ImageView) findViewById(R.id.imgZoomIn);
         imgZoomOut = (ImageView) findViewById(R.id.imgZoomOut);
         txtScale = (TextView) findViewById(R.id.txtScale);
+        editOcrText = (EditText) findViewById(R.id.editOcrText);
         layoutBottomBtn = (View) findViewById(R.id.layoutBottomBtn);
         txtDetails.setOnClickListener(this);
         txtSetWallpage.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtEdit.setOnClickListener(this);
+        txtOcr.setOnClickListener(this);
         txtRotate.setOnClickListener(this);
         imgLeft.setOnClickListener(this);
         imgRight.setOnClickListener(this);
@@ -272,8 +283,9 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             @Override
             public void onClick(View view) {
                 if (picture.getId() > 0) {
-                    isShowBottomBtn = !isShowBottomBtn;
-                    layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+                    editOcrText.setVisibility(View.GONE);
+//                    isShowBottomBtn = !isShowBottomBtn;
+//                    layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
                 }
             }
         });
@@ -357,6 +369,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        editOcrText.setVisibility(View.GONE);
+        editOcrText.setText("");
         switch (view.getId()) {
 //            case R.id.txtMore:
 //                if (!popupWindow.isShowing()) {
@@ -403,6 +417,26 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
             case R.id.imgRight:
                 nextPic();
+                break;
+
+            case R.id.txtOcr:
+                editOcrText.setVisibility(View.VISIBLE);
+                Multimedia picture = picturePreviewPersenter.getCurPic();
+                Bitmap bitmap = BitmapFactory.decodeFile(picture.getPath());
+                InputImage image = InputImage.fromBitmap(bitmap, 0);
+
+                TextRecognizer recognizer = TextRecognition.getClient(
+                        new ChineseTextRecognizerOptions.Builder().build()
+                );
+
+                recognizer.process(image)
+                        .addOnSuccessListener(result -> {
+                            String text = result.getText();
+                            editOcrText.setText(text);
+                        })
+                        .addOnFailureListener(e -> {
+                            e.printStackTrace();
+                        });
                 break;
 
             case R.id.txtDetails:
@@ -556,6 +590,9 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     private  void setImgZoomIn(){
+        if(editOcrText.getVisibility() == View.VISIBLE){
+            return;
+        }
         currentScale = currentScale * step;
         if(currentScale >= scaleMax){
             currentScale = scaleMax;
@@ -565,6 +602,9 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     private  void setImgZoomOut(){
+        if(editOcrText.getVisibility() == View.VISIBLE){
+            return;
+        }
         currentScale = currentScale / step;
         if(currentScale <= scaleMin){
             currentScale = scaleMin;

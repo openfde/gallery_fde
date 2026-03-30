@@ -84,6 +84,15 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
+
+        <ImageView
+            android:id="@+id/txtOcr"
+            android:src="@drawable/ic_ocr"
+            android:tooltipText="OCR"
+            style="@style/list_bottom_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
         <ImageView
             android:id="@+id/txtDetails"
             android:src="@drawable/ic_details"

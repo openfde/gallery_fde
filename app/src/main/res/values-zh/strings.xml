@@ -14,6 +14,7 @@
     <string name="is_set_wallpaper">确定设置为壁纸?</string>
     <string name="cancel">取消</string>
     <string name="details">详情</string>
+    <string name="ocr">文字识别</string>
     <string name="collect">收藏</string>
     <string name="can_not_choose_empty">请选择一张图片</string>
     <string name="can_not_choose_too_more">请选择不大于9张</string>
