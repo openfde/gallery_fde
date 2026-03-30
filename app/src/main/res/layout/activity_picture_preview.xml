@@ -22,11 +22,7 @@
     android:background="#f2f2f2"
     tools:context=".ui.activity.PicturePreviewActivity">
 
-    <com.fde.imageeditlibrary.editimage.view.RotateImageView
-        android:id="@+id/imageView"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+
 
     <ImageView
         android:id="@+id/imgDetails"
@@ -37,12 +33,20 @@
         android:layout_height="wrap_content"/>
 
     <include
+        android:id="@+id/layoutBottomBtn"
         android:layout_alignParentBottom="true"
         layout="@layout/layout_details_bottom_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_margin="6dp"
+        android:layout_marginTop="6dp"
         android:layout_height="wrap_content"/>
+
+    <com.fde.imageeditlibrary.editimage.view.RotateImageView
+        android:id="@+id/imageView"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_above="@id/layoutBottomBtn"
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/imgLeft"

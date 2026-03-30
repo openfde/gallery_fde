@@ -85,7 +85,7 @@ import java.util.List;
 
 public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener ,View.OnTouchListener{
     Multimedia picture;
-    LinearLayout layoutBottomBtn;
+    View layoutBottomBtn;
     RotateImageView imageView;
     ImageView imgDetails;
     ImageView imgLeft;
@@ -249,7 +249,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgZoomIn = (ImageView) findViewById(R.id.imgZoomIn);
         imgZoomOut = (ImageView) findViewById(R.id.imgZoomOut);
         txtScale = (TextView) findViewById(R.id.txtScale);
-        layoutBottomBtn = (LinearLayout) findViewById(R.id.layoutBottomBtn);
+        layoutBottomBtn = (View) findViewById(R.id.layoutBottomBtn);
         txtDetails.setOnClickListener(this);
         txtSetWallpage.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
@@ -531,8 +531,13 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
      * 上一页
      */
     public void prePic() {
-        startAnimation();
         Multimedia prePic = picturePreviewPersenter.getPrePic();
+        if(prePic == null){
+            stopAnimation();
+            showShortToast(getString(R.string.no_more_pic));
+            return;
+        }
+        startAnimation();
         showPic(prePic);
     }
 
@@ -540,8 +545,13 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
      * 下一页
      */
     public void nextPic() {
-        startAnimation();
         Multimedia nextPic = picturePreviewPersenter.getNextPic();
+        if(nextPic == null){
+            stopAnimation();
+            showShortToast(getString(R.string.no_more_pic));
+            return;
+        }
+        startAnimation();
         showPic(nextPic);
     }
 
