@@ -38,6 +38,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -226,15 +227,25 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+            prePic();
+        }else if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
+            nextPic();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_SCROLL &&
                 event.isFromSource(InputDevice.SOURCE_MOUSE)) {
             float vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
             float hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
             if (vScroll > 0) {
-                setImgZoomOut();
-            } else if (vScroll < 0) {
                 setImgZoomIn();
+            } else if (vScroll < 0) {
+                setImgZoomOut();
             }
             return true;
         }
@@ -242,6 +253,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     private float startX = 0f; // 按下起点
+    private float startY = 0f; // 按下起点
     private boolean dragging = false;
 
     public void initView() {
@@ -271,7 +283,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgZoomOut.setOnClickListener(this);
         imgZoomIn.setOnClickListener(this);
         imageView.setOnDoubleTapListener(null);
-        imageView.setOnTouchListener(this);
+//        imageView.setOnTouchListener(this);
     }
 
     private void initData(){
@@ -469,6 +481,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
         int button = event.getButtonState();
         float x = event.getX();
+        float y = event.getY();
 
         switch (event.getAction()) {
 
@@ -476,6 +489,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 // 只处理左键按下
                 if ((button & MotionEvent.BUTTON_PRIMARY) != 0) {
                     startX = x;
+                    startX = y;
                     dragging = true;
                     return true;
                 }
@@ -491,22 +505,29 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             case MotionEvent.ACTION_UP:
                 if (dragging) {
                     float dx = x - startX;
+                    float dy = y - startY;
                     dragging = false;
                     // 设置阈值，比如 50px 才算翻页
                     float threshold = 50f;
 
-                    if (dx > threshold) {
-                        prePic();
-                    } else if (dx < -threshold) {
-                        nextPic();
+                    if(currentScale > 1.0f){
+                        imageView.setFrame((int)dx,(int)dy,imageView.getWidth(),imageView.getHeight());
+//                         v.onTouchEvent(event);
+                        return false;
+//                        imageView.setTranslationX(dx);
+//                        imageView.setTranslationY(dy);
+                    }else {
+                        if (dx > threshold) {
+                            prePic();
+                        } else if (dx < - threshold) {
+                            nextPic();
+                        }
                     }
-
                     return true;
                 }
                 break;
         }
-
-        return false;
+        return  false;
     }
 
     private void setSetWallpage(){
@@ -535,6 +556,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             @Override
             public void run() {
 //                Multimedia pic = list.get(curPos);
+                Multimedia picture = picturePreviewPersenter.getCurPic();
                 Bitmap bitmap = BitmapFactory.decodeFile(picture.getPath());
                 Matrix matrix = new Matrix();
                 rotateAngle+=90;

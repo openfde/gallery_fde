@@ -36,6 +36,7 @@
                     android:src="@drawable/ic_reduce"
                     style="@style/list_bottom_button"
                     android:layout_width="wrap_content"
+                    android:focusable="false"
                     android:layout_height="match_parent"/>
 
                 <TextView
@@ -45,12 +46,14 @@
                     android:textColor="#707070"
                     android:gravity="center"
                     android:visibility="visible"
+                    android:focusable="false"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
 
                 <ImageView
                     android:id="@+id/imgZoomIn"
                     android:src="@drawable/ic_plus"
+                    android:focusable="false"
                     style="@style/list_bottom_button"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
@@ -66,6 +69,7 @@
             android:tooltipText="@string/edit"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
+            android:focusable="false"
             android:layout_height="match_parent"/>
 
         <ImageView
@@ -74,6 +78,7 @@
             android:src="@drawable/ic_right_rotate"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
+            android:focusable="false"
             android:layout_height="wrap_content"/>
 
         <ImageView
@@ -82,6 +87,7 @@
             android:tooltipText="@string/delete"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
+            android:focusable="false"
             android:layout_height="match_parent"/>
 
 
@@ -89,6 +95,7 @@
             android:id="@+id/txtOcr"
             android:src="@drawable/ic_ocr"
             android:tooltipText="OCR"
+            android:focusable="false"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
@@ -97,6 +104,7 @@
             android:id="@+id/txtDetails"
             android:src="@drawable/ic_details"
             android:tooltipText="@string/details"
+            android:focusable="false"
             style="@style/list_bottom_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
@@ -106,6 +114,7 @@
             android:src="@drawable/ic_wallpaper"
             android:tooltipText="@string/set_wallpage"
             style="@style/list_bottom_icon"
+            android:focusable="false"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
 
