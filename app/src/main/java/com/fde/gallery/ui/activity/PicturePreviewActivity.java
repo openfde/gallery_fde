@@ -35,6 +35,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
@@ -444,7 +445,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 recognizer.process(image)
                         .addOnSuccessListener(result -> {
                             String text = result.getText();
-                            editOcrText.setText(text);
+                            if(TextUtils.isEmpty(text)){
+                                editOcrText.setText(getString(R.string.no_text));
+                            }else {
+                                editOcrText.setText(text);
+                            }
                         })
                         .addOnFailureListener(e -> {
                             e.printStackTrace();
@@ -509,19 +514,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                     dragging = false;
                     // 设置阈值，比如 50px 才算翻页
                     float threshold = 50f;
-
-                    if(currentScale > 1.0f){
-                        imageView.setFrame((int)dx,(int)dy,imageView.getWidth(),imageView.getHeight());
-//                         v.onTouchEvent(event);
-                        return false;
-//                        imageView.setTranslationX(dx);
-//                        imageView.setTranslationY(dy);
-                    }else {
-                        if (dx > threshold) {
-                            prePic();
-                        } else if (dx < - threshold) {
-                            nextPic();
-                        }
+                    
+                    if (dx > threshold) {
+                        prePic();
+                    } else if (dx < - threshold) {
+                        nextPic();
                     }
                     return true;
                 }
