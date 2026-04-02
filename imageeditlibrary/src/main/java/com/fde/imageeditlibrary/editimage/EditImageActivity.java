@@ -368,7 +368,7 @@ public class EditImageActivity extends BaseActivity {
         if (canAutoExit()) {
             onSaveTaskDone();
         } else {//图片还未被保存    弹出提示框确认
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this,R.style.RoundedAlertDialog);
             alertDialogBuilder.setMessage(R.string.exit_without_save)
                     .setCancelable(false).setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

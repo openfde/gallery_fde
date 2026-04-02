@@ -514,7 +514,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                     dragging = false;
                     // 设置阈值，比如 50px 才算翻页
                     float threshold = 50f;
-                    
+
                     if (dx > threshold) {
                         prePic();
                     } else if (dx < - threshold) {
@@ -529,7 +529,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
     private void setSetWallpage(){
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
             builder.setTitle(R.string.is_set_wallpaper);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override

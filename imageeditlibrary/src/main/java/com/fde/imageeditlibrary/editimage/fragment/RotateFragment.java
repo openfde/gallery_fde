@@ -126,7 +126,7 @@ public class RotateFragment extends BaseEditFragment {
     private final class BackToMenuClick implements OnClickListener {
         @Override
         public void onClick(View v) {
-            activity.setSaveBtnShow(false);
+            activity.setSaveBtnShow(true);
             backToMain();
         }
     }// end class

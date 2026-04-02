@@ -15,4 +15,10 @@
     </style>
 
 
+    <style name="RoundedAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/rounded_dialog_background</item>
+        <item name="colorAccent">#318BF3</item>
+
+    </style>
+
 </resources>

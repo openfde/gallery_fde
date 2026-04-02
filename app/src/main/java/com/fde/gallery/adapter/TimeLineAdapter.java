@@ -3,7 +3,9 @@ package com.fde.gallery.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -76,23 +78,35 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
         holder.checkBox.setChecked(multimedia.isSelected());
         holder.txtDate.setText(StringUtils.conversionTime(1000* multimedia.getDateTaken()));
 
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Multimedia multimedia = list.get(position);
-                Intent intent = new Intent();
-                if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
-                    SPUtils.putUserInfo(context,"curPicPath",multimedia.getPath());
-                    intent.putExtra("picture_data", multimedia);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setClass(context, PicturePreviewActivity.class);
-                } else {
-                    intent.putExtra("video_data", multimedia);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setClass(context, VideoPlayActivity.class);
-                }
-                context.startActivity(intent);
-            }
+        GestureDetector detector = new GestureDetector(context,
+                new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true; // ⚠️ 必须返回 true
+                    }
+
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e) {
+                        Multimedia multimedia = list.get(position);
+                        Intent intent = new Intent();
+                        if (multimedia.getMediaType() == Constant.MEDIA_PIC) {
+                            SPUtils.putUserInfo(context,"curPicPath",multimedia.getPath());
+                            intent.putExtra("picture_data", multimedia);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.setClass(context, PicturePreviewActivity.class);
+                        } else {
+                            intent.putExtra("video_data", multimedia);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.setClass(context, VideoPlayActivity.class);
+                        }
+                        context.startActivity(intent);
+                        return true;
+                    }
+                });
+
+        holder.rootView.setOnTouchListener((v, event) -> {
+            return detector.onTouchEvent(event);
         });
 
         holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {

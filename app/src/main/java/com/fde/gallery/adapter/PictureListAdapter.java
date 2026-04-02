@@ -19,7 +19,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.util.SparseBooleanArray;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -79,12 +81,24 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
         Multimedia picture = list.get(position);
         holder.bind(picture, itemSizePx);
 
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                viewEvent.onJumpEvent(picture);
-            }
+        GestureDetector detector = new GestureDetector(context,
+                new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true; // ⚠️ 必须返回 true
+                    }
+
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e) {
+                        viewEvent.onJumpEvent(picture);
+                        return true;
+                    }
+                });
+
+        holder.rootView.setOnTouchListener((v, event) -> {
+            return detector.onTouchEvent(event);
         });
 
         holder.checkBox.setVisibility(picture.isShowCheckbox() ?View.VISIBLE:View.INVISIBLE);

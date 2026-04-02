@@ -123,7 +123,7 @@ public class PicturePreviewPersenter {
             if(size > 0){
                 strSize = "size:  " + (size / 1024) + "kb\n";
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context,com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
             builder.setTitle(R.string.details);
             builder.setMessage("title:  " + pic.getTitle() + "\n"
                     + "width:  " + pic.getWidth() + "\n"
@@ -155,7 +155,7 @@ public class PicturePreviewPersenter {
 
     public void showDelDlg() {
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
             builder.setTitle(R.string.is_delete);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
