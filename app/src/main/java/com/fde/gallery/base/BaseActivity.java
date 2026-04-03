@@ -114,7 +114,7 @@ public class BaseActivity extends AppCompatActivity {
                                    @NonNull String positiveText,
                                    @Nullable DialogInterface.OnClickListener onNegativeButtonClickListener,
                                    @NonNull String negativeText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setPositiveButton(positiveText, onPositiveButtonClickListener);

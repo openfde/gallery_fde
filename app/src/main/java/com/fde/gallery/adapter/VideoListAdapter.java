@@ -20,7 +20,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -87,18 +89,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.checkBox.setVisibility(video.isShowCheckbox() ? View.VISIBLE : View.GONE);
         holder.checkBox.setChecked(video.isSelected());
 
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Multimedia video = list.get(position);
-                Intent intent = new Intent();
-                intent.putExtra("video_data", video);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setClass(context, VideoPlayActivity.class);
-                context.startActivity(intent);
-            }
-        });
-
         holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {
             @Override
             public boolean onContextClick(View view) {
@@ -106,6 +96,30 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 viewEvent.onRightEvent(position,0);
                 return false;
             }
+        });
+
+        GestureDetector detector = new GestureDetector(context,
+                new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true; // ⚠️ 必须返回 true
+                    }
+
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e) {
+                        Multimedia video = list.get(position);
+                        Intent intent = new Intent();
+                        intent.putExtra("video_data", video);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setClass(context, VideoPlayActivity.class);
+                        context.startActivity(intent);
+                        return true;
+                    }
+                });
+
+        holder.rootView.setOnTouchListener((v, event) -> {
+            return detector.onTouchEvent(event);
         });
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

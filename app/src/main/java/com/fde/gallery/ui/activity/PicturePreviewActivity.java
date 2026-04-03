@@ -35,9 +35,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -226,15 +228,25 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_DPAD_LEFT){
+            prePic();
+        }else if(keyCode == KeyEvent.KEYCODE_DPAD_RIGHT){
+            nextPic();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_SCROLL &&
                 event.isFromSource(InputDevice.SOURCE_MOUSE)) {
             float vScroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL);
             float hScroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL);
             if (vScroll > 0) {
-                setImgZoomOut();
-            } else if (vScroll < 0) {
                 setImgZoomIn();
+            } else if (vScroll < 0) {
+                setImgZoomOut();
             }
             return true;
         }
@@ -242,6 +254,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     }
 
     private float startX = 0f; // 按下起点
+    private float startY = 0f; // 按下起点
     private boolean dragging = false;
 
     public void initView() {
@@ -271,7 +284,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgZoomOut.setOnClickListener(this);
         imgZoomIn.setOnClickListener(this);
         imageView.setOnDoubleTapListener(null);
-        imageView.setOnTouchListener(this);
+//        imageView.setOnTouchListener(this);
     }
 
     private void initData(){
@@ -432,7 +445,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 recognizer.process(image)
                         .addOnSuccessListener(result -> {
                             String text = result.getText();
-                            editOcrText.setText(text);
+                            if(TextUtils.isEmpty(text)){
+                                editOcrText.setText(getString(R.string.no_text));
+                            }else {
+                                editOcrText.setText(text);
+                            }
                         })
                         .addOnFailureListener(e -> {
                             e.printStackTrace();
@@ -469,6 +486,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
         int button = event.getButtonState();
         float x = event.getX();
+        float y = event.getY();
 
         switch (event.getAction()) {
 
@@ -476,6 +494,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                 // 只处理左键按下
                 if ((button & MotionEvent.BUTTON_PRIMARY) != 0) {
                     startX = x;
+                    startX = y;
                     dragging = true;
                     return true;
                 }
@@ -491,27 +510,26 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             case MotionEvent.ACTION_UP:
                 if (dragging) {
                     float dx = x - startX;
+                    float dy = y - startY;
                     dragging = false;
                     // 设置阈值，比如 50px 才算翻页
                     float threshold = 50f;
 
                     if (dx > threshold) {
                         prePic();
-                    } else if (dx < -threshold) {
+                    } else if (dx < - threshold) {
                         nextPic();
                     }
-
                     return true;
                 }
                 break;
         }
-
-        return false;
+        return  false;
     }
 
     private void setSetWallpage(){
         try {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
             builder.setTitle(R.string.is_set_wallpaper);
             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
@@ -535,6 +553,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             @Override
             public void run() {
 //                Multimedia pic = list.get(curPos);
+                Multimedia picture = picturePreviewPersenter.getCurPic();
                 Bitmap bitmap = BitmapFactory.decodeFile(picture.getPath());
                 Matrix matrix = new Matrix();
                 rotateAngle+=90;

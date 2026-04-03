@@ -206,7 +206,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                     baseFragment.showShortToast(context.getString(R.string.can_not_choose_empty));
                     return;
                 }
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context,com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
                 builder.setTitle(R.string.is_delete);
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override

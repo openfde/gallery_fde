@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -67,18 +69,30 @@ public class TimeLineListAdapter extends RecyclerView.Adapter<TimeLineListAdapte
         MultGroup multGroup = list.get(position);
         holder.bind(multGroup, itemSizePx);
 
-        holder.rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra("title", multGroup.getTitle());
-                Bundle b = new Bundle();
-                b.putSerializable("picList", (Serializable) multGroup.getList());
-                intent.putExtras(b);
-                intent.setClass(context, TimeLineActivity.class);
-                baseFragment.getActivity().startActivityFromFragment(baseFragment,intent, Constant.ACTION_REQUEST_UPDATE);
-//                context.startActivity(intent);
-            }
+
+        GestureDetector detector = new GestureDetector(context,
+                new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true; // ⚠️ 必须返回 true
+                    }
+
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e) {
+                        Intent intent = new Intent();
+                        intent.putExtra("title", multGroup.getTitle());
+                        Bundle b = new Bundle();
+                        b.putSerializable("picList", (Serializable) multGroup.getList());
+                        intent.putExtras(b);
+                        intent.setClass(context, TimeLineActivity.class);
+                        baseFragment.getActivity().startActivityFromFragment(baseFragment,intent, Constant.ACTION_REQUEST_UPDATE);
+                        return true;
+                    }
+                });
+
+        holder.rootView.setOnTouchListener((v, event) -> {
+            return detector.onTouchEvent(event);
         });
     }
 

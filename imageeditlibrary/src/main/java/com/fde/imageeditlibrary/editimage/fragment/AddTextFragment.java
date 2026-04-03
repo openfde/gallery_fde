@@ -171,7 +171,7 @@ public class AddTextFragment extends BaseEditFragment implements TextWatcher {
     private final class BackToMenuClick implements OnClickListener {
         @Override
         public void onClick(View v) {
-            activity.setSaveBtnShow(false);
+            activity.setSaveBtnShow(true);
             backToMain();
         }
     }// end class

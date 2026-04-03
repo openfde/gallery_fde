@@ -73,7 +73,7 @@ public class VideoPlayActivity extends BaseActivity {
         imgDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context,com.fde.imageeditlibrary.R.style.RoundedAlertDialog);
                 builder.setTitle(R.string.details);
                 builder.setMessage("title:  " + videoData.getTitle() + "\n"
 //                        + "width:  " + videoData.getWidth() + "\n"
