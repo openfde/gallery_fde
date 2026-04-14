@@ -19,18 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
-
-# Cling UPnP Library - Keep seamless util classes
--keep class org.seamless.util.** { *; }
--keep class org.seamless.** { *; }
--dontwarn org.seamless.**
-
-# Cling UPnP core classes
--keep class org.fourthline.cling.** { *; }
--keep interface org.fourthline.cling.** { *; }
--dontwarn org.fourthline.cling.**
-
-# Additional UPnP related classes
--keep class org.fourthline.kryo.** { *; }
--dontwarn org.fourthline.kryo.**

@@ -33,6 +33,7 @@ import android.widget.PopupMenu;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bella.dlna.DLNARendererService;
 import com.fde.baselib.view.CustomTitleBar;
 import com.fde.gallery.adapter.SectionsPagerAdapter;
 import com.fde.gallery.base.BaseActivity;
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
+
         appTaskController = AppTaskControllerProxy.create();
         appTaskController.initCustomCaption(new WeakReference<>(this),true, new AppTaskStatusListener() {
             @Override
@@ -93,6 +95,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initView() {
+        DLNARendererService.Companion.startService(context);
+
         videoFragment = new VideoListFragment();
         pictureFragment = new PictureListFragment();
         timeLineFragment = new TimeLineListFragment();
@@ -170,6 +174,11 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DLNARendererService.Companion.stopService(context);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

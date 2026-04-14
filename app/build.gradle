@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -33,6 +34,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packagingOptions {
+        resources {
+            excludes += "META-INF/beans.xml"
+        }
+    }
+
     signingConfigs {
         release {
             storeFile file("../openfde.jks")
@@ -57,6 +64,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "FdeGallery.apk"
@@ -72,13 +83,17 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
 
     api project(':imageeditlibrary')
+    api project(':dlna')
     implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     implementation group: 'com.github.bumptech.glide', name: 'glide', version: '5.0.4'
     implementation files('libs/baselib.aar')
     compileOnly files('libs/openfde_sdk.jar')
+
+
+
     implementation("com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14")
     implementation 'com.google.mlkit:text-recognition-chinese:16.0.1'
 }

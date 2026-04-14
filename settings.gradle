@@ -10,6 +10,11 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         jcenter()
+        maven {
+            url 'http://4thline.org/m2'
+            allowInsecureProtocol = true
+        }
+
     }
 }
 dependencyResolutionManagement {
@@ -25,9 +30,15 @@ dependencyResolutionManagement {
         mavenCentral()
         gradlePluginPortal()
         jcenter()
+        maven {
+            url 'http://4thline.org/m2'
+            allowInsecureProtocol = true
+        }
+
     }
 }
 rootProject.name = "Gallery"
 include ':app'
 include 'photoview'
 include 'imageeditlibrary'
+include ':dlna'

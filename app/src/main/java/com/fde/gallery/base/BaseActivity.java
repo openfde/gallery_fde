@@ -35,6 +35,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.bella.dlna.BaseRendererActivity;
 import com.fde.gallery.R;
 import com.fde.gallery.common.Constant;
 
@@ -42,7 +43,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends BaseRendererActivity {
     protected Context context;
 
     private AlertDialog mAlertDialog;
