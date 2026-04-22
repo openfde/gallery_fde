@@ -12,7 +12,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,14 +22,15 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_above="@id/layoutBottom">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center|top"
+            android:layout_marginBottom="50dp"
             android:scrollbars="none" />
 
         <com.fde.gallery.view.CustomScrollBarView
@@ -41,6 +42,11 @@
 
     </FrameLayout>
 
-    <include layout="@layout/layout_bottom_button" />
+    <include
+        android:id="@+id/layoutBottom"
+        layout="@layout/layout_bottom_button"
+        android:layout_width="match_parent"
+        android:layout_height="102dp"
+        android:layout_alignParentBottom="true"/>
 
-</LinearLayout>
+</RelativeLayout>

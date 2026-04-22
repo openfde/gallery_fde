@@ -111,22 +111,22 @@ public class PictureListAdapter extends RecyclerView.Adapter<PictureListAdapter.
             }
         });
 
-        holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {
-            @Override
-            public boolean onContextClick(View view) {
-//                holder.checkBox.setVisibility(View.VISIBLE);
-                viewEvent.onRightEvent(position,0);
-                return false;
-            }
-        });
-
-        holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                viewEvent.onRightEvent(position,0);
-                return false;
-            }
-        });
+//        holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {
+//            @Override
+//            public boolean onContextClick(View view) {
+////                holder.checkBox.setVisibility(View.VISIBLE);
+//                viewEvent.onRightEvent(position,0);
+//                return false;
+//            }
+//        });
+//
+//        holder.rootView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                viewEvent.onRightEvent(position,0);
+//                return false;
+//            }
+//        });
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

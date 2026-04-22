@@ -109,14 +109,14 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.TimeLi
             return detector.onTouchEvent(event);
         });
 
-        holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {
-            @Override
-            public boolean onContextClick(View view) {
-//                holder.checkBox.setVisibility(View.VISIBLE);
-                viewEvent.onRightEvent(position,groupPos);
-                return false;
-            }
-        });
+//        holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {
+//            @Override
+//            public boolean onContextClick(View view) {
+////                holder.checkBox.setVisibility(View.VISIBLE);
+//                viewEvent.onRightEvent(position,groupPos);
+//                return false;
+//            }
+//        });
 
         holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

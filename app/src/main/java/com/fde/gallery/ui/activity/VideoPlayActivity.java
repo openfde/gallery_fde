@@ -46,7 +46,6 @@ import com.google.android.exoplayer2.util.Util;
 
 public class VideoPlayActivity extends BaseActivity {
     private StyledPlayerView mStyledPlayerView;
-    private DefaultTrackSelector mDefaultTrackSelector;
     private DefaultTrackSelector.Parameters mDefaultTrackSelectorParameters;
     private Multimedia videoData;
 
@@ -108,7 +107,7 @@ public class VideoPlayActivity extends BaseActivity {
             startActivity(new Intent(context, MainActivity.class));
             finish();
         }else {
-            mStyledPlayerView.setControllerAutoShow(true);
+            mStyledPlayerView.setControllerAutoShow(false);
             mStyledPlayerView.setControllerShowTimeoutMs(3000);
             mStyledPlayerView.setShowNextButton(false);
             mStyledPlayerView.setShowBuffering(StyledPlayerView.SHOW_BUFFERING_NEVER);
@@ -129,13 +128,11 @@ public class VideoPlayActivity extends BaseActivity {
      * release player
      */
     private void releasePlayer() {
-        mDefaultTrackSelector = null;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        initPlayer();
         mStyledPlayerView.onResume();
     }
 
@@ -153,5 +150,6 @@ public class VideoPlayActivity extends BaseActivity {
         if (player != null) {
             player.release();
         }
+        player = null ;
     }
 }

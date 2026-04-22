@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +28,8 @@ import com.fde.gallery.base.BaseActivity;
 import com.fde.gallery.bean.Multimedia;
 import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
+import com.fde.gallery.ui.fragment.PictureListFragment;
+import com.fde.gallery.ui.fragment.VideoListFragment;
 import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
 import com.fde.gallery.utils.LogTools;
@@ -44,7 +49,7 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
     List<Multimedia> list;
     List<Multimedia> delList;
 
-    LinearLayout layoutBottomBtn;
+    View layoutBottomBtn;
     TextView txtShare;
     TextView txtDelete;
     TextView txtAllSelected;
@@ -78,13 +83,53 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
         recyclerView.setAdapter(timeLineAdapter);
         RecyclerScrollBinder.bind(recyclerView, bar);
 
-        layoutBottomBtn = (LinearLayout) findViewById(R.id.layoutBottomBtn);
+        layoutBottomBtn = (View) findViewById(R.id.layoutBottom);
         txtShare = (TextView) findViewById(R.id.txtShare);
         txtDelete = (TextView) findViewById(R.id.txtDelete);
         txtAllSelected = (TextView) findViewById(R.id.txtAllSelected);
         txtShare.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtAllSelected.setOnClickListener(this);
+
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            private long touchDownTime = 0;
+
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchDownTime = System.currentTimeMillis();
+                } else if (e.getAction() == MotionEvent.ACTION_UP) {
+                    long duration = System.currentTimeMillis() - touchDownTime;
+                    if (duration >= ViewConfiguration.getLongPressTimeout()) {
+                        View childView = rv.findChildViewUnder(e.getX(), e.getY());
+                        if (childView != null) {
+                            int position = rv.getChildAdapterPosition(childView);
+                            onRightEvent(position, 0);
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+            }
+        });
+
+
+        recyclerView.setOnContextClickListener(new View.OnContextClickListener() {
+
+            @Override
+            public boolean onContextClick(View v) {
+                onRightEvent(0,0);
+                return false;
+            }
+        });
     }
 
     private void listenWindowResize() {
@@ -105,6 +150,42 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
         gridLayoutManager.setSpanCount(span);
         int itemSize = widthPx / span;
         timeLineAdapter.updateItemSize(itemSize);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(  keyCode == KeyEvent.KEYCODE_BACK){
+            if(layoutBottomBtn.getVisibility() != View.GONE){
+                showOrHideBottomBtn(false);
+                return true;
+            }
+            return super.onKeyDown(keyCode, event);
+        }else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+
+    public void showOrHideBottomBtn(boolean isShow) {
+        isShowBottomBtn = isShow;
+
+        try {
+            layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
+            for (int i = 0; i < list.size(); i++) {
+                Multimedia picture = list.get(i);
+                picture.setShowCheckbox(isShowBottomBtn);
+                list.set(i, picture);
+            }
+            timeLineAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(isShow){
+            DeviceUtils.setBottomMargin(recyclerView, DeviceUtils.dpToPx(context, 0));
+        }else {
+            DeviceUtils.setBottomMargin(recyclerView, DeviceUtils.dpToPx(context, 50));
+        }
     }
 
     @Override
@@ -188,18 +269,7 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onRightEvent(int pos, int groupPos) {
         isShowBottomBtn = !isShowBottomBtn;
-
-        try {
-            layoutBottomBtn.setVisibility(isShowBottomBtn ? View.VISIBLE : View.GONE);
-            for (int i = 0; i < list.size(); i++) {
-                Multimedia picture = list.get(i);
-                picture.setShowCheckbox(isShowBottomBtn);
-                list.set(i, picture);
-            }
-            timeLineAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        showOrHideBottomBtn(isShowBottomBtn);
     }
 
     @Override

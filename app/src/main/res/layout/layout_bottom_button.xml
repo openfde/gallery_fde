@@ -21,31 +21,52 @@
     android:visibility="gone">
 
 
-    <TextView
-        android:id="@+id/txtShare"
-        style="@style/list_bottom_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawableTop="@mipmap/icon_share"
-        android:text="@string/share" />
+        android:gravity="center|top"
+        android:layout_weight="1">
 
-    <TextView
-        android:id="@+id/txtDelete"
-        style="@style/list_bottom_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawableTop="@mipmap/icon_delete"
-        android:text="@string/delete" />
+        <TextView
+            android:id="@+id/txtShare"
+            style="@style/list_bottom_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@mipmap/icon_share"
+            android:text="@string/share" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtAllSelected"
-        style="@style/list_bottom_button"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawableTop="@mipmap/icon_select_all"
-        android:text="@string/select_all" />
+        android:gravity="center|top"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/txtDelete"
+            style="@style/list_bottom_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@mipmap/icon_delete"
+            android:text="@string/delete" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/txtAllSelected"
+            style="@style/list_bottom_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableTop="@mipmap/icon_select_all"
+            android:text="@string/select_all" />
+    </LinearLayout>
+
 
 </LinearLayout>

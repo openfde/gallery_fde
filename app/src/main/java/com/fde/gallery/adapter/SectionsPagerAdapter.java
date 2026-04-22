@@ -35,6 +35,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private static final int[] TAB_TITLES = new int[]{R.string.tab_picture, R.string.tab_video, R.string.tab_time_line};
     private final Context context;
     BaseFragment baseFragment;
+    private PictureListFragment pictureFragment;
+    private VideoListFragment videoFragment;
+    private TimeLineListFragment timeLineFragment;
 
     public SectionsPagerAdapter(BaseFragment baseFragment, Context context, FragmentManager fm) {
         super(fm);
@@ -45,17 +48,34 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            PictureListFragment pictureFragment = new PictureListFragment();
+            if (pictureFragment == null) {
+                pictureFragment = new PictureListFragment();
+            }
             return pictureFragment;
         } else if (position == 1) {
-            VideoListFragment videoFragment = new VideoListFragment();
+            if (videoFragment == null) {
+                videoFragment = new VideoListFragment();
+            }
             return videoFragment;
         } else {
-            TimeLineListFragment timeLineFragment = new TimeLineListFragment();
+            if (timeLineFragment == null) {
+                timeLineFragment = new TimeLineListFragment();
+            }
             return timeLineFragment;
         }
     }
 
+    public PictureListFragment getPictureFragment() {
+        return pictureFragment;
+    }
+
+    public VideoListFragment getVideoFragment() {
+        return videoFragment;
+    }
+
+    public TimeLineListFragment getTimeLineFragment() {
+        return timeLineFragment;
+    }
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {

@@ -102,6 +102,13 @@ public class PictureListFragment extends BaseFragment {
         }
     }
 
+    public  boolean hideBottomBtn() {
+        if(pictureListPersenter != null){
+           return pictureListPersenter.hideBottomBtn();
+        }
+        return  false;
+    }
+
 
     @Override
     protected void onFragmentFirstVisible() {

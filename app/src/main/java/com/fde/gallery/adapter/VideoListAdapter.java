@@ -89,15 +89,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.checkBox.setVisibility(video.isShowCheckbox() ? View.VISIBLE : View.GONE);
         holder.checkBox.setChecked(video.isSelected());
 
-        holder.rootView.setOnContextClickListener(new View.OnContextClickListener() {
-            @Override
-            public boolean onContextClick(View view) {
-//                holder.checkBox.setVisibility(View.VISIBLE);
-                viewEvent.onRightEvent(position,0);
-                return false;
-            }
-        });
-
         GestureDetector detector = new GestureDetector(context,
                 new GestureDetector.SimpleOnGestureListener() {
 
