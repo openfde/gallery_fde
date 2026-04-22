@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
@@ -171,6 +172,13 @@ public class DeviceUtils {
         return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 
+    public static  void setBottomMargin(View view, int dpValue) {
+        float density = view.getResources().getDisplayMetrics().density;
+        int pxValue = (int) (dpValue * density + 0.5f);
 
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+        params.bottomMargin = pxValue;
+        view.setLayoutParams(params);
+    }
 
 }
