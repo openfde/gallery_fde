@@ -101,6 +101,7 @@ class VideoViewRendererActivity : BaseRendererActivity() {
 
     override fun onDestroy() {
         renderState = RenderState.STOPPED
+        playView.player?.release()
         super.onDestroy()
     }
 

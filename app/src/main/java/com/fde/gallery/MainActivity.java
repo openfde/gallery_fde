@@ -25,6 +25,7 @@ import android.openfde.AppTaskStatusListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListPopupWindow;
@@ -55,7 +56,7 @@ public class MainActivity extends BaseActivity {
     VideoListFragment videoFragment;
     PictureListFragment pictureFragment;
 
-    TimeLineListFragment timeLineFragment ;
+    TimeLineListFragment timeLineFragment;
     ViewPager viewPager;
     TabLayout tabLayout;
 
@@ -63,7 +64,7 @@ public class MainActivity extends BaseActivity {
     SectionsPagerAdapter sectionsPagerAdapter;
     Context context;
 
-    private AppTaskControllerProxy appTaskController ;
+    private AppTaskControllerProxy appTaskController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class MainActivity extends BaseActivity {
 
 
         appTaskController = AppTaskControllerProxy.create();
-        appTaskController.initCustomCaption(new WeakReference<>(this),true, new AppTaskStatusListener() {
+        appTaskController.initCustomCaption(new WeakReference<>(this), true, new AppTaskStatusListener() {
             @Override
             public void onStatusChanged(int windowingMode, boolean isSystemBarVisible) {
                 customTitleBar.setButtonBackground(CustomTitleBar.Type.MAXIMIZE, windowingMode == 5 ? com.fde.baselib.R.drawable.icon_maximize : com.fde.baselib.R.drawable.icon_exitmaximize);
@@ -112,7 +113,7 @@ public class MainActivity extends BaseActivity {
         tabLayout.setupWithViewPager(viewPager);
 //        sectionsPagerAdapter.notifyDataSetChanged();
 //        readImages();
-        LogTools.i("getAppVersionCode: "+ DeviceUtils.getAppVersionCode(context));
+        LogTools.i("getAppVersionCode: " + DeviceUtils.getAppVersionCode(context));
 
         customTitleBar = (CustomTitleBar) findViewById(R.id.customTitleBar);
         customTitleBar.setTitle(getString(R.string.app_name));
@@ -180,10 +181,32 @@ public class MainActivity extends BaseActivity {
         DLNARendererService.Companion.stopService(context);
     }
 
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            int pos = viewPager.getCurrentItem();
+            if (pos == 0) {
+                PictureListFragment currentFragment = sectionsPagerAdapter.getPictureFragment();
+                if (currentFragment != null) {
+                    if (currentFragment.hideBottomBtn()) {
+                        return true;
+                    }
+                }
+            } else if (pos == 1) {
+                VideoListFragment currentFragment = sectionsPagerAdapter.getVideoFragment();
+                if (currentFragment.hideBottomBtn()) {
+                    return true;
+                }
+            }
+            return super.onKeyDown(keyCode, event);
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogTools.i("onActivityResult requestCode "+requestCode + " resultCode "+resultCode);
+        LogTools.i("onActivityResult requestCode " + requestCode + " resultCode " + resultCode);
         if (requestCode == Constant.REQUEST_SELECT_PHOTO && resultCode == RESULT_OK) {
             data.setClass(context, PicturePreviewActivity.class);
             data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -194,11 +217,11 @@ public class MainActivity extends BaseActivity {
     private void readImages() {
         File file = new File("/mnt/sdcard/");
         MediaScannerConnection.scanFile(this,
-                new String[] { file.getPath() }, null,
+                new String[]{file.getPath()}, null,
                 new MediaScannerConnection.OnScanCompletedListener() {
                     public void onScanCompleted(String path, Uri uri) {
                         // 文件已经被扫描完成，现在可以在MediaStore中查询到这个文件了
-                        LogTools.i("readImages path "+path);
+                        LogTools.i("readImages path " + path);
                     }
                 });
 
@@ -215,7 +238,7 @@ public class MainActivity extends BaseActivity {
                 LogTools.i(" --------moveToNext-----");
                 // 获取图片的路径
                 String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                LogTools.i("path "+path);
+                LogTools.i("path " + path);
                 // 使用路径来加载图片
                 // ...
             }

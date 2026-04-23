@@ -88,6 +88,13 @@ public class VideoListFragment extends BaseFragment {
         }
     }
 
+    public  boolean hideBottomBtn() {
+        if(videoListPersenter != null){
+            return videoListPersenter.hideBottomBtn();
+        }
+        return  false;
+    }
+
     @Override
     protected void onFragmentFirstVisible() {
         super.onFragmentFirstVisible();
