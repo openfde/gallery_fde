@@ -587,7 +587,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         Multimedia prePic = picturePreviewPersenter.getPrePic();
         if(prePic == null){
             stopAnimation();
-            showShortToast(getString(R.string.no_more_pic));
+            showShortToast(getString(R.string.is_first_pic));
             return;
         }
         startAnimation();

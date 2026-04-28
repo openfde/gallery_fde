@@ -222,7 +222,6 @@ public class FileUtils {
                 null,         // Selection criteria
                 null,         // Selection criteria
                 MediaStore.Images.Media.DATE_MODIFIED + " desc");        // The sort order for the returned rows
-
         if (cursor != null) {
             int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID);
             int dataColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
@@ -253,6 +252,20 @@ public class FileUtils {
             cursor.close();
         }
         return list;
+    }
+    
+    public static Multimedia getMultimediaByPath(Context context, String titleName) {
+       try {
+           List<Multimedia> list =  getAllVideos(context);
+           for (Multimedia multimedia : list) {
+               if (titleName.contains(multimedia.getTitle())) {
+                   return multimedia;
+               }
+           }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       return null;
     }
 
     public static Multimedia getNextPicture(Context context) {
