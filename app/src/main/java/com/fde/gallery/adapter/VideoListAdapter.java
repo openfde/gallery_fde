@@ -175,6 +175,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 //                .apply(new RequestOptions().frame(1000))
                             .format(DecodeFormat.PREFER_ARGB_8888)
                             .frame(0)
+                            .override(400,400)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop() // 裁剪图片以适应ImageView的大小
                             .dontTransform() // 禁用任何额外的转换

@@ -70,6 +70,7 @@
     <string name="show_pic_tips">Only Show a width > 799 and a height > 599 . If you want to select other images, go to the gallery</string>
     <string name="set_pic_tips">The wallpaper is relatively large and may take a bit longer to set</string>
     <string name="no_more_pic">No more pictures</string>
+    <string name="is_first_pic">"It's already the first one"</string>
     <string name="open">Open</string>
     <string name="exit">Exit</string>
     <string name="no_text">No text recognized</string>
