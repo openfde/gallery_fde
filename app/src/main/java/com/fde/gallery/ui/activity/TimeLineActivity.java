@@ -196,7 +196,7 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
                     ArrayList<Uri> imageUris = new ArrayList<>();
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).isSelected()) {
-                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
+                            imageUris.add(FileProvider.getUriForFile(context, Constant.PKG_PROVIDER, new File(list.get(i).getPath())));
                         }
                     }
                     int size = imageUris.size();

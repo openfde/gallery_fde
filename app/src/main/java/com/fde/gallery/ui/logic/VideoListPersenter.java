@@ -38,6 +38,7 @@ import com.fde.gallery.R;
 import com.fde.gallery.adapter.VideoListAdapter;
 import com.fde.gallery.base.BaseFragment;
 import com.fde.gallery.bean.Multimedia;
+import com.fde.gallery.common.Constant;
 import com.fde.gallery.event.ViewEvent;
 import com.fde.gallery.utils.DeviceUtils;
 import com.fde.gallery.utils.FileUtils;
@@ -234,7 +235,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                     ArrayList<Uri> imageUris = new ArrayList<>();
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).isSelected()) {
-                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
+                            imageUris.add(FileProvider.getUriForFile(context, Constant.PKG_PROVIDER, new File(list.get(i).getPath())));
                         }
                     }
                     int size = imageUris.size();
