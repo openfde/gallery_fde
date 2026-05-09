@@ -67,7 +67,6 @@
         <activity
             android:name=".ui.activity.VideoPlayActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|density|screenSize|smallestScreenSize"
-            android:documentLaunchMode="always"
             android:exported="true"
             android:screenOrientation="portrait">
 
