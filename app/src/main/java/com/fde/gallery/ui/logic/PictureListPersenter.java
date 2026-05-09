@@ -248,7 +248,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
         Intent intent = new Intent();
         intent.putExtra("picture_data", picture);
         intent.setClass(context, PicturePreviewActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         baseFragment.getActivity().startActivity(intent);
 //        baseFragment.getActivity().startActivityFromFragment(baseFragment, intent, Constant.REQUEST_DELETE_PHOTO);
     }
@@ -263,7 +263,7 @@ public class PictureListPersenter implements ViewEvent, View.OnClickListener {
                     ArrayList<Uri> imageUris = new ArrayList<>();
                     for (int i = 0; i < list.size(); i++) {
                         if (list.get(i).isSelected()) {
-                            imageUris.add(FileProvider.getUriForFile(context, "com.fde.gallery.provider", new File(list.get(i).getPath())));
+                            imageUris.add(FileProvider.getUriForFile(context, Constant.PKG_PROVIDER, new File(list.get(i).getPath())));
                         }
                     }
                     int size = imageUris.size();

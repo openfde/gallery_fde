@@ -17,6 +17,7 @@ package com.fde.gallery.ui.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -51,6 +52,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.bumptech.glide.Glide;
@@ -88,6 +90,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PicturePreviewActivity extends BaseActivity implements View.OnClickListener ,View.OnTouchListener{
@@ -109,6 +112,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     TextView txtScale ;
 
     ImageView txtDelete;
+    ImageView txtShare;
 
     PicturePreviewPersenter picturePreviewPersenter;
 
@@ -264,6 +268,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         imgLeft = (ImageView) findViewById(R.id.imgLeft);
         imgRight = (ImageView) findViewById(R.id.imgRight);
         txtDelete = (ImageView) findViewById(R.id.txtDelete);
+        txtShare = (ImageView) findViewById(R.id.txtShare);
         txtDetails = (ImageView) findViewById(R.id.txtDetails);
         txtSetWallpage = (ImageView) findViewById(R.id.txtSetWallpage);
         txtEdit = (ImageView) findViewById(R.id.txtEdit);
@@ -276,6 +281,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         txtDetails.setOnClickListener(this);
         txtSetWallpage.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
+        txtShare.setOnClickListener(this);
         txtEdit.setOnClickListener(this);
         txtOcr.setOnClickListener(this);
         txtRotate.setOnClickListener(this);
@@ -388,13 +394,26 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 //            case R.id.txtMore:
 //                if (!popupWindow.isShowing()) {
 //                    popupWindow.showAtLocation(bottomSheetView, Gravity.BOTTOM | Gravity.RIGHT, 10, 10);
-//                }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                //                }
 //                break;
 
             case R.id.txtDelete:
                 picturePreviewPersenter.showDelDlg();
                 break;
+            case R.id.txtShare:
 
+                ArrayList<Uri> imageUris = new ArrayList<>();
+                imageUris.add(FileProvider.getUriForFile(context, Constant.PKG_PROVIDER, new File(picture.getPath())));
+
+                Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                intent.setType("image/*"); //set MIME type
+//                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+                startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+
+                break;
+                
 
             case R.id.txtEdit:
 //                MultiTransformation mation3 = new MultiTransformation(new CircleCrop());
