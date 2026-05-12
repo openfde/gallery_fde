@@ -72,7 +72,9 @@ public class VideoListFragment extends BaseFragment {
                 new ContentObserver(new Handler(Looper.getMainLooper())) {
                     @Override
                     public void onChange(boolean selfChange) {
-                        videoListPersenter.getAllVideos(context);
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            videoListPersenter.getAllVideos(context);
+                        }, 1000);
                     }
                 }
         );

@@ -168,18 +168,23 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 if(path.toLowerCase().endsWith(".flv")){
                     Glide.with(context).load(FileUtils.getFlvBitmap(path)).into(imageView);
                 }else {
-                    Glide.with(context)
-//                .load(Uri.fromFile(new File(list.get(position).getPath())))
-                            .load(item.getPath())
+                    RequestOptions requestOptions = new RequestOptions()
                             .error(R.mipmap.ic_launcher)
-//                .apply(new RequestOptions().frame(1000))
                             .format(DecodeFormat.PREFER_ARGB_8888)
-                            .frame(0)
-                            .override(400,400)
+                            .frame(1)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop() // 裁剪图片以适应ImageView的大小
-                            .dontTransform() // 禁用任何额外的转换
-                            .dontAnimate()
+                            .centerCrop()
+                            .dontTransform()
+                            .dontAnimate();
+
+                    // 只有当图片宽度或高度大于2000时才设置override
+                    if (item.getWidth() > 2000 || item.getHeight() > 2000) {
+                        requestOptions.override(400, 400);
+                    }
+
+                    Glide.with(context)
+                            .load(item.getPath())
+                            .apply(requestOptions)
                             .into(imageView);
                 }
             }
