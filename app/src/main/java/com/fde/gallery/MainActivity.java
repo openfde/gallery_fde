@@ -113,6 +113,7 @@ public class MainActivity extends BaseActivity {
 
         customTitleBar = (CustomTitleBar) findViewById(R.id.customTitleBar);
         customTitleBar.setTitle(getString(R.string.app_name));
+        customTitleBar.setViewVisible(CustomTitleBar.Type.OPTION, true);
         customTitleBar.setOnButtonClickListener(new CustomTitleBar.OnButtonClickListener() {
             @Override
             public void onLeftClick() {
