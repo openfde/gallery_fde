@@ -168,9 +168,12 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
                 if (m == null) {
                     String docId = FileUtils.getMediaStoreIdFromUri(context, imageUri);
-                    LogTools.i("docId   " + docId);
+                    if(docId == null){
+                        docId = getIntent().getStringExtra("documentId").replaceAll("image:","");
+                    }
+                    LogTools.i("docId   " + docId  + ",realPath "+realPath);
                     picture = new Multimedia();
-                    if(docId !=null){
+                    if(docId != null){
                         picture.setId(StringUtils.ToInt(docId));
                     }else{
                         picture.setId(-1);
