@@ -175,19 +175,21 @@ public class MainActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            int pos = viewPager.getCurrentItem();
-            if (pos == 0) {
-                PictureListFragment currentFragment = sectionsPagerAdapter.getPictureFragment();
-                if (currentFragment != null) {
-                    if (currentFragment.hideBottomBtn()) {
+            try {
+                int pos = viewPager.getCurrentItem();
+                if (pos == 0) {
+                    PictureListFragment currentFragment = sectionsPagerAdapter.getPictureFragment();
+                    if (currentFragment != null && currentFragment.hideBottomBtn()) {
+                        return true;
+                    }
+                } else if (pos == 1) {
+                    VideoListFragment currentFragment = sectionsPagerAdapter.getVideoFragment();
+                    if (currentFragment != null && currentFragment.hideBottomBtn()) {
                         return true;
                     }
                 }
-            } else if (pos == 1) {
-                VideoListFragment currentFragment = sectionsPagerAdapter.getVideoFragment();
-                if (currentFragment.hideBottomBtn()) {
-                    return true;
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return super.onKeyDown(keyCode, event);
         } else {

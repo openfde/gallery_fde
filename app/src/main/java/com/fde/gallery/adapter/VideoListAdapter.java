@@ -171,7 +171,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                     RequestOptions requestOptions = new RequestOptions()
                             .error(R.mipmap.ic_launcher)
                             .format(DecodeFormat.PREFER_ARGB_8888)
-                            .frame(1)
+                            .frame(100)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
                             .dontTransform()
