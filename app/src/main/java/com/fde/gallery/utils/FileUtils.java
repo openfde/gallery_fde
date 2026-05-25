@@ -456,4 +456,66 @@ public class FileUtils {
         bitmap.recycle();
         rotatedBitmap.recycle();
     }
+
+    public static String getRealPathFromUriT(Context context, Uri uri) {
+
+        if (DocumentsContract.isDocumentUri(context, uri)) {
+
+            String docId = DocumentsContract.getDocumentId(uri);
+            // image/467
+
+            String[] split = docId.split(":");
+            String type;
+            String id;
+
+            if (split.length == 2) {
+                type = split[0];
+                id = split[1];
+            } else {
+                // image/467 这种格式
+                split = docId.split("/");
+                type = split[0];
+                id = split[1];
+            }
+
+            Uri contentUri = null;
+
+            if ("image".equals(type)) {
+                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            } else if ("video".equals(type)) {
+                contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+            } else if ("audio".equals(type)) {
+                contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            }else {
+                contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            }
+
+            String selection = "_id=?";
+            String[] selectionArgs = new String[]{id};
+
+            Cursor cursor = context.getContentResolver().query(
+                    contentUri,
+                    new String[]{MediaStore.MediaColumns.DATA},
+                    selection,
+                    selectionArgs,
+                    null);
+
+            if (cursor != null) {
+                try {
+                    if (cursor.moveToFirst()) {
+                        int column =
+                                cursor.getColumnIndexOrThrow(
+                                        MediaStore.MediaColumns.DATA);
+
+                        return cursor.getString(column);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

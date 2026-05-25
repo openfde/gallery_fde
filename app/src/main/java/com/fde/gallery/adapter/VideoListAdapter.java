@@ -174,13 +174,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                             .frame(100)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .centerCrop()
+                            .override(400,400)
                             .dontTransform()
                             .dontAnimate();
-
-                    // 只有当图片宽度或高度大于2000时才设置override
-                    if (item.getWidth() > 2000 || item.getHeight() > 2000) {
-                        requestOptions.override(400, 400);
-                    }
 
                     Glide.with(context)
                             .load(item.getPath())

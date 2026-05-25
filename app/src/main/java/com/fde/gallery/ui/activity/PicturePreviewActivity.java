@@ -35,6 +35,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -146,6 +147,8 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         List<Multimedia> tempList = FileUtils.getAllImages(context);
 
 
+
+
         if (picture == null) {
             Uri imageUri = getIntent().getData();
             DocumentFile documentFile = DocumentFile.fromSingleUri(context, imageUri);
@@ -156,33 +159,73 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             } else {
                 String actionStr = getIntent().getAction();
                 LogTools.d("realPath   " + realPath + " ,documentFile " + documentFile +",actionStr "+actionStr);
-                Multimedia m = new Multimedia();
 
                 if ("android.intent.action.EDIT".equals(actionStr)) {
                     String filePath = FileUtils.getFilePathFromUri(context, documentFile.getUri());
-                    m = findPicture(tempList, filePath);
-                    picture = m;
+                    picture = findPicture(tempList, filePath);
                 } else {
-                    m = findPicture(tempList, realPath);
+                    picture = findPicture(tempList, realPath);
+//                    if(picture == null){
+//                        picture= new Multimedia();
+//                        Uri uri = Uri.parse(realPath);
+//                        String documentId = DocumentsContract.getDocumentId(uri);
+//                        boolean isNumeric = documentId != null && documentId.matches("\\d+");
+//                        String relativePath = documentId.substring(documentId.indexOf(':') + 1);
+//                        LogTools.d("relativePath   " + relativePath);
+//                        picture.setPath("/storage/emulated/0/"+relativePath);
+//                        picture.setId(-1);
+//                    }
                 }
 
-                if (m == null) {
-                    String docId = FileUtils.getMediaStoreIdFromUri(context, imageUri);
-                    if(docId == null){
-                        docId = getIntent().getStringExtra("documentId").replaceAll("image:","");
-                    }
-                    LogTools.i("docId   " + docId  + ",realPath "+realPath);
-                    picture = new Multimedia();
-                    if(docId != null){
-                        picture.setId(StringUtils.ToInt(docId));
-                    }else{
+
+                if(picture == null){
+                    picture= new Multimedia();
+                    Uri uri = Uri.parse(realPath);
+                    String documentId = DocumentsContract.getDocumentId(uri).replaceAll("image:","");
+                    boolean isNumeric = documentId != null && documentId.matches("\\d+");
+                    LogTools.d("isNumeric：    " + isNumeric  +",documentId  "+documentId);
+                    if(isNumeric){
+                        picture.setId(StringUtils.ToInt(documentId));
+                        if(realPath.contains("content://com.android.providers.media")){
+                            String realPa = FileUtils.getRealPathFromUriT(context, imageUri);
+                            if(realPa !=null){
+                                realPath = realPa;
+                            }
+                        }
+                        picture.setPath(realPath);
+                    }else {
+                        String relativePath = documentId.substring(documentId.indexOf(':') + 1);
+                        LogTools.d("relativePath：    " + relativePath);
+                        picture.setPath("/storage/emulated/0/"+relativePath);
                         picture.setId(-1);
                     }
-                    picture.setPath(realPath);
+
                 }
 
+//                if (picture == null) {
+//                    String docId = FileUtils.getMediaStoreIdFromUri(context, imageUri);
+//                    if(docId == null){
+//                        docId = getIntent().getStringExtra("documentId").replaceAll("image:","");
+//                    }
+//                    boolean isNumeric = docId != null && docId.matches("\\d+");
+//                    LogTools.i("docId   " + docId  + ",realPath "+realPath +",isNumeric "+isNumeric);
+//                    picture = new Multimedia();
+//
+//                    if(docId != null){
+//                        if(docId  == null || "".equals(docId) || !isNumeric){
+//                            realPath = FileUtils.getRealPathFromUriT(context, imageUri);
+//                        }else {
+//                            picture.setId(StringUtils.ToInt(docId));
+//                        }
+//                    }else{
+//                        picture.setId(-1);
+//                    }
+//                    picture.setPath(realPath);
+//
+//                }
+
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
-                if(m == null && picturePreviewPersenter.getCurPic() !=null){
+                if(picture == null && picturePreviewPersenter.getCurPic() !=null){
                     picture = picturePreviewPersenter.getCurPic();
                 }
                 initData();
@@ -277,7 +320,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         txtEdit = (ImageView) findViewById(R.id.txtEdit);
         txtRotate = (ImageView) findViewById(R.id.txtRotate);
         imgZoomIn = (ImageView) findViewById(R.id.imgZoomIn);
-        imgZoomOut = (ImageView) findViewById(R.id.imgZoomOut);
+            imgZoomOut = (ImageView) findViewById(R.id.imgZoomOut);
         txtScale = (TextView) findViewById(R.id.txtScale);
         editOcrText = (EditText) findViewById(R.id.editOcrText);
         layoutBottomBtn = (View) findViewById(R.id.layoutBottomBtn);
@@ -358,6 +401,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     public void showPic(Multimedia multimedia) {
         if (multimedia != null && !"".equals(multimedia.getPath())) {
             try {
+                LogTools.d("multimedia getPath "+multimedia.getPath());
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .override(StringUtils.ToInt(Utils.getSystemProperty("openfde.display_width")),StringUtils.ToInt(Utils.getSystemProperty("openfde.display_height")));
@@ -666,6 +710,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
