@@ -21,7 +21,7 @@ android {
     }
 
     ext {
-        appVersion = project.findProperty('appVersion') ?: "2.2.5"
+        appVersion = project.findProperty('appVersion') ?: "2.2.6"
     }
     version = appVersion
     defaultConfig {
@@ -35,7 +35,14 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("../openfde.jks")
+            storeFile file('/home/xudq/code/app14/gallery_fde/openfde.jks')
+            storePassword "keyforcat"
+            keyAlias "rootcloud"
+            keyPassword "keyforcat"
+        }
+
+        debug{
+            storeFile file('/home/xudq/code/app14/gallery_fde/openfde.jks')
             storePassword "keyforcat"
             keyAlias "rootcloud"
             keyPassword "keyforcat"
@@ -48,7 +55,7 @@ android {
         }
 
         debug {
-            applicationIdSuffix
+            signingConfig signingConfigs.release
         }
     }
 

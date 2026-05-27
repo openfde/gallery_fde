@@ -5,4 +5,5 @@
     <external-path name="Pictures" path="."/>
     <external-path name="my_images" path="/storage/emulated/0/Pictures/fde/" />
     <external-path name="fde" path="/mnt/sdcard/Pictures/fde/" />
+    <external-path name="Documents" path="/storage/emulated/0/Documents/" />
 </paths>
