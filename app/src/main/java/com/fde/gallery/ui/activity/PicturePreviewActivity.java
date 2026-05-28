@@ -196,7 +196,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                     }else {
                         String relativePath = documentId.substring(documentId.indexOf(':') + 1);
                         LogTools.d("relativePath：    " + relativePath);
-                        picture.setPath("/storage/emulated/0/"+relativePath);
+                        if(relativePath.contains("volumes")){
+                            picture.setPath(relativePath);
+                        }else {
+                            picture.setPath("/storage/emulated/0/"+relativePath);
+                        }
                         picture.setId(-1);
                     }
 
@@ -223,7 +227,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 //                    picture.setPath(realPath);
 //
 //                }
-
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
                 if(picture == null && picturePreviewPersenter.getCurPic() !=null){
                     picture = picturePreviewPersenter.getCurPic();
@@ -241,7 +244,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             picture = m;
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
             initData();
-            LogTools.i("picture " + picture);
         }
 
 //        popupWindow = new PopupWindow(this);
