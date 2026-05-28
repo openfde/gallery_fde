@@ -35,14 +35,14 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('/home/xudq/code/app14/gallery_fde/openfde.jks')
+            storeFile file('../openfde.jks')
             storePassword "keyforcat"
             keyAlias "rootcloud"
             keyPassword "keyforcat"
         }
 
         debug{
-            storeFile file('/home/xudq/code/app14/gallery_fde/openfde.jks')
+            storeFile file('../openfde.jks')
             storePassword "keyforcat"
             keyAlias "rootcloud"
             keyPassword "keyforcat"
