@@ -22,8 +22,10 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.openfde.AppTaskControllerProxy;
 import android.openfde.AppTaskStatusListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.widget.ArrayAdapter;
@@ -150,7 +152,15 @@ public class MainActivity extends BaseActivity {
                         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
                         intent.setType("image/*");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            intent.putExtra(
+                                    DocumentsContract.EXTRA_INITIAL_URI,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            );
+                        }
+
                         startActivityForResult(intent, Constant.REQUEST_SELECT_PHOTO);
                     } else {
                         appTaskController.closeTask();
@@ -201,6 +211,10 @@ public class MainActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         LogTools.i("onActivityResult requestCode " + requestCode + " resultCode " + resultCode);
+        if(data == null){
+            LogTools.i("onActivityResult data is null ");
+            return;
+        }
         if (requestCode == Constant.REQUEST_SELECT_PHOTO && resultCode == RESULT_OK) {
             data.setClass(context, PicturePreviewActivity.class);
             data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
