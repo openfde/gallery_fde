@@ -53,6 +53,7 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
     TextView txtShare;
     TextView txtDelete;
     TextView txtAllSelected;
+    TextView txtCancel;
     boolean isAllSelected;
     boolean isShowBottomBtn = false;
 
@@ -87,9 +88,11 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
         txtShare = (TextView) findViewById(R.id.txtShare);
         txtDelete = (TextView) findViewById(R.id.txtDelete);
         txtAllSelected = (TextView) findViewById(R.id.txtAllSelected);
+        txtCancel = (TextView) findViewById(R.id.txtCancel);
         txtShare.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtAllSelected.setOnClickListener(this);
+        txtCancel.setOnClickListener(this);
 
         recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             private long touchDownTime = 0;
@@ -259,9 +262,14 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
                 }
                 timeLineAdapter.notifyDataSetChanged();
                 txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
-                Drawable drawableTop = isAllSelected ? context.getDrawable(R.mipmap.icon_select_none) : context.getDrawable(R.mipmap.icon_select_all);
+                Drawable drawableTop = isAllSelected ? context.getDrawable(R.drawable.ic_main_not_selected) : context.getDrawable(R.drawable.ic_main_all_selected);
                 drawableTop.setBounds(0, 0, drawableTop.getIntrinsicWidth(), drawableTop.getIntrinsicHeight());
                 txtAllSelected.setCompoundDrawables(null, drawableTop, null, null);
+                break;
+
+            case R.id.txtCancel:
+                isShowBottomBtn = !isShowBottomBtn;
+                showOrHideBottomBtn(isShowBottomBtn);
                 break;
         }
     }
@@ -302,6 +310,8 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
                     FileUtils.deleteImage(context, picture.getPath());
                 }
                 timeLineAdapter.notifyDataSetChanged();
+                isShowBottomBtn = !isShowBottomBtn;
+                showOrHideBottomBtn(isShowBottomBtn);
             } catch (RecoverableSecurityException e) {
                 requestConfirmDialog(e);
             }

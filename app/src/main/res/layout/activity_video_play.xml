@@ -28,7 +28,7 @@
 
     <ImageView
         android:id="@+id/imgDetails"
-        android:src="@mipmap/icon_details"
+        android:src="@drawable/ic_details"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"

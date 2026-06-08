@@ -21,6 +21,7 @@ import android.app.RecoverableSecurityException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,6 +60,7 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
     TextView txtShare;
     TextView txtDelete;
     TextView txtAllSelected;
+    TextView txtCancel;
     List<Multimedia> list;
     List<Multimedia> delList;
     int numberOfColumns = 3;
@@ -82,10 +84,12 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
         txtShare = (TextView) view.findViewById(R.id.txtShare);
         txtDelete = (TextView) view.findViewById(R.id.txtDelete);
         txtAllSelected = (TextView) view.findViewById(R.id.txtAllSelected);
+        txtCancel = (TextView) view.findViewById(R.id.txtCancel);
         CustomScrollBarView bar = (CustomScrollBarView) view.findViewById(R.id.scrollBar);
         txtShare.setOnClickListener(this);
         txtDelete.setOnClickListener(this);
         txtAllSelected.setOnClickListener(this);
+        txtCancel.setOnClickListener(this);
         gridLayoutManager = new GridLayoutManager(context, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
         listenWindowResize();
@@ -298,6 +302,14 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                 }
                 videoListAdapter.notifyDataSetChanged();
                 txtAllSelected.setText(isAllSelected ? context.getString(R.string.deselect_all) : context.getString(R.string.select_all));
+                Drawable drawableTop = isAllSelected ? context.getDrawable(R.drawable.ic_main_not_selected) : context.getDrawable(R.drawable.ic_main_all_selected);
+                drawableTop.setBounds(0, 0, drawableTop.getIntrinsicWidth(), drawableTop.getIntrinsicHeight());
+                txtAllSelected.setCompoundDrawables(null, drawableTop, null, null);
+                break;
+
+            case R.id.txtCancel:
+                isShowBottomBtn = !isShowBottomBtn;
+                showOrHideBottomBtn(isShowBottomBtn);
                 break;
         }
     }
@@ -311,6 +323,8 @@ public class VideoListPersenter implements ViewEvent, View.OnClickListener {
                     FileUtils.deleteVideo(context, video.getPath());
                 }
                 videoListAdapter.notifyDataSetChanged();
+                isShowBottomBtn = !isShowBottomBtn;
+                showOrHideBottomBtn(isShowBottomBtn);
             } catch (RecoverableSecurityException e) {
                 baseFragment.requestConfirmDialog(e);
             }

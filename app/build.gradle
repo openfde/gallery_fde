@@ -21,7 +21,7 @@ android {
     }
 
     ext {
-        appVersion = project.findProperty('appVersion') ?: "2.2.7"
+        appVersion = project.findProperty('appVersion') ?: "2.3.0"
     }
     version = appVersion
     defaultConfig {
