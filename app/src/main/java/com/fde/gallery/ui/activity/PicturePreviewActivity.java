@@ -143,6 +143,11 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
         animDrawablePlayer = AnimFactory.INSTANCE.loading(this,imgDetails);
         startAnimation();
 //        View view = getLayoutInflater().inflate(R.layout.activity_picture_preview,null);
+        handlePreview();
+
+    }
+
+    private void handlePreview(){
         picture = (Multimedia) getIntent().getSerializableExtra("picture_data");
         List<Multimedia> tempList = FileUtils.getAllImages(context);
 
@@ -165,18 +170,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
                     picture = findPicture(tempList, filePath);
                 } else {
                     picture = findPicture(tempList, realPath);
-//                    if(picture == null){
-//                        picture= new Multimedia();
-//                        Uri uri = Uri.parse(realPath);
-//                        String documentId = DocumentsContract.getDocumentId(uri);
-//                        boolean isNumeric = documentId != null && documentId.matches("\\d+");
-//                        String relativePath = documentId.substring(documentId.indexOf(':') + 1);
-//                        LogTools.d("relativePath   " + relativePath);
-//                        picture.setPath("/storage/emulated/0/"+relativePath);
-//                        picture.setId(-1);
-//                    }
                 }
-
 
                 if(picture == null){
                     picture= new Multimedia();
@@ -206,27 +200,6 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
 
                 }
 
-//                if (picture == null) {
-//                    String docId = FileUtils.getMediaStoreIdFromUri(context, imageUri);
-//                    if(docId == null){
-//                        docId = getIntent().getStringExtra("documentId").replaceAll("image:","");
-//                    }
-//                    boolean isNumeric = docId != null && docId.matches("\\d+");
-//                    LogTools.i("docId   " + docId  + ",realPath "+realPath +",isNumeric "+isNumeric);
-//                    picture = new Multimedia();
-//
-//                    if(docId != null){
-//                        if(docId  == null || "".equals(docId) || !isNumeric){
-//                            realPath = FileUtils.getRealPathFromUriT(context, imageUri);
-//                        }else {
-//                            picture.setId(StringUtils.ToInt(docId));
-//                        }
-//                    }else{
-//                        picture.setId(-1);
-//                    }
-//                    picture.setPath(realPath);
-//
-//                }
                 picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
                 if(picture == null && picturePreviewPersenter.getCurPic() !=null){
                     picture = picturePreviewPersenter.getCurPic();
@@ -245,22 +218,14 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             picturePreviewPersenter = new PicturePreviewPersenter(this, picture);
             initData();
         }
+    }
 
-//        popupWindow = new PopupWindow(this);
-//        bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_layout, null);
-//        popupWindow.setContentView(bottomSheetView);
-//        int width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.4);
-//        popupWindow.setWidth(width);
-//        popupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-//        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        popupWindow.setOutsideTouchable(true);
-//        popupWindow.setFocusable(true);
-//        txtDetails = bottomSheetView.findViewById(R.id.txtDetails);
-//        txtSetWallpage = bottomSheetView.findViewById(R.id.txtSetWallpage);
-//        txtSetWallpageLock = bottomSheetView.findViewById(R.id.txtSetWallpageLock);
-//        txtDetails.setOnClickListener(this);
-//        txtSetWallpage.setOnClickListener(this);
-//        txtSetWallpageLock.setOnClickListener(this);
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handlePreview();
     }
 
     @Override
@@ -434,6 +399,7 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
             }
         }
     }
+
 
     @Override
     public void onClick(View view) {
