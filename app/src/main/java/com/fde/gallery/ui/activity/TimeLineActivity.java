@@ -212,7 +212,7 @@ public class TimeLineActivity extends BaseActivity implements View.OnClickListen
                     }
                     Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    intent.setType("image/*"); //set MIME type
+                    intent.setType("*/*"); //set MIME type
 //                    intent.putExtra(Intent.EXTRA_STREAM, imageUris.get(0)); //
                     intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
                     startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
