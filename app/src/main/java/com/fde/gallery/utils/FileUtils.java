@@ -258,7 +258,7 @@ public class FileUtils {
        try {
            List<Multimedia> list =  getAllVideos(context);
            for (Multimedia multimedia : list) {
-               if (titleName.contains(multimedia.getTitle())) {
+               if (titleName.equals(multimedia.getTitle())) {
                    return multimedia;
                }
            }
