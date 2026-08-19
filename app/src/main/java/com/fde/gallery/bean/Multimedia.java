@@ -15,6 +15,8 @@
  */
 package com.fde.gallery.bean;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +36,8 @@ public class Multimedia implements Serializable {
     private boolean isSelected;
     private boolean isShowCheckbox;
     private int mediaType;
+
+    private Uri uri ;
 
     public long getId() {
         return id;
@@ -126,6 +130,14 @@ public class Multimedia implements Serializable {
     // 用于获取当前图片的格式化日期
     public String getDate() {
         return new SimpleDateFormat("yyyy年MM月").format(new Date(dateTaken * 1000L));
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
     }
 
     @Override

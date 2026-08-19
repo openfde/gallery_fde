@@ -133,6 +133,7 @@ public class FileUtils {
                         picture.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
                         picture.setTitle(cursor.getString(titleColumn));
                         picture.setSize(cursor.getLong(sizeColumn));
+                        picture.setUri(contentUri);
                         int w = cursor.getInt(widthColumn);
                         int h = cursor.getInt(heightColumn);
                         if (w == 0) {
@@ -245,7 +246,7 @@ public class FileUtils {
                 long date = cursor.getLong(dateTakenColumn);
                 video.setDateTaken(date > 0 ? date : cursor.getLong(dateAddDateColumn));
                 video.setMediaType(Constant.MEDIA_VIDEO);
-//                video.setUri(contentUri);
+                video.setUri(contentUri);
                 list.add(video);
             }
 //            LogTools.i("video list size " + list.toString());
