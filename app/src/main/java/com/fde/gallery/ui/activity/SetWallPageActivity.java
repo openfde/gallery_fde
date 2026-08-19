@@ -1,7 +1,10 @@
 package com.fde.gallery.ui.activity;
 
+import android.app.Activity;
 import android.app.WallpaperManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -47,6 +50,8 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
     SetWallPageAdapter pictureListAdapter;
     int curPos = 0;
 
+    private final static String WALLPKG = "com.android.wallpaper";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,32 +88,48 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
-                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-                        int w = wallpaperBitmap.getWidth();
-                        int h = wallpaperBitmap.getHeight();
-                        if (w != 0 && h != 0) {
-                            if (w > h) {
-                                wallpaperManager.suggestDesiredDimensions(w, h);
-                            } else {
-                                wallpaperManager.suggestDesiredDimensions(h, w);
-                            }
-                        } else {
-                            wallpaperManager.suggestDesiredDimensions(1280, 1706);
-                        }
+                        ComponentName callingActivity = getCallingActivity();
+                        if (callingActivity != null) {
+                            String callerPackage = callingActivity.getPackageName();
+                            if(WALLPKG.equals(callerPackage)){
+                                Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
+                                WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+                                int w = wallpaperBitmap.getWidth();
+                                int h = wallpaperBitmap.getHeight();
+                                if (w != 0 && h != 0) {
+                                    if (w > h) {
+                                        wallpaperManager.suggestDesiredDimensions(w, h);
+                                    } else {
+                                        wallpaperManager.suggestDesiredDimensions(h, w);
+                                    }
+                                } else {
+                                    wallpaperManager.suggestDesiredDimensions(1280, 1706);
+                                }
 
-                        try {
-                            wallpaperManager.setBitmap(wallpaperBitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                                try {
+                                    wallpaperManager.setBitmap(wallpaperBitmap);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                });
+                            }else {
+                                Uri uri = pic.getUri(); //Uri.fromFile(new File(pathPic));
+                                Intent resultIntent = new Intent();
+                                resultIntent.setData(uri);
+                                resultIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                resultIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                setResult(Activity.RESULT_OK, resultIntent);
                                 finish();
                             }
-                        });
+                        }
+
+
                     }
                 }).start();
             }

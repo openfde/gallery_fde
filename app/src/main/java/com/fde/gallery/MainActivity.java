@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListPopupWindow;
@@ -63,7 +64,7 @@ public class MainActivity extends BaseActivity {
     SectionsPagerAdapter sectionsPagerAdapter;
     Context context;
 
-    private AppTaskControllerProxy appTaskController;
+//    private AppTaskControllerProxy appTaskController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +72,14 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         context = this;
 
-        appTaskController = AppTaskControllerProxy.create();
-        appTaskController.initCustomCaption(new WeakReference<>(this), true, new AppTaskStatusListener() {
-            @Override
-            public void onStatusChanged(int windowingMode, boolean isSystemBarVisible) {
-                customTitleBar.setButtonBackground(CustomTitleBar.Type.MAXIMIZE, windowingMode == 5 ? com.fde.baselib.R.drawable.icon_maximize : com.fde.baselib.R.drawable.icon_exitmaximize);
-                customTitleBar.setButtonBackground(CustomTitleBar.Type.FULLSCREEN, isSystemBarVisible ? com.fde.baselib.R.drawable.icon_fullscreen : com.fde.baselib.R.drawable.icon_exitfullscreen);
-            }
-        });
+//        appTaskController = AppTaskControllerProxy.create();
+//        appTaskController.initCustomCaption(new WeakReference<>(this), true, new AppTaskStatusListener() {
+//            @Override
+//            public void onStatusChanged(int windowingMode, boolean isSystemBarVisible) {
+//                customTitleBar.setButtonBackground(CustomTitleBar.Type.MAXIMIZE, windowingMode == 5 ? com.fde.baselib.R.drawable.icon_maximize : com.fde.baselib.R.drawable.icon_exitmaximize);
+//                customTitleBar.setButtonBackground(CustomTitleBar.Type.FULLSCREEN, isSystemBarVisible ? com.fde.baselib.R.drawable.icon_fullscreen : com.fde.baselib.R.drawable.icon_exitfullscreen);
+//            }
+//        });
 
         initView();
 
@@ -112,63 +113,64 @@ public class MainActivity extends BaseActivity {
         LogTools.i("getAppVersionCode: " + DeviceUtils.getAppVersionCode(context));
 
         customTitleBar = (CustomTitleBar) findViewById(R.id.customTitleBar);
-        customTitleBar.setTitle(getString(R.string.app_name));
-        customTitleBar.setOnButtonClickListener(new CustomTitleBar.OnButtonClickListener() {
-            @Override
-            public void onLeftClick() {
-                finish(); // 左上角返回
-            }
-
-            @Override
-            public void onCloseClick() {
-                appTaskController.closeTask();
-            }
-
-            @Override
-            public void onFullscreenClick() {
-                // 全屏逻辑
-                appTaskController.enterOrExitFullscreen();
-            }
-
-            @Override
-            public void onImportClick() {
-                ListPopupWindow listPopupWindow = new ListPopupWindow(context);
-                List<String> data = Arrays.asList(getString(R.string.open), getString(R.string.exit));
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                        context,
-                        android.R.layout.simple_list_item_1,
-                        data
-                );
-
-                listPopupWindow.setAnchorView(customTitleBar.getButton(CustomTitleBar.Type.OPTION)); // 绑定按钮
-                listPopupWindow.setAdapter(adapter);
-                listPopupWindow.setWidth(150);
-
-                listPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
-                    if (position == 0) {
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                        intent.addCategory(Intent.CATEGORY_OPENABLE);
-                        intent.setType("image/*");
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivityForResult(intent, Constant.REQUEST_SELECT_PHOTO);
-                    } else {
-                        appTaskController.closeTask();
-                    }
-                    listPopupWindow.dismiss();
-                });
-                listPopupWindow.show();
-            }
-
-            @Override
-            public void onMinimizeClick() {
-                appTaskController.minimize();
-            }
-
-            @Override
-            public void onMaximizeClick() {
-                appTaskController.maximizeOrNot();
-            }
-        });
+        customTitleBar.setVisibility(View.GONE);
+//        customTitleBar.setTitle(getString(R.string.app_name));
+//        customTitleBar.setOnButtonClickListener(new CustomTitleBar.OnButtonClickListener() {
+//            @Override
+//            public void onLeftClick() {
+//                finish(); // 左上角返回
+//            }
+//
+//            @Override
+//            public void onCloseClick() {
+//                appTaskController.closeTask();
+//            }
+//
+//            @Override
+//            public void onFullscreenClick() {
+//                // 全屏逻辑
+//                appTaskController.enterOrExitFullscreen();
+//            }
+//
+//            @Override
+//            public void onImportClick() {
+//                ListPopupWindow listPopupWindow = new ListPopupWindow(context);
+//                List<String> data = Arrays.asList(getString(R.string.open), getString(R.string.exit));
+//                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+//                        context,
+//                        android.R.layout.simple_list_item_1,
+//                        data
+//                );
+//
+//                listPopupWindow.setAnchorView(customTitleBar.getButton(CustomTitleBar.Type.OPTION)); // 绑定按钮
+//                listPopupWindow.setAdapter(adapter);
+//                listPopupWindow.setWidth(150);
+//
+//                listPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
+//                    if (position == 0) {
+//                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                        intent.setType("image/*");
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivityForResult(intent, Constant.REQUEST_SELECT_PHOTO);
+//                    } else {
+//                        appTaskController.closeTask();
+//                    }
+//                    listPopupWindow.dismiss();
+//                });
+//                listPopupWindow.show();
+//            }
+//
+//            @Override
+//            public void onMinimizeClick() {
+//                appTaskController.minimize();
+//            }
+//
+//            @Override
+//            public void onMaximizeClick() {
+//                appTaskController.maximizeOrNot();
+//            }
+//        });
     }
 
     @Override
