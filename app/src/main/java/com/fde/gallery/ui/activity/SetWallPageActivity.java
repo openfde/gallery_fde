@@ -3,17 +3,22 @@ package com.fde.gallery.ui.activity;
 import android.app.Activity;
 import android.app.WallpaperManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -119,12 +124,16 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
                                     }
                                 });
                             }else {
-                                Uri uri = pic.getUri(); //Uri.fromFile(new File(pathPic));
-                                Intent resultIntent = new Intent();
-                                resultIntent.setData(uri);
-                                resultIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                resultIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                                setResult(Activity.RESULT_OK, resultIntent);
+                                try {
+                                    Uri uri = getUri(pic.getPath());
+                                    Intent resultIntent = new Intent();
+                                    resultIntent.setData(uri);
+                                    resultIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    resultIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                    setResult(Activity.RESULT_OK, resultIntent);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 finish();
                             }
                         }
@@ -137,6 +146,32 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
 
     }
 
+    public Uri getUri(String filePath){
+        ContentResolver resolver = context.getContentResolver();
+        Uri contentUri = null;
+        String[] projection = {
+                MediaStore.Images.Media._ID
+        };
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        try (Cursor cursor = resolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                new String[]{filePath},
+                null)) {
+
+            if (cursor != null && cursor.moveToFirst()) {
+                long id = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(
+                                MediaStore.Images.Media._ID));
+
+                contentUri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        id);
+            }
+        }
+        return contentUri;
+    }
 
     /***
      * get all picture

@@ -37,8 +37,6 @@ public class Multimedia implements Serializable {
     private boolean isShowCheckbox;
     private int mediaType;
 
-    private Uri uri ;
-
     public long getId() {
         return id;
     }
@@ -127,13 +125,6 @@ public class Multimedia implements Serializable {
         this.mediaType = mediaType;
     }
 
-    public Uri getUri() {
-        return uri;
-    }
-
-    public void setUri(Uri uri) {
-        this.uri = uri;
-    }
 
     // 用于获取当前图片的格式化日期
     public String getDate() {
