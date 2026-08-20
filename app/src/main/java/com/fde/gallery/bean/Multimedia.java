@@ -15,6 +15,8 @@
  */
 package com.fde.gallery.bean;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -122,6 +124,7 @@ public class Multimedia implements Serializable {
     public void setMediaType(int mediaType) {
         this.mediaType = mediaType;
     }
+
 
     // 用于获取当前图片的格式化日期
     public String getDate() {

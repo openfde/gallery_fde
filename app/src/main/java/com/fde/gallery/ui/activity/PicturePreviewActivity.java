@@ -33,6 +33,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -349,29 +350,41 @@ public class PicturePreviewActivity extends BaseActivity implements View.OnClick
     public void showPic(Multimedia multimedia) {
         if (multimedia != null && !"".equals(multimedia.getPath())) {
             try {
-                RequestOptions options = new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .override(StringUtils.ToInt(Utils.getSystemProperty("openfde.display_width")),StringUtils.ToInt(Utils.getSystemProperty("openfde.display_height")));
+                LogTools.d("Build.VERSION.SDK_INT  "+ Build.VERSION.SDK_INT);
 
-                Glide.with(context) // replace 'this' with your context
-                        .load(multimedia.getPath())
-                        .error(R.mipmap.ic_launcher)
-                        .apply(options)
-                        .fitCenter()
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                stopAnimation();
-                                return false;
-                            }
+                if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.R){
+                    Glide.with(context) // replace 'this' with your context
+                            .load(multimedia.getPath())
+                            .error(R.mipmap.ic_launcher)
+                            .fitCenter()
+                            .into(imageView);
+                    stopAnimation();
+                }else {
+                    RequestOptions options = new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .override(StringUtils.ToInt(Utils.getSystemProperty("openfde.display_width")),StringUtils.ToInt(Utils.getSystemProperty("openfde.display_height")));
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                stopAnimation();
-                                return false;
-                            }
-                        })
-                        .into(imageView);
+                    Glide.with(context) // replace 'this' with your context
+                            .load(multimedia.getPath())
+                            .error(R.mipmap.ic_launcher)
+                            .apply(options)
+                            .fitCenter()
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    stopAnimation();
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    stopAnimation();
+                                    return false;
+                                }
+                            })
+                            .into(imageView);
+                }
+
 
             } catch (Exception e) {
                 e.printStackTrace();

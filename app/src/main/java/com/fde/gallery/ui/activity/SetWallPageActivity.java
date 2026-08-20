@@ -1,16 +1,24 @@
 package com.fde.gallery.ui.activity;
 
+import android.app.Activity;
 import android.app.WallpaperManager;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,6 +54,8 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
     int numberOfColumns = 3;
     SetWallPageAdapter pictureListAdapter;
     int curPos = 0;
+
+    private final static String WALLPKG = "com.android.wallpaper";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,32 +93,52 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
-                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-                        int w = wallpaperBitmap.getWidth();
-                        int h = wallpaperBitmap.getHeight();
-                        if (w != 0 && h != 0) {
-                            if (w > h) {
-                                wallpaperManager.suggestDesiredDimensions(w, h);
-                            } else {
-                                wallpaperManager.suggestDesiredDimensions(h, w);
-                            }
-                        } else {
-                            wallpaperManager.suggestDesiredDimensions(1280, 1706);
-                        }
+                        ComponentName callingActivity = getCallingActivity();
+                        if (callingActivity != null) {
+                            String callerPackage = callingActivity.getPackageName();
+                            if(WALLPKG.equals(callerPackage)){
+                                Bitmap wallpaperBitmap = BitmapFactory.decodeFile(pic.getPath());
+                                WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+                                int w = wallpaperBitmap.getWidth();
+                                int h = wallpaperBitmap.getHeight();
+                                if (w != 0 && h != 0) {
+                                    if (w > h) {
+                                        wallpaperManager.suggestDesiredDimensions(w, h);
+                                    } else {
+                                        wallpaperManager.suggestDesiredDimensions(h, w);
+                                    }
+                                } else {
+                                    wallpaperManager.suggestDesiredDimensions(1280, 1706);
+                                }
 
-                        try {
-                            wallpaperManager.setBitmap(wallpaperBitmap);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                                try {
+                                    wallpaperManager.setBitmap(wallpaperBitmap);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                });
+                            }else {
+                                try {
+                                    Uri uri = getUri(pic.getPath());
+                                    Intent resultIntent = new Intent();
+                                    resultIntent.setData(uri);
+                                    resultIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    resultIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                    setResult(Activity.RESULT_OK, resultIntent);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                                 finish();
                             }
-                        });
+                        }
+
+
                     }
                 }).start();
             }
@@ -116,6 +146,32 @@ public class SetWallPageActivity extends BaseActivity implements ViewEvent {
 
     }
 
+    public Uri getUri(String filePath){
+        ContentResolver resolver = context.getContentResolver();
+        Uri contentUri = null;
+        String[] projection = {
+                MediaStore.Images.Media._ID
+        };
+        String selection = MediaStore.Images.Media.DATA + "=?";
+        try (Cursor cursor = resolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                new String[]{filePath},
+                null)) {
+
+            if (cursor != null && cursor.moveToFirst()) {
+                long id = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(
+                                MediaStore.Images.Media._ID));
+
+                contentUri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        id);
+            }
+        }
+        return contentUri;
+    }
 
     /***
      * get all picture
